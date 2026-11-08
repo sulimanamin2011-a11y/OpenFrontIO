@@ -92,7 +92,7 @@ describe("UpgradeStructureExecution", () => {
 
     game.endSpawnPhase();
 
-    player.addGold(750_000n);
+    player.addGold(250_000n);
 
     expect(city.level()).toBe(1);
 
@@ -100,6 +100,30 @@ describe("UpgradeStructureExecution", () => {
     game.addExecution(execution);
     game.executeNextTick();
 
+    expect(city.level()).toBe(2);
+  });
+
+  it("uses DOMINION silver and gold city upgrade prices", async () => {
+    const game = await setup("ocean_and_land", { gameType: GameType.Singleplayer, instantBuild: true }, [], undefined, undefined, false);
+    const playerInfo = new PlayerInfo("player1", PlayerType.Human, null, "player1_id");
+    game.addPlayer(playerInfo);
+    const player = game.player("player1_id")!;
+    let landTile: TileRef | undefined;
+    for (let y = 0; y < game.map().height() && landTile === undefined; y++) {
+      for (let x = 0; x < game.map().width(); x++) {
+        const tile = game.ref(x, y);
+        if (game.isLand(tile)) { landTile = tile; break; }
+      }
+    }
+    player.conquer(landTile!);
+    const city = player.buildUnit(UnitType.City, landTile!, {});
+    game.endSpawnPhase();
+    player.addGold(1_000_000n);
+    const firstUpgrade = player.buildableUnits(landTile!).find((unit) => unit.type === UnitType.City)!;
+    expect(firstUpgrade.upgradeCosts![0]).toBe(250_000n);
+    expect(firstUpgrade.upgradeCosts![1]).toBe(1_000_000n);
+    game.addExecution(new UpgradeStructureExecution(player, city.id(), 2));
+    game.executeNextTick();
     expect(city.level()).toBe(3);
   });
 
