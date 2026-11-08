@@ -235,15 +235,8 @@ describe("MasterLobbyService inactive deployment still starts queued lobbies", (
   });
 
   it("assigns a countdown to a lobby that was queued before going inactive", async () => {
-    vi.stubEnv("DOMAIN", "localhost");
-    vi.spyOn(ServerEnv, "numWorkers").mockReturnValue(1);
-    const playlist = { gameConfig: vi.fn(async () => ({})) };
-    const log = { info: vi.fn(), error: vi.fn() } as any;
-    const service = new MasterLobbyService(playlist as any, log);
-    const worker = createMockWorker();
-    service.registerWorker(0, worker as any);
-    worker.emit("message", { type: "workerReady", workerId: 0 });
-
+    // Use the worker and service created by this describe's beforeEach so
+    // schedulerTask() invokes the scheduler belonging to the same service.
     // Worker reports one queued ffa lobby with no startsAt yet.
     worker.emit("message", {
       type: "lobbyList",
