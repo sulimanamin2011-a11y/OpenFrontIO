@@ -52,6 +52,16 @@ export class PortExecution implements Execution {
       this.createStation();
     }
 
+    // DOMINION port economy: Silver ports (level 1) generate 100K every
+    // 15 seconds; Gold ports (level 2+) generate 300K every 10 seconds.
+    // The simulation runs at 10 ticks per second. Keep this independent of
+    // the trade-ship polling cadence so every port pays on its own schedule.
+    if (this.port.level() >= 2 && ticks % 100 === 0) {
+      this.port.owner().addGold(300_000n, this.port.tile());
+    } else if (this.port.level() === 1 && ticks % 150 === 0) {
+      this.port.owner().addGold(100_000n, this.port.tile());
+    }
+
     // Only check every 10 ticks for performance.
     if ((this.mg.ticks() + this.checkOffset) % 10 !== 0) {
       return;
