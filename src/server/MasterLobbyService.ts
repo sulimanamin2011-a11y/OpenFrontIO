@@ -37,6 +37,12 @@ export interface MasterLobbyServiceOptions {
  */
 const QUEUED_LOBBIES_PER_TYPE = 6;
 
+function lobbyStartDelayMs(numClients: number): number {
+  if (numClients < 50) return 60_000;
+  if (numClients <= 100) return 90_000;
+  return 120_000;
+}
+
 export class MasterLobbyService {
   private readonly workers = new Map<number, Worker>();
   // Worker id => the lobbies it owns.
@@ -82,6 +88,13 @@ export class MasterLobbyService {
   // set rather than the roster's own field so a roster that arrives twice
   // between broadcasts does not lose the first one's delists.
   private readonly pendingDelist = new Set<string>();
+  // Countdown duration is selected from the front lobby's live player count.
+  // Remember the chosen duration so a population tier change can restart the
+  // countdown once, without pushing it back on every scheduler poll.
+  private readonly lobbyCountdowns = new Map<
+    string,
+    { delayMs: number; startsAt: number }
+  >();
 
   constructor(
     private playlist: MapPlaylist,
@@ -432,9 +445,13 @@ export class MasterLobbyService {
   private async maybeScheduleLobby() {
     // Coordinated: the site's queue depth and countdowns are the
     // coordinator's; adding our own here would double-schedule.
-    if (this.isCoordinated()) return;
+    if (this.isCoordinated()) {
+      this.lobbyCountdowns.clear();
+      return;
+    }
 
     const lobbiesByType = this.getAllLobbies().games;
+    const activeCountdowns = new Set<string>();
 
     // Scheduled types only: hosted lobbies are started by their host, never
     // given a countdown or replaced by the master.
@@ -446,12 +463,27 @@ export class MasterLobbyService {
       // either receives a startsAt (IPC round-trip delay), leaving both stuck
       // without a countdown.
       const nextLobby = lobbies[0];
-      if (nextLobby && nextLobby.startsAt === undefined) {
-        this.sendMessageToWorker({
-          type: "updateLobby",
-          gameID: nextLobby.gameID,
-          startsAt: Date.now() + ServerEnv.gameCreationRate(),
-        });
+      if (nextLobby) {
+        activeCountdowns.add(nextLobby.gameID);
+        const delayMs = lobbyStartDelayMs(nextLobby.numClients);
+        const previous = this.lobbyCountdowns.get(nextLobby.gameID);
+
+        if (previous === undefined || previous.delayMs !== delayMs) {
+          const startsAt = Date.now() + delayMs;
+          this.lobbyCountdowns.set(nextLobby.gameID, { delayMs, startsAt });
+          this.sendMessageToWorker({
+            type: "updateLobby",
+            gameID: nextLobby.gameID,
+            startsAt,
+          });
+        } else if (nextLobby.startsAt !== previous.startsAt) {
+          // Retry if the worker has not yet reflected the last IPC update.
+          this.sendMessageToWorker({
+            type: "updateLobby",
+            gameID: nextLobby.gameID,
+            startsAt: previous.startsAt,
+          });
+        }
       }
 
       // An inactive deployment still starts what it already queued (the
@@ -466,6 +498,12 @@ export class MasterLobbyService {
         gameConfig: await this.playlist.gameConfig(type),
         publicGameType: type,
       } satisfies MasterCreateGame);
+    }
+
+    // A lobby that leaves the front of its queue will get a fresh countdown
+    // when it becomes next; hosted lobbies never enter this map.
+    for (const gameID of this.lobbyCountdowns.keys()) {
+      if (!activeCountdowns.has(gameID)) this.lobbyCountdowns.delete(gameID);
     }
   }
 
