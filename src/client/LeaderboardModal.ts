@@ -1,9 +1,7 @@
 import { RankedType } from "@openfront/engine-api/game/GameTypes";
 import { html } from "lit";
-import { customElement, query, state } from "lit/decorators.js";
+import { customElement, query } from "lit/decorators.js";
 import { BaseModal } from "./components/BaseModal";
-import "./components/leaderboard/LeaderboardClanTable";
-import type { LeaderboardClanTable } from "./components/leaderboard/LeaderboardClanTable";
 import "./components/leaderboard/LeaderboardPlayerList";
 import type {
   LeaderboardPlayerList,
@@ -18,7 +16,6 @@ const TAB_KEYS = [
   "players",
   "players2v2",
   "playersFfa",
-  "clans",
   "tribes",
 ] as const;
 
@@ -35,13 +32,8 @@ const PLAYER_TABS: Record<string, PlayerLadder> = {
 export class LeaderboardModal extends BaseModal {
   protected routerName = "leaderboard";
 
-  @state()
-  private clanDateRange: { start: string; end: string } | null = null;
-
   @query("leaderboard-player-list")
   private playerList?: LeaderboardPlayerList;
-  @query("leaderboard-clan-table")
-  private clanTable?: LeaderboardClanTable;
   @query("leaderboard-tribe-table")
   private tribeTable?: LeaderboardTribeTable;
 
@@ -63,7 +55,6 @@ export class LeaderboardModal extends BaseModal {
           key: "playersFfa",
           label: translateText("leaderboard_modal.ranked_ffa_tab"),
         },
-        { key: "clans", label: translateText("leaderboard_modal.clans_tab") },
         { key: "tribes", label: translateText("leaderboard_modal.tribes_tab") },
       ],
     };
@@ -75,7 +66,6 @@ export class LeaderboardModal extends BaseModal {
 
   private tabComponent(tab: string) {
     if (this.rankedTypeFor(tab) !== null) return this.playerList;
-    if (tab === "clans") return this.clanTable;
     return this.tribeTable;
   }
 
@@ -123,22 +113,7 @@ export class LeaderboardModal extends BaseModal {
     })();
   }
 
-  private handleClanDateRangeChange(
-    event: CustomEvent<{ start: string; end: string }>,
-  ) {
-    this.clanDateRange = event.detail;
-  }
-
   protected renderHeaderSlot() {
-    let dateRange = html``;
-    if (this.clanDateRange) {
-      const start = new Date(this.clanDateRange.start).toLocaleDateString();
-      const end = new Date(this.clanDateRange.end).toLocaleDateString();
-      dateRange = html`<span
-        class="text-sm font-normal text-white/40 ml-2 wrap-break-words"
-        >(${start} - ${end})</span
-      >`;
-    }
     const refreshTime = html`<span
       class="text-sm font-normal text-white/40 ml-2 wrap-break-words italic"
       >(${translateText("leaderboard_modal.refresh_time")})</span
@@ -152,7 +127,6 @@ export class LeaderboardModal extends BaseModal {
           >
             ${translateText("leaderboard_modal.title")}
           </span>
-          ${this.activeTab === "clans" ? dateRange : ""}
           ${
             this.rankedTypeFor(this.activeTab) !== null ||
             this.activeTab === "tribes"
@@ -177,12 +151,6 @@ export class LeaderboardModal extends BaseModal {
             this.rankedTypeFor(this.activeTab) ?? this.lastRankedType
           }
         ></leaderboard-player-list>
-        <leaderboard-clan-table
-          class=${this.activeTab === "clans" ? "h-full" : "hidden"}
-          @date-range-change=${(
-            event: CustomEvent<{ start: string; end: string }>,
-          ) => this.handleClanDateRangeChange(event)}
-        ></leaderboard-clan-table>
         <leaderboard-tribe-table
           class=${this.activeTab === "tribes" ? "h-full" : "hidden"}
         ></leaderboard-tribe-table>
