@@ -181,4 +181,32 @@ describe("UpgradeStructureExecution", () => {
     expect(city.level()).toBe(6);
     expect(goldBefore - player.gold()).toBe(bu.upgradeCosts![4]);
   });
+
+  it("uses DOMINION Silver and Gold SAM launcher prices", async () => {
+    const game = await setup("ocean_and_land", { gameType: GameType.Singleplayer, instantBuild: true }, [], undefined, undefined, false);
+    const playerInfo = new PlayerInfo("player1", PlayerType.Human, null, "player1_id");
+    game.addPlayer(playerInfo);
+    const player = game.player("player1_id")!;
+    let landTile: TileRef | undefined;
+    for (let y = 0; y < game.map().height() && landTile === undefined; y++) {
+      for (let x = 0; x < game.map().width(); x++) {
+        const tile = game.ref(x, y);
+        if (game.isLand(tile)) { landTile = tile; break; }
+      }
+    }
+    player.conquer(landTile!);
+    game.endSpawnPhase();
+    player.addGold(6_000_000n);
+
+    const initial = player.buildableUnits(landTile!).find((unit) => unit.type === UnitType.SAMLauncher)!;
+    expect(initial.cost).toBe(1_000_000n);
+    const sam = player.buildUnit(UnitType.SAMLauncher, landTile!, {});
+    const upgrade = player.buildableUnits(landTile!).find((unit) => unit.type === UnitType.SAMLauncher)!;
+    expect(upgrade.upgradeCosts![0]).toBe(4_000_000n);
+
+    game.addExecution(new UpgradeStructureExecution(player, sam.id(), 1));
+    game.executeNextTick();
+    expect(sam.level()).toBe(2);
+  });
+
 });
