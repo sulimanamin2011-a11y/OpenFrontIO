@@ -92,18 +92,9 @@ export function planJoinVerify(args: {
   steamAuthed: boolean;
 }): JoinVerifyPlan {
   if (!args.isReadmit) {
-    // Steam-authenticated first joins skip the Turnstile siteverify — Steam
-    // ownership (a signed provider="steam" claim, set by infra only after
-    // verifySteamTicket()) is the anti-abuse signal. A null token still runs
-    // the API's name check, so banned/slur names are censored: the join is
-    // VERIFIED (never skipped), it just omits the bot challenge.
-    if (args.steamAuthed) {
-      return { action: "verify", token: null };
-    }
-    if (!args.turnstileToken) {
-      return { action: "reject" };
-    }
-    return { action: "verify", token: args.turnstileToken };
+    // Guest and account players can join without a Turnstile challenge.
+    // The API still screens their usernames when the token is null.
+    return { action: "verify", token: null };
   }
   if (args.gameStarted || args.identityUnchanged) {
     return { action: "skip" };

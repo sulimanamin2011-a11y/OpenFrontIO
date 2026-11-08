@@ -164,11 +164,8 @@ export class MapPlaylist {
 
   public async gameConfig(type: ScheduledPublicGameType): Promise<GameConfig> {
     this.scheduled++;
-    const trusted = this.scheduled % TRUSTED_PUBLIC_EVERY === 0;
+    const trusted = false;
     const config = await this.rollConfig(type, trusted);
-    if (trusted) {
-      config.trusted = true;
-    }
     return config;
   }
 
@@ -197,12 +194,6 @@ export class MapPlaylist {
     }
 
     let unadjustedMaxPlayers = await this.lobbyMaxPlayers(map, mode, isCompact);
-    if (trusted) {
-      unadjustedMaxPlayers = Math.min(
-        unadjustedMaxPlayers,
-        TRUSTED_MAX_PLAYER_COUNT,
-      );
-    }
     playerTeams = this.adjustTeamCountForPlayerCapacity(
       playerTeams,
       unadjustedMaxPlayers,
@@ -416,12 +407,6 @@ export class MapPlaylist {
 
     let unadjustedMaxPlayers =
       crowdedMaxPlayers ?? (await this.lobbyMaxPlayers(map, mode, isCompact));
-    if (trusted) {
-      unadjustedMaxPlayers = Math.min(
-        unadjustedMaxPlayers,
-        TRUSTED_MAX_PLAYER_COUNT,
-      );
-    }
     playerTeams = this.adjustTeamCountForPlayerCapacity(
       playerTeams,
       unadjustedMaxPlayers,

@@ -847,14 +847,7 @@ export async function startWorker() {
           | undefined;
 
         const allowedFlares = ServerEnv.allowedFlares();
-        if (claims === null) {
-          if (allowedFlares !== undefined) {
-            log.warn("Unauthorized: Anonymous user attempted to join game");
-            admissionGuard.rollback();
-            ws.close(CloseCode.Unauthorized, CloseReason.LoginRequired);
-            return;
-          }
-        } else {
+        if (claims !== null) {
           // Verify token and get player permissions
           const result = await getUserMe(clientMsg.token);
           if (result.type === "error") {
