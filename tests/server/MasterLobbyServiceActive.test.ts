@@ -111,6 +111,26 @@ describe("MasterLobbyService active/inactive deployment", () => {
 });
 
 describe("MasterLobbyService inactive deployment still starts queued lobbies", () => {
+  let worker: ReturnType<typeof createMockWorker>;
+  let service: MasterLobbyService;
+
+  beforeEach(() => {
+    vi.stubEnv("DOMAIN", "localhost");
+    vi.spyOn(ServerEnv, "numWorkers").mockReturnValue(1);
+    const playlist = { gameConfig: vi.fn(async () => ({})) };
+    const log = { info: vi.fn(), error: vi.fn() } as any;
+    service = new MasterLobbyService(playlist as any, log);
+    worker = createMockWorker();
+    service.registerWorker(0, worker as any);
+    worker.emit("message", { type: "workerReady", workerId: 0 });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllEnvs();
+    vi.mocked(startPolling).mockClear();
+  });
+
   it("uses a one-minute countdown below 50 players", async () => {
     vi.spyOn(Date, "now").mockReturnValue(10_000);
     worker.emit("message", {
