@@ -130,6 +130,14 @@ type PlaylistKey = "ffa" | "team" | "specialFfa" | "specialTeam";
 // every map until the first fetch lands (or with no API, in dev).
 export const DEFAULT_MAP_WEIGHT = 5;
 
+// DOMINION's featured maps appear more often in public rotations without
+// overriding an API weight of zero (which explicitly disables a map).
+const FEATURED_MAP_ROTATION_MULTIPLIER = 3;
+const FEATURED_MAPS = new Set<GameMapType>([
+  GameMapType.TradersDream,
+  GameMapType.FourIslands,
+]);
+
 const WEIGHT_KEYS = {
   ffa: "ffaWeight",
   team: "teamWeight",
@@ -731,7 +739,12 @@ export class MapPlaylist {
     const maps: GameMapType[] = [];
     let heaviest: { map: GameMapType; weight: number } | undefined;
     for (const { type: map } of listedMaps) {
-      const weight = weights[map]?.[WEIGHT_KEYS[type]] ?? DEFAULT_MAP_WEIGHT;
+      const configuredWeight =
+        weights[map]?.[WEIGHT_KEYS[type]] ?? DEFAULT_MAP_WEIGHT;
+      const weight =
+        configuredWeight > 0 && FEATURED_MAPS.has(map)
+          ? configuredWeight * FEATURED_MAP_ROTATION_MULTIPLIER
+          : configuredWeight;
       if (weight > (heaviest?.weight ?? 0)) heaviest = { map, weight };
       const copies = Math.floor(weight) + (rand.next() < weight % 1 ? 1 : 0);
       for (let i = 0; i < copies; i++) {
