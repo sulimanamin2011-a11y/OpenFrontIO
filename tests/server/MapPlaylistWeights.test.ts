@@ -31,6 +31,26 @@ describe("MapPlaylist weights", () => {
     ).toBe(3);
   });
 
+  it("features Trader's Dream and Four Islands more often", () => {
+    const weights = {
+      [GameMapType.TradersDream]: { ffaWeight: 2 },
+      [GameMapType.FourIslands]: { ffaWeight: 2 },
+    };
+    const playlist = p.buildMapsList("ffa", weights, new PseudoRandom(1));
+    expect(playlist.filter((m) => m === GameMapType.TradersDream)).toHaveLength(6);
+    expect(playlist.filter((m) => m === GameMapType.FourIslands)).toHaveLength(6);
+  });
+
+  it("does not re-enable a featured map with an explicit zero weight", () => {
+    const weights = {
+      [GameMapType.TradersDream]: { ffaWeight: 0 },
+      [GameMapType.FourIslands]: { ffaWeight: 0 },
+    };
+    const playlist = p.buildMapsList("ffa", weights, new PseudoRandom(1));
+    expect(playlist).not.toContain(GameMapType.TradersDream);
+    expect(playlist).not.toContain(GameMapType.FourIslands);
+  });
+
   it("gives a map or queue with no weight the default", () => {
     expect(count("ffa", {})).toBe(DEFAULT_MAP_WEIGHT);
     // A weight for another queue leaves ffa on the default.
