@@ -111,6 +111,109 @@ describe("MasterLobbyService active/inactive deployment", () => {
 });
 
 describe("MasterLobbyService inactive deployment still starts queued lobbies", () => {
+  it("uses a one-minute countdown below 50 players", async () => {
+    vi.spyOn(Date, "now").mockReturnValue(10_000);
+    worker.emit("message", {
+      type: "lobbyList",
+      lobbies: [
+        {
+          gameID: "SMALL001",
+          publicGameType: "ffa",
+          numClients: 49,
+          createdAt: 1,
+        },
+      ],
+    });
+
+    await schedulerTask()();
+
+    const updates = worker.send.mock.calls.filter(
+      ([msg]) => msg.type === "updateLobby" && msg.gameID === "SMALL001",
+    );
+    expect(updates).toHaveLength(1);
+    expect(updates[0][0].startsAt).toBe(70_000);
+  });
+
+  it("uses a 90-second countdown from 50 through 100 players", async () => {
+    vi.spyOn(Date, "now").mockReturnValue(10_000);
+    worker.emit("message", {
+      type: "lobbyList",
+      lobbies: [
+        {
+          gameID: "MEDIUM01",
+          publicGameType: "ffa",
+          numClients: 100,
+          createdAt: 1,
+        },
+      ],
+    });
+
+    await schedulerTask()();
+
+    const updates = worker.send.mock.calls.filter(
+      ([msg]) => msg.type === "updateLobby" && msg.gameID === "MEDIUM01",
+    );
+    expect(updates[0][0].startsAt).toBe(100_000);
+  });
+
+  it("extends the countdown to two minutes above 100 players", async () => {
+    vi.spyOn(Date, "now").mockReturnValue(10_000);
+    worker.emit("message", {
+      type: "lobbyList",
+      lobbies: [
+        {
+          gameID: "LARGE001",
+          publicGameType: "ffa",
+          numClients: 101,
+          createdAt: 1,
+        },
+      ],
+    });
+
+    await schedulerTask()();
+
+    const updates = worker.send.mock.calls.filter(
+      ([msg]) => msg.type === "updateLobby" && msg.gameID === "LARGE001",
+    );
+    expect(updates[0][0].startsAt).toBe(130_000);
+  });
+
+  it("restarts the countdown when the lobby crosses a player-count tier", async () => {
+    vi.spyOn(Date, "now").mockReturnValue(10_000);
+    worker.emit("message", {
+      type: "lobbyList",
+      lobbies: [
+        {
+          gameID: "GROWING1",
+          publicGameType: "ffa",
+          numClients: 20,
+          createdAt: 1,
+        },
+      ],
+    });
+    await schedulerTask()();
+
+    vi.spyOn(Date, "now").mockReturnValue(20_000);
+    worker.emit("message", {
+      type: "lobbyList",
+      lobbies: [
+        {
+          gameID: "GROWING1",
+          publicGameType: "ffa",
+          numClients: 75,
+          startsAt: 70_000,
+          createdAt: 1,
+        },
+      ],
+    });
+    await schedulerTask()();
+
+    const updates = worker.send.mock.calls.filter(
+      ([msg]) => msg.type === "updateLobby" && msg.gameID === "GROWING1",
+    );
+    expect(updates.map(([msg]) => msg.startsAt)).toEqual([70_000, 110_000]);
+  });
+
   it("assigns a countdown to a lobby that was queued before going inactive", async () => {
     vi.stubEnv("DOMAIN", "localhost");
     vi.spyOn(ServerEnv, "numWorkers").mockReturnValue(1);
