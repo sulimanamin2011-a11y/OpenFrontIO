@@ -386,7 +386,11 @@ export class EngineConfig extends Config {
         );
       case UnitType.City:
         return this.costWrapper(
-          (numUnits: number) => Math.min(1_000_000, pow2(numUnits) * 125_000),
+          (numUnits: number) =>
+            Math.min(
+              10_000_000,
+              numUnits === 0 ? 125_000 : 125_000 * numUnits * (numUnits + 1),
+            ),
           UnitType.City,
         );
       case UnitType.Factory:
