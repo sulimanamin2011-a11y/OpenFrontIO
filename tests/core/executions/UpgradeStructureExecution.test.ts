@@ -4,6 +4,7 @@ import {
   MAX_UPGRADE_AMOUNT,
   PlayerInfo,
   PlayerType,
+  TerrainType,
   UnitType,
 } from "@openfront/engine-api/game/GameTypes";
 import { UpgradeStructureExecution } from "@openfront/engine/execution/UpgradeStructureExecution";
@@ -238,6 +239,34 @@ describe("UpgradeStructureExecution", () => {
     expect(config.warshipShellAttackRate(2)).toBe(17);
     expect(config.warshipShellAttackRate(3)).toBe(14);
     expect(config.warshipShellAttackRate(4)).toBe(14);
+  });
+
+  it("makes Gold defense posts reduce incoming attack effectiveness more than Bronze", async () => {
+    const game = await setup("ocean_and_land", { gameType: GameType.Singleplayer, instantBuild: true }, [], undefined, undefined, false);
+    const input = {
+      terrain: TerrainType.Plains,
+      attackTroops: 1_000,
+      attacker: { type: PlayerType.Human, numTiles: 100 },
+      defender: {
+        type: PlayerType.Human,
+        numTiles: 100,
+        troops: 1_000,
+        isTraitor: false,
+        isDisconnectedTeammate: false,
+      },
+      falloutRatio: null,
+      borderSize: 10,
+    };
+    const bronze = game.config().attackLogic({
+      ...input,
+      defenderDefensePostLevel: 1,
+    });
+    const gold = game.config().attackLogic({
+      ...input,
+      defenderDefensePostLevel: 3,
+    });
+    expect(gold.attackerTroopLoss).toBeGreaterThan(bronze.attackerTroopLoss);
+    expect(gold.tickFraction).toBeGreaterThan(bronze.tickFraction);
   });
 
 });
