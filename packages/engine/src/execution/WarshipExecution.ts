@@ -275,7 +275,7 @@ export class WarshipExecution implements Execution {
 
     const ships = mg.nearbyUnits(
       this.warship.tile(),
-      config.warshipTargettingRange(),
+      config.warshipTargettingRange(this.warship.level()),
       types,
     );
 
