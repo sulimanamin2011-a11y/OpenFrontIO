@@ -55,7 +55,15 @@ class FactoryStopHandler implements TrainStopHandler {
     mg: Game,
     station: TrainStation,
     trainExecution: TrainExecution,
-  ): void {}
+  ): void {
+    const factoryOwner = station.unit.owner();
+    const gold = mg
+      .config()
+      .factoryTrainGold(station.unit.level(), factoryOwner);
+    factoryOwner.addGold(gold, station.tile());
+    factoryOwner.addTrainGold(gold);
+    mg.stats().trainExternalTrade(factoryOwner, gold);
+  }
 }
 
 export function createTrainStopHandlers(
