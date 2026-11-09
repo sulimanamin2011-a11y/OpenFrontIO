@@ -411,7 +411,8 @@ export class BuildMenu extends LitElement implements Controller {
     if (
       buildableUnit.canBuild !== false &&
       (buildableUnit.type === UnitType.Castle ||
-        buildableUnit.type === UnitType.AircraftBase)
+        buildableUnit.type === UnitType.AircraftBase) &&
+      (buildableUnit.canUpgrade === false || this.uiState.preventStacking)
     ) {
       this.uiState.ghostStructure = buildableUnit.type;
       this.uiState.upgradeMultiplier = 1;
