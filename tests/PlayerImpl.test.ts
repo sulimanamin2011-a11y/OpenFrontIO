@@ -37,6 +37,16 @@ describe("PlayerImpl", () => {
     expect(buCity!.canUpgrade).toBe(city.id());
   });
 
+  test("Castle can be upgraded from the Castle menu", () => {
+    const castle = player.buildUnit(UnitType.Castle, game.ref(0, 0), {});
+    player.addGold(BigInt(1_000_000));
+    const buildableCastle = player
+      .buildableUnits(game.ref(0, 0), [UnitType.Castle])
+      .find((bu) => bu.type === UnitType.Castle);
+    expect(buildableCastle).toBeDefined();
+    expect(buildableCastle!.canUpgrade).toBe(castle.id());
+  });
+
   test("opt-in new placement rail preview is available beside an upgradeable factory", () => {
     for (let x = 0; x < 100; x++) {
       for (let y = 0; y < 100; y++) player.conquer(game.ref(x, y));
