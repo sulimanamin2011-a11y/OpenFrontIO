@@ -416,7 +416,14 @@ export class EngineConfig extends Config {
       case UnitType.Castle:
         return this.costWrapper(() => 1_000_000, UnitType.Castle);
       case UnitType.AircraftBase:
-        return this.costWrapper(() => 2_500_000, UnitType.AircraftBase);
+        // DOMINION: the base's upgrade tier determines the aircraft tier.
+        // The first base costs 2.5M; Bronze -> Silver costs 500K and
+        // Silver -> Gold costs 1.5M.
+        return this.costWrapper(
+          (numUnits: number) =>
+            numUnits === 0 ? 2_500_000 : numUnits === 1 ? 500_000 : 1_500_000,
+          UnitType.AircraftBase,
+        );
       case UnitType.TransportShip:
       case UnitType.Shell:
       case UnitType.SAMMissile:
