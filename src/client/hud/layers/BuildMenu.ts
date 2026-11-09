@@ -403,6 +403,21 @@ export class BuildMenu extends LitElement implements Controller {
   }
 
   public sendBuildOrUpgrade(buildableUnit: BuildableUnit, tile: TileRef): void {
+    // Castle and aircraft base are placed through the same live map ghost
+    // preview used by keyboard placement. This lets players inspect the
+    // footprint and choose a location before spending gold.
+    if (
+      buildableUnit.canBuild !== false &&
+      (buildableUnit.type === UnitType.Castle ||
+        buildableUnit.type === UnitType.AircraftBase)
+    ) {
+      this.uiState.ghostStructure = buildableUnit.type;
+      this.uiState.upgradeMultiplier = 1;
+      this.eventBus.emit(new CloseViewEvent());
+      this.hideMenu();
+      return;
+    }
+
     if (buildableUnit.canUpgrade !== false && !this.uiState.preventStacking) {
       this.eventBus.emit(
         new SendUpgradeStructureIntentEvent(
