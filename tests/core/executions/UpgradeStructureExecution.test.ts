@@ -269,4 +269,16 @@ describe("UpgradeStructureExecution", () => {
     expect(gold.tickFraction).toBeGreaterThan(bronze.tickFraction);
   });
 
+  it("scales warship targeting range and shell damage by rank", async () => {
+    const game = await setup("ocean_and_land", { gameType: GameType.Singleplayer, instantBuild: true }, [], undefined, undefined, false);
+    const config = game.config();
+    expect(config.warshipTargettingRange(1)).toBe(130);
+    expect(config.warshipTargettingRange(2)).toBe(145);
+    expect(config.warshipTargettingRange(3)).toBe(160);
+    expect(config.warshipTierShellDamageBonus(1)).toBe(0);
+    expect(config.warshipTierShellDamageBonus(2)).toBe(10);
+    expect(config.warshipTierShellDamageBonus(3)).toBe(20);
+    expect(config.warshipTierShellDamageBonus(4)).toBe(20);
+  });
+
 });
