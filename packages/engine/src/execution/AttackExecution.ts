@@ -365,18 +365,25 @@ export class AttackExecution implements Execution {
     borderSize: number,
   ): AttackLogicInput {
     const defender = this.target.isPlayer() ? this.target : null;
-    // Same test as scanning nearbyUnits() for a post owned by the defender
-    // (active, not under construction, within range), without building a
-    // result array per conquered tile — this runs for every tile of every
-    // attack on the map.
-    const defenderHasDefensePost =
-      defender !== null &&
-      this.mg.hasUnitNearby(
-        tile,
-        this.mg.config().defensePostRange(),
-        UnitType.DefensePost,
-        defender.id(),
-      );
+    // Higher-level posts protect a wider area. Query the maximum tier range
+    // once, then select the strongest completed post that covers this tile.
+    const defenderDefensePostLevel =
+      defender === null
+        ? 0
+        : this.mg
+            .nearbyUnits(
+              tile,
+              this.mg.config().defensePostRange(3),
+              UnitType.DefensePost,
+              (unit) => unit.owner() === defender,
+            )
+            .reduce((level, { unit, distSquared }) => {
+              const postLevel = unit.level();
+              const range = this.mg.config().defensePostRange(postLevel);
+              return distSquared <= range * range
+                ? Math.max(level, postLevel)
+                : level;
+            }, 0);
     return {
       terrain: this.map.terrainType(tile),
       attackTroops,
@@ -395,7 +402,7 @@ export class AttackExecution implements Execution {
               isDisconnectedTeammate:
                 defender.isDisconnected() && this._owner.isOnSameTeam(defender),
             },
-      defenderHasDefensePost,
+      defenderDefensePostLevel,
       falloutRatio: this.mg.hasFallout(tile)
         ? this.mg.numTilesWithFallout() / this.mg.numLandTiles()
         : null,
