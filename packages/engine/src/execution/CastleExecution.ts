@@ -56,10 +56,7 @@ export class CastleExecution implements Execution {
       .nearbyUnits(
         this.castle.tile(),
         Math.min(55, 35 + (this.castle.level() - 1) * 10),
-        [
-        UnitType.TransportShip,
-        UnitType.Warship,
-        ],
+        [UnitType.TransportShip, UnitType.Warship],
       )
       .filter(
         ({ unit }) =>
