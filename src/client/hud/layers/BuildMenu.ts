@@ -28,6 +28,8 @@ import { UIState } from "../../UIState";
 import { GameView } from "../../view";
 const warshipIcon = assetUrl("images/BattleshipIconWhite.svg");
 const cityIcon = assetUrl("images/CityIconWhite.svg");
+const castleIcon = assetUrl("images/CastleIconWhite.svg");
+const aircraftBaseIcon = assetUrl("images/AircraftBaseIconWhite.svg");
 const factoryIcon = assetUrl("images/FactoryIconWhite.svg");
 const goldCoinIcon = assetUrl("images/GoldCoinIcon.svg");
 const mirvIcon = assetUrl("images/MIRVIcon.svg");
@@ -121,7 +123,7 @@ const buildTable: BuildItemDisplay[][] = [
     },
     {
       unitType: UnitType.Castle,
-      icon: cityIcon,
+      icon: castleIcon,
       description: "Build a fortified stronghold on your territory.",
       key: "Castle",
       countable: true,
@@ -129,7 +131,7 @@ const buildTable: BuildItemDisplay[][] = [
     },
     {
       unitType: UnitType.AircraftBase,
-      icon: factoryIcon,
+      icon: aircraftBaseIcon,
       description: "Build a base for aircraft operations.",
       key: "Aircraft Base",
       countable: true,
