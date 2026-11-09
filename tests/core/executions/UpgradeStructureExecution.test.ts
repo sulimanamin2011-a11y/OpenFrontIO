@@ -294,4 +294,15 @@ describe("UpgradeStructureExecution", () => {
     expect(config.warshipPassiveHealingRange(4)).toBe(180);
   });
 
+  it("prices warship rank upgrades progressively toward Gold", async () => {
+    const game = await setup("ocean_and_land", { gameType: GameType.Singleplayer, instantBuild: true }, [], undefined, undefined, false);
+    const playerInfo = new PlayerInfo("player1", PlayerType.Human, null, "player1_id");
+    game.addPlayer(playerInfo);
+    const player = game.player("player1_id")!;
+    const warshipCost = game.config().unitInfo(UnitType.Warship).cost;
+    expect(warshipCost(game, player, 0)).toBe(250_000n);
+    expect(warshipCost(game, player, 1)).toBe(500_000n);
+    expect(warshipCost(game, player, 2)).toBe(750_000n);
+  });
+
 });
