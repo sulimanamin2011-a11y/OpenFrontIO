@@ -247,6 +247,12 @@ export class Config {
           upgradable: true,
         };
         break;
+      case UnitType.Castle:
+      case UnitType.AircraftBase:
+        info = {
+          constructionDuration: this.instantBuild() ? 0 : 10 * 10,
+        };
+        break;
       case UnitType.TransportShip:
       case UnitType.SAMMissile:
       case UnitType.AtomBomb:
