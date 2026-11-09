@@ -14,6 +14,7 @@ import type {
   SnapshotReader,
   SnapshotWriter,
 } from "../snapshot/SnapshotContext";
+import { CastleExecution } from "./CastleExecution";
 import { CityExecution } from "./CityExecution";
 import { DefensePostExecution } from "./DefensePostExecution";
 import { FactoryExecution } from "./FactoryExecution";
@@ -165,9 +166,10 @@ export class ConstructionExecution implements Execution {
         this.mg.addExecution(new FactoryExecution(this.structure!));
         break;
       case UnitType.Castle:
+        this.mg.addExecution(new CastleExecution(this.structure!));
+        break;
       case UnitType.AircraftBase:
-        // These are persistent structures. Their dedicated gameplay
-        // executions are added with their combat/aircraft systems.
+        // Aircraft operations are attached in the aircraft systems pass.
         break;
       default:
         console.warn(
