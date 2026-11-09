@@ -416,14 +416,24 @@ export class EngineConfig extends Config {
       case UnitType.Castle:
         return this.costWrapper(() => 1_000_000, UnitType.Castle);
       case UnitType.AircraftBase:
-        // DOMINION: the base's upgrade tier determines the aircraft tier.
-        // The first base costs 2.5M; Bronze -> Silver costs 500K and
-        // Silver -> Gold costs 1.5M.
-        return this.costWrapper(
-          (numUnits: number) =>
-            numUnits === 0 ? 2_500_000 : numUnits === 1 ? 500_000 : 1_500_000,
-          UnitType.AircraftBase,
-        );
+        // DOMINION: the aircraft base is unique, so its tier—not the number
+        // of bases owned—determines the next upgrade price.
+        return (game: Game, player: Player, extraLevels = 0) => {
+          if (
+            player.type() === PlayerType.Human &&
+            this.hasInfiniteGoldFor(player)
+          ) {
+            return 0n;
+          }
+          const base = player
+            .units(UnitType.AircraftBase)
+            .find((unit) => !unit.isMarkedForDeletion());
+          if (base === undefined) {
+            return 2_500_000n;
+          }
+          const nextLevel = base.level() + extraLevels;
+          return nextLevel <= 1 ? 500_000n : 1_500_000n;
+        };
       case UnitType.TransportShip:
       case UnitType.Shell:
       case UnitType.SAMMissile:
