@@ -16,15 +16,14 @@ import { ShellExecution } from "./ShellExecution";
  * Combat state is snapshot-backed so the defense survives reconnects.
  */
 export class CastleExecution implements Execution {
-  private mg: Game;
+  private mg!: Game;
   private active = true;
   private target: Unit | null = null;
   private lastShellAttack = 0;
-  private alreadySentShell = new Set<Unit>();
 
   constructor(private castle: Unit) {}
 
-  init(mg: Game, ticks: number): void {
+  init(mg: Game, _ticks: number): void {
     this.mg = mg;
   }
 
@@ -41,13 +40,9 @@ export class CastleExecution implements Execution {
         this.target,
       ),
     );
-    if (!this.target.hasHealth()) {
-      this.alreadySentShell.add(this.target);
-      this.target = null;
-    }
   }
 
-  tick(ticks: number): void {
+  tick(_ticks: number): void {
     if (!this.castle.isActive()) {
       this.active = false;
       return;
@@ -63,8 +58,7 @@ export class CastleExecution implements Execution {
       .filter(
         ({ unit }) =>
           unit.owner() !== this.castle.owner() &&
-          !unit.owner().isFriendly(this.castle.owner()) &&
-          !this.alreadySentShell.has(unit),
+          !unit.owner().isFriendly(this.castle.owner()),
       );
 
     this.target =
@@ -91,7 +85,6 @@ export class CastleExecution implements Execution {
       castle: w.unit(this.castle),
       target: w.unitOrNull(this.target),
       lastShellAttack: this.lastShellAttack,
-      alreadySentShell: [...this.alreadySentShell].map((unit) => w.unit(unit)),
     });
   }
 
@@ -101,9 +94,6 @@ export class CastleExecution implements Execution {
     this.castle = r.unit(state.castle);
     this.target = r.unitOrNull(state.target);
     this.lastShellAttack = state.lastShellAttack;
-    this.alreadySentShell = new Set(
-      state.alreadySentShell.map((unit) => r.unit(unit)),
-    );
   }
 }
 
@@ -113,7 +103,6 @@ const CastleStateSchema = z.object({
   castle: zRef(),
   target: zRef().nullable(),
   lastShellAttack: zInt(),
-  alreadySentShell: z.array(zRef()),
 });
 type CastleState = z.infer<typeof CastleStateSchema>;
 
