@@ -220,6 +220,7 @@ describe("UpgradeStructureExecution", () => {
     expect(initial.cost).toBe(2_500_000n);
     const base = player.buildUnit(UnitType.AircraftBase, landTile!, {});
     expect(base.info().upgradable).toBe(true);
+    expect(player.gold()).toBe(2_000_000n);
     // A second base is forbidden, but the existing one remains upgradeable.
     expect(player.canBuild(UnitType.AircraftBase, landTile!)).toBe(false);
 
@@ -233,6 +234,7 @@ describe("UpgradeStructureExecution", () => {
     game.addExecution(new UpgradeStructureExecution(player, base.id(), 1));
     game.executeNextTick();
     expect(base.level()).toBe(2);
+    expect(player.gold()).toBe(1_500_000n);
 
     const gold = player
       .buildableUnits(landTile!)
@@ -242,6 +244,7 @@ describe("UpgradeStructureExecution", () => {
     game.addExecution(new UpgradeStructureExecution(player, base.id(), 1));
     game.executeNextTick();
     expect(base.level()).toBe(3);
+    expect(player.gold()).toBe(0n);
   });
 
   it("uses DOMINION Silver and Gold SAM launcher prices", async () => {
