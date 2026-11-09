@@ -47,6 +47,15 @@ describe("PlayerImpl", () => {
     expect(buildableCastle!.canUpgrade).toBe(castle.id());
   });
 
+  test("Aircraft Base is available as a separate placeable structure", () => {
+    player.addGold(BigInt(2_500_000));
+    const buildableBase = player
+      .buildableUnits(game.ref(0, 0), [UnitType.AircraftBase])
+      .find((bu) => bu.type === UnitType.AircraftBase);
+    expect(buildableBase).toBeDefined();
+    expect(buildableBase!.canBuild).not.toBe(false);
+  });
+
   test("opt-in new placement rail preview is available beside an upgradeable factory", () => {
     for (let x = 0; x < 100; x++) {
       for (let y = 0; y < 100; y++) player.conquer(game.ref(x, y));
