@@ -31,6 +31,11 @@ describe("BuildPreviewController ghost preservation (locked nuke / Enter confirm
       expect(shouldPreserveGhostAfterBuild(UnitType.City)).toBe(false);
     });
 
+    test("returns false for Castle and Aircraft Base so each placement is a single build", () => {
+      expect(shouldPreserveGhostAfterBuild(UnitType.Castle)).toBe(false);
+      expect(shouldPreserveGhostAfterBuild(UnitType.AircraftBase)).toBe(false);
+    });
+
     test("returns false for Factory so ghost is cleared after placement", () => {
       expect(shouldPreserveGhostAfterBuild(UnitType.Factory)).toBe(false);
     });
