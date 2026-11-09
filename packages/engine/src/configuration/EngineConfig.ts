@@ -809,12 +809,13 @@ export class EngineConfig extends Config {
     return 75;
   }
 
-  warshipPassiveHealing(): number {
-    return 1;
+  /** Higher warship ranks repair faster and can recover farther from ports. */
+  warshipPassiveHealing(level: number = 1): number {
+    return 1 + Math.min(2, Math.max(0, level - 1));
   }
 
-  warshipPassiveHealingRange(): number {
-    return 150;
+  warshipPassiveHealingRange(level: number = 1): number {
+    return 150 + Math.min(2, Math.max(0, level - 1)) * 15;
   }
 
   warshipPortSwitchThreshold(): number {
