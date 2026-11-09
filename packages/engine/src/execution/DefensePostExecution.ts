@@ -1,3 +1,4 @@
+import { UnitType } from "@openfront/engine-api/game/GameTypes";
 import { zInt, zRef } from "@openfront/engine-lib/snapshot/SnapshotType";
 import { z } from "zod";
 import { Execution, Game, Unit } from "../game/Game";
@@ -61,49 +62,44 @@ export class DefensePostExecution implements Execution {
       this.target = null;
     }
 
-    // TODO: Reconsider how/if defense posts target ships.
-    // const ships = this.mg
-    //   .nearbyUnits(
-    //     this.post.tile(),
-    //     this.mg.config().defensePostTargettingRange(),
-    //     [UnitType.TransportShip, UnitType.Warship],
-    //   )
-    //   .filter(
-    //     ({ unit }) =>
-    //       this.post !== null &&
-    //       unit.owner() !== this.post.owner() &&
-    //       !unit.owner().isFriendly(this.post.owner()) &&
-    //       !this.alreadySentShell.has(unit),
-    //   );
-    //
-    // this.target =
-    //   ships.sort((a, b) => {
-    //     const { unit: unitA, distSquared: distA } = a;
-    //     const { unit: unitB, distSquared: distB } = b;
-    //
-    //     // Prioritize TransportShip
-    //     if (
-    //       unitA.type() === UnitType.TransportShip &&
-    //       unitB.type() !== UnitType.TransportShip
-    //     )
-    //       return -1;
-    //     if (
-    //       unitA.type() !== UnitType.TransportShip &&
-    //       unitB.type() === UnitType.TransportShip
-    //     )
-    //       return 1;
-    //
-    //     // If both are the same type, sort by distance (lower `distSquared` means closer)
-    //     return distA - distB;
-    //   })[0]?.unit ?? null;
-    //
-    // if (this.target === null || !this.target.isActive()) {
-    //   this.target = null;
-    //   return;
-    // } else {
-    //   this.shoot();
-    //   return;
-    // }
+    // Defense posts protect nearby waters from hostile transport ships and
+    // warships. Higher upgrade tiers extend the range.
+    const range = this.mg.config().defensePostRange(this.post.level());
+    const ships = this.mg
+      .nearbyUnits(
+        this.post.tile(),
+        range,
+        [UnitType.TransportShip, UnitType.Warship],
+      )
+      .filter(
+        ({ unit }) =>
+          unit.owner() !== this.post.owner() &&
+          !unit.owner().isFriendly(this.post.owner()) &&
+          !this.alreadySentShell.has(unit),
+      );
+
+    this.target =
+      ships.sort((a, b) => {
+        const { unit: unitA, distSquared: distA } = a;
+        const { unit: unitB, distSquared: distB } = b;
+
+        // Prioritize transports, then the nearest ship.
+        if (
+          unitA.type() === UnitType.TransportShip &&
+          unitB.type() !== UnitType.TransportShip
+        ) return -1;
+        if (
+          unitA.type() !== UnitType.TransportShip &&
+          unitB.type() === UnitType.TransportShip
+        ) return 1;
+        return distA - distB;
+      })[0]?.unit ?? null;
+
+    if (this.target === null || !this.target.isActive()) {
+      this.target = null;
+      return;
+    }
+    this.shoot();
   }
 
   isActive(): boolean {
