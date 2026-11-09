@@ -150,15 +150,15 @@ export class EngineConfig extends Config {
   }
 
   defensePostRange(level: number = 1): number {
-    return super.defensePostRange() + Math.max(0, level - 1) * 15;
+    return super.defensePostRange() + Math.min(2, Math.max(0, level - 1)) * 15;
   }
 
   defensePostDefenseBonus(level: number = 1): number {
-    return 5 + Math.max(0, level - 1) * 0.5;
+    return 5 + Math.min(2, Math.max(0, level - 1)) * 0.5;
   }
 
   defensePostSpeedBonus(level: number = 1): number {
-    return 3 + Math.max(0, level - 1) * 0.25;
+    return 3 + Math.min(2, Math.max(0, level - 1)) * 0.25;
   }
 
   playerTeams(): TeamCountConfig {
