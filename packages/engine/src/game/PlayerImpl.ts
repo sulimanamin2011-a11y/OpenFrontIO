@@ -1463,6 +1463,15 @@ export class PlayerImpl implements Player {
     if (this.mg.config().isUnitDisabled(unitType)) {
       return false;
     }
+    // DOMINION: one aircraft base per player. The base is the launch point
+    // for that player's single jet, so duplicate bases must be rejected by
+    // the engine (not merely hidden in the client build menu).
+    if (
+      unitType === UnitType.AircraftBase &&
+      this.unitsOwned(UnitType.AircraftBase) >= 1
+    ) {
+      return false;
+    }
     const cost = knownCost ?? this.mg.unitInfo(unitType).cost(this.mg, this);
     if (this._gold < cost) {
       return false;
