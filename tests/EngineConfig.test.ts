@@ -19,6 +19,12 @@ describe("EngineConfig.unitInfo", () => {
     });
   }
 
+  it("gives DOMINION strongholds durable health", () => {
+    const shared = new Config({} as unknown as GameConfig, false);
+    expect(shared.unitInfo(UnitType.Castle).maxHealth).toBe(5_000);
+    expect(shared.unitInfo(UnitType.AircraftBase).maxHealth).toBe(3_000);
+  });
+
   it("caches per unit type", () => {
     const engine = new EngineConfig({} as unknown as GameConfig, false);
     expect(engine.unitInfo(UnitType.City)).toBe(engine.unitInfo(UnitType.City));
