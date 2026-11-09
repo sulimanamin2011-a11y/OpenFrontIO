@@ -3,6 +3,7 @@ import {
   PlayerType,
   UnitType,
 } from "@openfront/engine-api/game/GameTypes";
+import { CastleExecution } from "@openfront/engine/execution/CastleExecution";
 import { ConstructionExecution } from "@openfront/engine/execution/ConstructionExecution";
 import { DoomsdayClockExecution } from "@openfront/engine/execution/DoomsdayClockExecution";
 import { MirvExecution } from "@openfront/engine/execution/MIRVExecution";
@@ -151,6 +152,15 @@ describe("structure and missile execution snapshots", () => {
     // A missile in flight, more nukes cached in the targeting system.
     expect(b.units(UnitType.SAMMissile).length).toBeGreaterThan(0);
     await expectSnapshotRoundTrip(game, BIG, 60);
+  });
+
+  test("castle defensive execution snapshots", async () => {
+    const { game, a } = await twoPlayers(BIG, { instantBuild: true });
+    conquerRect(game, a, 0, 0, 40, 40);
+    const castle = a.buildUnit(UnitType.Castle, game.ref(10, 10), {});
+    game.addExecution(new CastleExecution(castle));
+    executeTicks(game, 2);
+    await expectSnapshotRoundTrip(game, BIG, 20);
   });
 
   test("shells in flight", async () => {
