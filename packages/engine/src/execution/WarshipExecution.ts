@@ -156,8 +156,8 @@ export class WarshipExecution implements Execution {
     // decay in DoomsdayClockExecution actually sinks warships instead of being
     // out-healed at a port. Inert when the mode is off: the mark is never set.
     if (owner.inDoomsdayClock()) return;
-    const passiveHealing = this.mg.config().warshipPassiveHealing();
-    const passiveHealingRange = this.mg.config().warshipPassiveHealingRange();
+    const passiveHealing = this.mg.config().warshipPassiveHealing(this.warship.level());
+    const passiveHealingRange = this.mg.config().warshipPassiveHealingRange(this.warship.level());
     const passiveHealingRangeSquared =
       passiveHealingRange * passiveHealingRange;
     const warshipTile = this.warship.tile();
