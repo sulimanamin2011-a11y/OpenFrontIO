@@ -19,7 +19,9 @@ export class CastleExecution implements Execution {
   private mg!: Game;
   private active = true;
   private target: Unit | null = null;
-  private lastShellAttack = 0;
+  // Allow the first defensive shot as soon as a completed Castle sees a target.
+  // Subsequent shots use the tier-specific reload interval below.
+  private lastShellAttack = -80;
 
   constructor(private castle: Unit) {}
 
@@ -31,7 +33,7 @@ export class CastleExecution implements Execution {
     if (this.target === null) return;
     const tier = Math.min(3, this.castle.level());
     const reloadTicks = tier === 1 ? 80 : tier === 2 ? 60 : 40;
-    if (this.mg.ticks() - this.lastShellAttack <= reloadTicks) return;
+    if (this.mg.ticks() - this.lastShellAttack < reloadTicks) return;
 
     this.lastShellAttack = this.mg.ticks();
     this.mg.addExecution(
