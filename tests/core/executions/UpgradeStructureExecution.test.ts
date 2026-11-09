@@ -305,4 +305,13 @@ describe("UpgradeStructureExecution", () => {
     expect(warshipCost(game, player, 2)).toBe(750_000n);
   });
 
+  it("gives upgraded defense posts faster shell reloads", async () => {
+    const game = await setup("ocean_and_land", { gameType: GameType.Singleplayer, instantBuild: true }, [], undefined, undefined, false);
+    const config = game.config();
+    expect(config.defensePostShellAttackRate(1)).toBe(100);
+    expect(config.defensePostShellAttackRate(2)).toBe(80);
+    expect(config.defensePostShellAttackRate(3)).toBe(60);
+    expect(config.defensePostShellAttackRate(4)).toBe(60);
+  });
+
 });
