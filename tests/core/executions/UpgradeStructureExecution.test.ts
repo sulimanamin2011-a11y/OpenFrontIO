@@ -220,6 +220,8 @@ describe("UpgradeStructureExecution", () => {
     expect(initial.cost).toBe(2_500_000n);
     const base = player.buildUnit(UnitType.AircraftBase, landTile!, {});
     expect(base.info().upgradable).toBe(true);
+    // A second base is forbidden, but the existing one remains upgradeable.
+    expect(player.canBuild(UnitType.AircraftBase, landTile!)).toBe(false);
 
     const silver = player
       .buildableUnits(landTile!)
