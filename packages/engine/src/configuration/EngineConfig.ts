@@ -267,6 +267,12 @@ export class EngineConfig extends Config {
     return toInt(gold * this.goldMultiplierFor(player));
   }
 
+  /** Gold paid to a factory owner whenever a train stops there. */
+  factoryTrainGold(level: number, player: PlayerLike): Gold {
+    const baseGold = level >= 2 ? 150_000 : 25_000;
+    return toInt(baseGold * this.goldMultiplierFor(player));
+  }
+
   trainStationMinRange(): number {
     return 15;
   }
