@@ -231,4 +231,13 @@ describe("UpgradeStructureExecution", () => {
     expect(config.defensePostSpeedBonus(4)).toBe(config.defensePostSpeedBonus(3));
   });
 
+  it("gives DOMINION warship ranks progressively faster reloads", async () => {
+    const game = await setup("ocean_and_land", { gameType: GameType.Singleplayer, instantBuild: true }, [], undefined, undefined, false);
+    const config = game.config();
+    expect(config.warshipShellAttackRate(1)).toBe(20);
+    expect(config.warshipShellAttackRate(2)).toBe(17);
+    expect(config.warshipShellAttackRate(3)).toBe(14);
+    expect(config.warshipShellAttackRate(4)).toBe(14);
+  });
+
 });
