@@ -248,6 +248,11 @@ export class Config {
         };
         break;
       case UnitType.Castle:
+        info = {
+          constructionDuration: this.instantBuild() ? 0 : 10 * 10,
+          upgradable: true,
+        };
+        break;
       case UnitType.AircraftBase:
         info = {
           constructionDuration: this.instantBuild() ? 0 : 10 * 10,
