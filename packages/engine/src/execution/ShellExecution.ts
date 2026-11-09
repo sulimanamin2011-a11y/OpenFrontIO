@@ -103,6 +103,15 @@ export class ShellExecution implements Execution {
 
     // Veteran warships hit harder — scale the (integer) multiplier by the firing
     // unit's veterancy. Integer percent math keeps the engine float-free.
+    if (this.ownerUnit.type() === UnitType.Warship) {
+      const tierBonus = this.mg
+        .config()
+        .warshipTierShellDamageBonus(this.ownerUnit.level());
+      damageMultiplier = Math.floor(
+        (damageMultiplier * (100 + tierBonus)) / 100,
+      );
+    }
+
     const veterancy = this.ownerUnit.veterancy();
     if (veterancy > 0) {
       const bonusPercent = this.mg.config().warshipVeterancyShellDamageBonus();
