@@ -845,8 +845,9 @@ export class EngineConfig extends Config {
     return 25;
   }
 
-  defensePostShellAttackRate(): number {
-    return 100;
+  /** Higher defense post tiers reload faster. */
+  defensePostShellAttackRate(level: number = 1): number {
+    return Math.max(60, 100 - Math.min(2, Math.max(0, level - 1)) * 20);
   }
 
   safeFromPiratesCooldownMax(): number {
