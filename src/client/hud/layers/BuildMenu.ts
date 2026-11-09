@@ -44,6 +44,7 @@ export interface BuildItemDisplay {
   description?: string;
   key?: string;
   countable?: boolean;
+  section?: "main" | "castle" | "aircraft";
 }
 
 const buildTable: BuildItemDisplay[][] = [
@@ -118,6 +119,22 @@ const buildTable: BuildItemDisplay[][] = [
       key: "unit_type.factory",
       countable: true,
     },
+    {
+      unitType: UnitType.Castle,
+      icon: cityIcon,
+      description: "Build a fortified stronghold on your territory.",
+      key: "Castle",
+      countable: true,
+      section: "castle",
+    },
+    {
+      unitType: UnitType.AircraftBase,
+      icon: factoryIcon,
+      description: "Build a base for aircraft operations.",
+      key: "Aircraft Base",
+      countable: true,
+      section: "aircraft",
+    },
   ],
 ];
 
@@ -131,6 +148,8 @@ export class BuildMenu extends LitElement implements Controller {
   private clickedTile: TileRef;
   public playerBuildables: BuildableUnit[] | null = null;
   private filteredBuildTable: BuildItemDisplay[][] = buildTable;
+  @state()
+  private activeSection: "main" | "castle" | "aircraft" = "main";
   public transformHandler: TransformHandler;
 
   init() {
@@ -410,6 +429,15 @@ export class BuildMenu extends LitElement implements Controller {
         class="build-menu ${this._hidden ? "hidden" : ""}"
         @contextmenu=${(e: MouseEvent) => e.preventDefault()}
       >
+        <div class="build-row" role="tablist" aria-label="Build categories">
+          ${(["main", "castle", "aircraft"] as const).map((section) => html`
+            <button class="build-button" style="width:auto;height:auto;min-height:36px;padding:8px 14px"
+              aria-selected=${this.activeSection === section}
+              @click=${() => { this.activeSection = section; this.filteredBuildTable = this.getBuildableUnits(); }}>
+              ${section === "main" ? "Structures & Weapons" : section === "castle" ? "Castle Menu" : "Aircraft Menu"}
+            </button>
+          `)}
+        </div>
         ${this.filteredBuildTable.map(
           (row) => html`
             <div class="build-row">
@@ -507,8 +535,11 @@ export class BuildMenu extends LitElement implements Controller {
 
   private getBuildableUnits(): BuildItemDisplay[][] {
     return buildTable.map((row) =>
-      row.filter((item) => !this.game?.config()?.isUnitDisabled(item.unitType)),
-    );
+      row.filter((item) =>
+        (item.section ?? "main") === this.activeSection &&
+        !this.game?.config()?.isUnitDisabled(item.unitType),
+      ),
+    ).filter((row) => row.length > 0);
   }
 
   get isVisible() {
