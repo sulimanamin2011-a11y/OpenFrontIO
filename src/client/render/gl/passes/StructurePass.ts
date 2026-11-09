@@ -17,6 +17,8 @@
 import type { GhostPreviewData, RendererConfig, UnitState } from "../../types";
 import {
   UT_CITY,
+  UT_CASTLE,
+  UT_AIRCRAFT_BASE,
   UT_DEFENSE_POST,
   UT_FACTORY,
   UT_MISSILE_SILO,
@@ -147,6 +149,13 @@ export class StructurePass {
       );
       if (col >= 0) {
         this.typeToAtlasCol.set(header.unitTypes[i], col);
+      } else if (header.unitTypes[i] === UT_CASTLE) {
+        // Until the dedicated castle sprite is added, render it with the
+        // existing city silhouette rather than hiding a valid structure.
+        this.typeToAtlasCol.set(header.unitTypes[i], STRUCTURE_ORDER.indexOf(UT_CITY));
+      } else if (header.unitTypes[i] === UT_AIRCRAFT_BASE) {
+        // Temporary aircraft-hangar silhouette; replaced by its own atlas art.
+        this.typeToAtlasCol.set(header.unitTypes[i], STRUCTURE_ORDER.indexOf(UT_FACTORY));
       }
     }
 
