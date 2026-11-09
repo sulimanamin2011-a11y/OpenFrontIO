@@ -164,6 +164,11 @@ export class ConstructionExecution implements Execution {
       case UnitType.Factory:
         this.mg.addExecution(new FactoryExecution(this.structure!));
         break;
+      case UnitType.Castle:
+      case UnitType.AircraftBase:
+        // These are persistent structures. Their dedicated gameplay
+        // executions are added with their combat/aircraft systems.
+        break;
       default:
         console.warn(
           `unit type ${this.constructionType} cannot be constructed`,
@@ -180,6 +185,8 @@ export class ConstructionExecution implements Execution {
       case UnitType.SAMLauncher:
       case UnitType.City:
       case UnitType.Factory:
+      case UnitType.Castle:
+      case UnitType.AircraftBase:
         return true;
       default:
         return false;
