@@ -780,8 +780,14 @@ export class EngineConfig extends Config {
     return 100;
   }
 
-  warshipTargettingRange(): number {
-    return 130;
+  /** Bronze/Silver/Gold warships gain a modest targeting-radius bonus. */
+  warshipTargettingRange(level: number = 1): number {
+    return 130 + Math.min(2, Math.max(0, level - 1)) * 15;
+  }
+
+  /** Shell damage bonus from warship rank, separate from veterancy. */
+  warshipTierShellDamageBonus(level: number): number {
+    return Math.min(2, Math.max(0, level - 1)) * 10;
   }
 
   /** DOMINION warship ranks: Bronze, Silver, Gold. Higher ranks reload faster. */
