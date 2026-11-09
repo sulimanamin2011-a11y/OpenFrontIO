@@ -784,8 +784,9 @@ export class EngineConfig extends Config {
     return 130;
   }
 
-  warshipShellAttackRate(): number {
-    return 20;
+  /** DOMINION warship ranks: Bronze, Silver, Gold. Higher ranks reload faster. */
+  warshipShellAttackRate(level: number = 1): number {
+    return Math.max(10, 20 - Math.min(2, Math.max(0, level - 1)) * 3);
   }
 
   warshipDockingRange(): number {
