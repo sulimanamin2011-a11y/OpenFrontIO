@@ -209,4 +209,26 @@ describe("UpgradeStructureExecution", () => {
     expect(sam.level()).toBe(2);
   });
 
+  it("applies DOMINION defense post tiers to range and defensive strength", async () => {
+    const game = await setup("ocean_and_land", { gameType: GameType.Singleplayer, instantBuild: true }, [], undefined, undefined, false);
+    const config = game.config();
+    expect(config.defensePostRange(1)).toBe(30);
+    expect(config.defensePostRange(2)).toBe(45);
+    expect(config.defensePostRange(3)).toBe(60);
+    expect(config.defensePostDefenseBonus(1)).toBe(5);
+    expect(config.defensePostDefenseBonus(2)).toBe(5.5);
+    expect(config.defensePostDefenseBonus(3)).toBe(6);
+    expect(config.defensePostSpeedBonus(1)).toBe(3);
+    expect(config.defensePostSpeedBonus(2)).toBe(3.25);
+    expect(config.defensePostSpeedBonus(3)).toBe(3.5);
+  });
+
+  it("caps defense post tier effects at Gold", async () => {
+    const game = await setup("ocean_and_land", { gameType: GameType.Singleplayer, instantBuild: true }, [], undefined, undefined, false);
+    const config = game.config();
+    expect(config.defensePostRange(4)).toBe(config.defensePostRange(3));
+    expect(config.defensePostDefenseBonus(4)).toBe(config.defensePostDefenseBonus(3));
+    expect(config.defensePostSpeedBonus(4)).toBe(config.defensePostSpeedBonus(3));
+  });
+
 });
