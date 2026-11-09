@@ -4,6 +4,7 @@ import {
   PlayerType,
   UnitType,
 } from "@openfront/engine-api/game/GameTypes";
+import { CastleExecution } from "@openfront/engine/execution/CastleExecution";
 import { MoveWarshipExecution } from "@openfront/engine/execution/MoveWarshipExecution";
 import { WarshipExecution } from "@openfront/engine/execution/WarshipExecution";
 import { Game, Player, Unit } from "@openfront/engine/game/Game";
@@ -36,6 +37,22 @@ describe("Warship", () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
+  test("Castle fires its first defensive shell without an initial cooldown", () => {
+    const castleTile = game.ref(coastX - 1, 10);
+    const enemyWarshipTile = game.ref(coastX + 7, 10);
+    player1.conquer(castleTile);
+
+    const castle = player1.buildUnit(UnitType.Castle, castleTile, {});
+    player2.buildUnit(UnitType.Warship, enemyWarshipTile, {
+      patrolTile: enemyWarshipTile,
+    });
+    game.addExecution(new CastleExecution(castle));
+
+    // The Castle should launch as soon as its first tick finds the hostile ship.
+    executeTicks(game, 2);
+    expect(player1.units(UnitType.Shell).length).toBeGreaterThan(0);
+  });
+
   test("Warship heals only if player has port", async () => {
     const maxHealth = game.config().unitInfo(UnitType.Warship).maxHealth;
     if (typeof maxHealth !== "number") {
