@@ -183,6 +183,65 @@ describe("UpgradeStructureExecution", () => {
     expect(goldBefore - player.gold()).toBe(bu.upgradeCosts![4]);
   });
 
+  it("prices aircraft base tiers as Bronze, Silver, and Gold", async () => {
+    const game = await setup(
+      "ocean_and_land",
+      { gameType: GameType.Singleplayer, instantBuild: true },
+      [],
+      undefined,
+      undefined,
+      false,
+    );
+    const playerInfo = new PlayerInfo(
+      "player1",
+      PlayerType.Human,
+      null,
+      "player1_id",
+    );
+    game.addPlayer(playerInfo);
+    const player = game.player("player1_id")!;
+    let landTile: TileRef | undefined;
+    for (let y = 0; y < game.map().height() && landTile === undefined; y++) {
+      for (let x = 0; x < game.map().width(); x++) {
+        const tile = game.ref(x, y);
+        if (game.isLand(tile)) {
+          landTile = tile;
+          break;
+        }
+      }
+    }
+    player.conquer(landTile!);
+    game.endSpawnPhase();
+    player.addGold(4_500_000n);
+
+    const initial = player
+      .buildableUnits(landTile!)
+      .find((unit) => unit.type === UnitType.AircraftBase)!;
+    expect(initial.cost).toBe(2_500_000n);
+    const base = player.buildUnit(UnitType.AircraftBase, landTile!, {});
+    expect(base.info().upgradable).toBe(true);
+
+    const silver = player
+      .buildableUnits(landTile!)
+      .find((unit) => unit.type === UnitType.AircraftBase)!;
+    expect(silver.canUpgrade).toBe(base.id());
+    expect(silver.upgradeCosts![0]).toBe(500_000n);
+    expect(silver.upgradeCosts![1]).toBe(2_000_000n);
+
+    game.addExecution(new UpgradeStructureExecution(player, base.id(), 1));
+    game.executeNextTick();
+    expect(base.level()).toBe(2);
+
+    const gold = player
+      .buildableUnits(landTile!)
+      .find((unit) => unit.type === UnitType.AircraftBase)!;
+    expect(gold.upgradeCosts![0]).toBe(1_500_000n);
+
+    game.addExecution(new UpgradeStructureExecution(player, base.id(), 1));
+    game.executeNextTick();
+    expect(base.level()).toBe(3);
+  });
+
   it("uses DOMINION Silver and Gold SAM launcher prices", async () => {
     const game = await setup("ocean_and_land", { gameType: GameType.Singleplayer, instantBuild: true }, [], undefined, undefined, false);
     const playerInfo = new PlayerInfo("player1", PlayerType.Human, null, "player1_id");
