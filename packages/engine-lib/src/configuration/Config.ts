@@ -249,12 +249,14 @@ export class Config {
         break;
       case UnitType.Castle:
         info = {
+          maxHealth: 5_000,
           constructionDuration: this.instantBuild() ? 0 : 10 * 10,
           upgradable: true,
         };
         break;
       case UnitType.AircraftBase:
         info = {
+          maxHealth: 3_000,
           constructionDuration: this.instantBuild() ? 0 : 10 * 10,
         };
         break;
