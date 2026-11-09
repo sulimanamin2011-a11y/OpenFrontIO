@@ -35,8 +35,10 @@ export interface AttackLogicInput {
     /** Defender is disconnected and on the attacker's team. */
     isDisconnectedTeammate: boolean;
   } | null;
-  /** A defense post owned by the defender is in range of the tile. */
-  defenderHasDefensePost: boolean;
+  /** Highest level of a defender-owned defense post covering this tile. */
+  defenderDefensePostLevel?: number;
+  /** Backward-compatible flag for callers that only know whether one exists. */
+  defenderHasDefensePost?: boolean;
   /** Fraction of land tiles with fallout, or null if the tile has no fallout. */
   falloutRatio: number | null;
   /** Tiles on the attack front this tick (plus jitter); fixed for the tick. */
@@ -147,12 +149,16 @@ export class EngineConfig extends Config {
     return 5 - falloutRatio * 2;
   }
 
-  defensePostDefenseBonus(): number {
-    return 5;
+  defensePostRange(level: number = 1): number {
+    return super.defensePostRange() + Math.max(0, level - 1) * 15;
   }
 
-  defensePostSpeedBonus(): number {
-    return 3;
+  defensePostDefenseBonus(level: number = 1): number {
+    return 5 + Math.max(0, level - 1) * 0.5;
+  }
+
+  defensePostSpeedBonus(level: number = 1): number {
+    return 3 + Math.max(0, level - 1) * 0.25;
   }
 
   playerTeams(): TeamCountConfig {
@@ -545,9 +551,12 @@ export class EngineConfig extends Config {
     const { attackTroops, attacker, defender } = input;
     let { mag, tileCost } = terrainAttackBase(input.terrain);
 
-    if (defender !== null && input.defenderHasDefensePost) {
-      mag *= this.defensePostDefenseBonus();
-      tileCost *= this.defensePostSpeedBonus();
+    const defensePostLevel =
+      input.defenderDefensePostLevel ??
+      (input.defenderHasDefensePost ? 1 : 0);
+    if (defender !== null && defensePostLevel > 0) {
+      mag *= this.defensePostDefenseBonus(defensePostLevel);
+      tileCost *= this.defensePostSpeedBonus(defensePostLevel);
     }
     if (input.falloutRatio !== null) {
       const fallout = this.falloutDefenseModifier(input.falloutRatio);
