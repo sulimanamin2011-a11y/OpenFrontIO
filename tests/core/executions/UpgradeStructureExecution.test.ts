@@ -281,4 +281,17 @@ describe("UpgradeStructureExecution", () => {
     expect(config.warshipTierShellDamageBonus(4)).toBe(20);
   });
 
+  it("improves warship passive repair by rank", async () => {
+    const game = await setup("ocean_and_land", { gameType: GameType.Singleplayer, instantBuild: true }, [], undefined, undefined, false);
+    const config = game.config();
+    expect(config.warshipPassiveHealing(1)).toBe(1);
+    expect(config.warshipPassiveHealing(2)).toBe(2);
+    expect(config.warshipPassiveHealing(3)).toBe(3);
+    expect(config.warshipPassiveHealingRange(1)).toBe(150);
+    expect(config.warshipPassiveHealingRange(2)).toBe(165);
+    expect(config.warshipPassiveHealingRange(3)).toBe(180);
+    expect(config.warshipPassiveHealing(4)).toBe(3);
+    expect(config.warshipPassiveHealingRange(4)).toBe(180);
+  });
+
 });
