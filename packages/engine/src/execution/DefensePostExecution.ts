@@ -27,7 +27,7 @@ export class DefensePostExecution implements Execution {
 
   private shoot() {
     if (this.target === null) return;
-    const shellAttackRate = this.mg.config().defensePostShellAttackRate();
+    const shellAttackRate = this.mg.config().defensePostShellAttackRate(this.post.level());
     if (this.mg.ticks() - this.lastShellAttack > shellAttackRate) {
       this.lastShellAttack = this.mg.ticks();
       this.mg.addExecution(
