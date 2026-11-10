@@ -1,7 +1,4 @@
-import {
-  isGrantedSubscription,
-  UserMeResponse,
-} from "@openfront/shared/ApiSchemas";
+import type { UserMeResponse } from "@openfront/shared/ApiSchemas";
 import {
   CosmeticPack,
   Cosmetics,
@@ -18,7 +15,6 @@ import { cosmeticSelectionLabel } from "./components/CosmeticPresentation";
 import { isPreviewableCosmetic } from "./components/CosmeticPreviewBubble";
 import "./components/CosmeticPreviewModal";
 import "./components/CurrencyDisplay";
-import "./components/CustomCurrencyCard";
 import "./components/EffectsGrid";
 import type { InlineCheckout } from "./components/InlineCheckout";
 import "./components/NotLoggedInWarning";
