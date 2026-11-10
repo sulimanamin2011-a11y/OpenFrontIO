@@ -30,7 +30,8 @@ export class AircraftCommandExecution implements Execution {
     const controller = mg.executions().find(
       (execution): execution is AircraftExecution =>
         execution instanceof AircraftExecution &&
-        execution.owns(base),
+        execution.owns(base) &&
+        execution.isReady(),
     );
     controller?.command(this.action, this.target);
   }
