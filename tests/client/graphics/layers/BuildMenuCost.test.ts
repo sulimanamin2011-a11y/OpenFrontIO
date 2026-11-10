@@ -233,3 +233,20 @@ describe("BuildMenu accessible category tabs", () => {
     menu.remove();
   });
 });
+
+
+describe("BuildMenu aircraft controls", () => {
+  it("shows launch, cursor guidance, bomb-drop and return controls in the aircraft tab", async () => {
+    const menu = makeMenu();
+    menu.game = { config: () => ({ isUnitDisabled: () => false }) } as any;
+    (menu as any).activeSection = "aircraft";
+    document.body.appendChild(menu);
+    await menu.updateComplete;
+
+    expect(menu.textContent).toContain("Launch Jet");
+    expect(menu.textContent).toContain("Follow Cursor");
+    expect(menu.textContent).toContain("Drop Atomic Bomb");
+    expect(menu.textContent).toContain("Return Jet");
+    menu.remove();
+  });
+});
