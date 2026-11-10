@@ -23,6 +23,8 @@ export class PortExecution implements Execution {
   private random: PseudoRandom;
   private checkOffset: number;
   private tradeShipSpawnRejections = 0;
+  private lastPassiveIncomeTick: number | undefined;
+  private passiveIncomeLevel: number | undefined;
 
   constructor(port: Unit) {
     this.port = port;
@@ -30,6 +32,8 @@ export class PortExecution implements Execution {
 
   init(mg: Game, ticks: number): void {
     this.mg = mg;
+    this.lastPassiveIncomeTick ??= ticks;
+    this.passiveIncomeLevel ??= this.port.level();
     this.random = new PseudoRandom(mg.ticks());
     this.checkOffset = mg.ticks() % 10;
   }
@@ -45,6 +49,8 @@ export class PortExecution implements Execution {
     }
 
     if (this.port.isUnderConstruction()) {
+      this.lastPassiveIncomeTick = ticks;
+      this.passiveIncomeLevel = this.port.level();
       return;
     }
 
@@ -52,14 +58,21 @@ export class PortExecution implements Execution {
       this.createStation();
     }
 
-    // DOMINION port economy: Silver ports (level 1) generate 100K every
-    // 15 seconds; Gold ports (level 2+) generate 300K every 10 seconds.
-    // The simulation runs at 10 ticks per second. Keep this independent of
-    // the trade-ship polling cadence so every port pays on its own schedule.
-    if (this.port.level() >= 2 && ticks % 100 === 0) {
-      this.port.owner().addGold(300_000n, this.port.tile());
-    } else if (this.port.level() === 1 && ticks % 150 === 0) {
-      this.port.owner().addGold(100_000n, this.port.tile());
+    // DOMINION port economy: Silver pays 100K every 15 seconds; Gold pays
+    // 300K every 10 seconds. Each port keeps its own timer, starting when
+    // construction completes and restarting when its upgrade tier changes.
+    const incomeLevel = this.port.level();
+    if (incomeLevel !== this.passiveIncomeLevel) {
+      this.passiveIncomeLevel = incomeLevel;
+      this.lastPassiveIncomeTick = ticks;
+    }
+    const incomeInterval = incomeLevel >= 2 ? 100 : 150;
+    if (ticks - (this.lastPassiveIncomeTick ?? ticks) >= incomeInterval) {
+      this.port.owner().addGold(
+        incomeLevel >= 2 ? 300_000n : 100_000n,
+        this.port.tile(),
+      );
+      this.lastPassiveIncomeTick = ticks;
     }
 
     // Only check every 10 ticks for performance.
@@ -179,6 +192,8 @@ export class PortExecution implements Execution {
         ? { random: w.random(this.random), checkOffset: this.checkOffset }
         : null,
       tradeShipSpawnRejections: this.tradeShipSpawnRejections,
+      lastPassiveIncomeTick: this.lastPassiveIncomeTick ?? null,
+      passiveIncomeLevel: this.passiveIncomeLevel ?? null,
     });
   }
 
@@ -191,6 +206,8 @@ export class PortExecution implements Execution {
       this.checkOffset = s.init.checkOffset;
     }
     this.tradeShipSpawnRejections = s.tradeShipSpawnRejections;
+    this.lastPassiveIncomeTick = s.lastPassiveIncomeTick ?? r.game.ticks();
+    this.passiveIncomeLevel = s.passiveIncomeLevel ?? this.port.level();
   }
 }
 
@@ -200,6 +217,8 @@ const PortStateSchema = z.object({
   // Set by init.
   init: z.object({ random: zRandom(), checkOffset: zInt() }).nullable(),
   tradeShipSpawnRejections: zInt(),
+  lastPassiveIncomeTick: zInt().nullable().optional(),
+  passiveIncomeLevel: zInt().nullable().optional(),
 });
 type PortState = z.infer<typeof PortStateSchema>;
 
