@@ -83,7 +83,7 @@ describe("TrainStation", () => {
     expect(unit.owner().addGold).toHaveBeenCalledWith(1000n, unit.tile());
   });
 
-  it("pays the factory owner 25K at Bronze and 150K at Gold train stops", () => {
+  it("pays the factory owner 25K at Silver and 150K at Gold train stops", () => {
     unit.type.mockReturnValue(UnitType.Factory);
     unit.level.mockReturnValue(2);
     const station = new TrainStation(game, unit);
@@ -99,7 +99,7 @@ describe("TrainStation", () => {
     );
   });
 
-  it("pays 25K when a Bronze factory receives a train", () => {
+  it("pays 25K when a Silver factory receives a train", () => {
     unit.type.mockReturnValue(UnitType.Factory);
     unit.level.mockReturnValue(1);
     const station = new TrainStation(game, unit);
