@@ -26,7 +26,7 @@ export class AircraftExecution implements Execution {
   private jet: Unit | null = null;
   private target: TileRef | null = null;
   private mode: "idle" | "outbound" | "following" | "returning" = "idle";
-  private lastLaunchTick = -3600;
+  private lastLaunchTick = -1200;
   private followUntil = 0;
   private pathFinder: SteppingPathFinder<TileRef> | null = null;
 
@@ -37,7 +37,7 @@ export class AircraftExecution implements Execution {
   command(action: AircraftCommand, target?: TileRef): boolean {
     if (!this.base.isActive() || this.base.isUnderConstruction()) return false;
     if (action === "launch") {
-      if (this.mode !== "idle" || this.mg.ticks() - this.lastLaunchTick < 3600) return false;
+      if (this.mode !== "idle" || this.mg.ticks() - this.lastLaunchTick < 1200) return false;
       if (target === undefined || !this.mg.isValidRef(target)) return false;
       this.jet = this.base.owner().buildUnit(UnitType.Jet, this.base.tile(), {});
       this.lastLaunchTick = this.mg.ticks();
@@ -97,7 +97,7 @@ export class AircraftExecution implements Execution {
     if (this.target === null || !this.pathFinder) return;
     if (this.mode === "outbound") {
       this.mode = "following";
-      this.followUntil = this.mg.ticks() + 300;
+      this.followUntil = this.mg.ticks() + 100;
     }
     const result = this.pathFinder.next(this.jet.tile(), this.target, 1);
     if (result.status === PathStatus.NEXT) {
