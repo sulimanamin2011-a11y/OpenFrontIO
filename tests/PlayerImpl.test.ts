@@ -49,6 +49,7 @@ describe("PlayerImpl", () => {
 
   test("a Factory cannot be upgraded beyond the Gold tier", () => {
     player.addGold(BigInt(1_000_000));
+    player.conquer(game.ref(20, 20));
     const factory = player.buildUnit(UnitType.Factory, game.ref(20, 20), {});
     player.upgradeUnit(factory);
 
