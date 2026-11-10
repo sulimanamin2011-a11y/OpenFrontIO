@@ -37,6 +37,24 @@ describe("Warship", () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
+  test("Warships and Defense Posts stop at their Gold upgrade tier", () => {
+    const warshipTile = game.ref(coastX + 1, 10);
+    const warship = player1.buildUnit(UnitType.Warship, warshipTile, {
+      patrolTile: warshipTile,
+    });
+    player1.upgradeUnit(warship);
+    player1.upgradeUnit(warship);
+    expect(warship.level()).toBe(3);
+    expect(player1.canUpgradeUnit(warship)).toBe(false);
+
+    const defenseTile = game.ref(coastX - 1, 10);
+    player1.conquer(defenseTile);
+    const defense = player1.buildUnit(UnitType.DefensePost, defenseTile, {});
+    player1.upgradeUnit(defense);
+    player1.upgradeUnit(defense);
+    expect(defense.level()).toBe(3);
+    expect(player1.canUpgradeUnit(defense)).toBe(false);
+  });
   test("Warship Bronze, Silver, and Gold tiers scale combat and repair", () => {
     const config = game.config();
 
