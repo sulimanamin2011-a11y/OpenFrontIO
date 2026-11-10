@@ -14,6 +14,7 @@
 export const UT_TRANSPORT = "Transport" as const;
 export const UT_TRADE_SHIP = "Trade Ship" as const;
 export const UT_WARSHIP = "Warship" as const;
+export const UT_JET = "Jet" as const;
 export const UT_ATOM_BOMB = "Atom Bomb" as const;
 export const UT_HYDROGEN_BOMB = "Hydrogen Bomb" as const;
 export const UT_MIRV = "MIRV" as const;
