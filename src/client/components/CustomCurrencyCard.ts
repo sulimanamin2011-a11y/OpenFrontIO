@@ -3,10 +3,10 @@ import { customElement, state } from "lit/decorators.js";
 import { showInGameAlert } from "../InGameModal";
 import {
   purchaseOutcomeMessage,
-  REAL_MONEY_PURCHASES_ENABLED,
   startPurchase,
 } from "../Payments";
 import { translateText } from "../Utils";
+import { REAL_MONEY_PURCHASES_ENABLED } from "../PurchasePolicy";
 import "./PlutoniumIcon";
 import "./PurchaseButton";
 
