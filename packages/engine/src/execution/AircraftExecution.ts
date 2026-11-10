@@ -147,17 +147,20 @@ export class AircraftExecution implements Execution {
         : this.jet.type() === UnitType.F20
           ? 2
           : 1;
-    const result = this.pathFinder.next(this.jet.tile(), this.target, speed);
-    if (result.status === PathStatus.NEXT) {
-      this.jet.move(result.node);
-    } else if (result.status === PathStatus.COMPLETE) {
-      if (this.mode === "returning") {
+    for (let step = 0; step < speed; step++) {
+      const result = this.pathFinder.next(this.jet.tile(), this.target);
+      if (result.status === PathStatus.NEXT) {
+        this.jet.move(result.node);
+        continue;
+      }
+      if (result.status === PathStatus.COMPLETE && this.mode === "returning") {
         this.jet.delete(false);
         this.jet = null;
         this.target = null;
         this.mode = "idle";
         this.pathFinder = null;
       }
+      break;
     }
   }
 
