@@ -338,6 +338,23 @@ describe("StoreModal cash-free configuration", () => {
       "tribes",
     ]);
   });
+
+  it("filters dollar-only catalog items from the cosmetic browser", () => {
+    const cashOnly: ResolvedCosmetic = {
+      ...red,
+      cosmetic: {
+        name: "cash-only",
+        product: { id: "cash-only" },
+      } as never,
+      key: "pattern:cash-only",
+    };
+    resolvedCatalog = [...resolvedCatalog, cashOnly];
+    const modal = document.createElement("store-modal") as StoreModal;
+    const purchasable = (modal as any).resolvedPurchasables();
+
+    expect(purchasable).toContain(red);
+    expect(purchasable).not.toContain(cashOnly);
+  });
 });
 describe("StoreModal cosmetic browser", () => {
   Element.prototype.animate ??= () => ({ cancel: () => {} }) as Animation;
