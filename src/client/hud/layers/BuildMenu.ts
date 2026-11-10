@@ -16,11 +16,13 @@ import { Controller } from "../../Controller";
 import {
   CloseViewEvent,
   MouseDownEvent,
+  MouseMoveEvent,
   ShowBuildMenuEvent,
   ShowEmojiMenuEvent,
 } from "../../InputHandler";
 import { TransformHandler } from "../../TransformHandler";
 import {
+  AircraftCommandIntentEvent,
   BuildUnitIntentEvent,
   SendUpgradeStructureIntentEvent,
 } from "../../Transport";
@@ -152,6 +154,12 @@ export class BuildMenu extends LitElement implements Controller {
   private filteredBuildTable: BuildItemDisplay[][] = buildTable;
   @state()
   private activeSection: "main" | "castle" | "aircraft" = "main";
+  @state()
+  private aircraftCommandMode: "launch" | "aim" | "drop" | null = null;
+  @state()
+  private aircraftCommandHint = "";
+  private lastAircraftAimTile: TileRef | null = null;
+  private lastAircraftAimAt = 0;
   public transformHandler: TransformHandler;
 
   init() {
@@ -176,7 +184,23 @@ export class BuildMenu extends LitElement implements Controller {
     });
     this.eventBus.on(CloseViewEvent, () => this.hideMenu());
     this.eventBus.on(ShowEmojiMenuEvent, () => this.hideMenu());
-    this.eventBus.on(MouseDownEvent, () => this.hideMenu());
+    this.eventBus.on(MouseDownEvent, (event) => {
+      if (this.aircraftCommandMode !== null) {
+        this.handleAircraftMapClick(event.x, event.y);
+        return;
+      }
+      this.hideMenu();
+    });
+    this.eventBus.on(MouseMoveEvent, (event) => {
+      if (this.aircraftCommandMode !== "aim") return;
+      const tile = this.tileAtScreenPoint(event.x, event.y);
+      if (tile === null || tile === this.lastAircraftAimTile) return;
+      const now = Date.now();
+      if (now - this.lastAircraftAimAt < 150) return;
+      this.lastAircraftAimTile = tile;
+      this.lastAircraftAimAt = now;
+      this.eventBus.emit(new AircraftCommandIntentEvent("aim", tile));
+    });
   }
 
   tick() {
@@ -555,8 +579,60 @@ export class BuildMenu extends LitElement implements Controller {
           `,
         )}
         </div>
+        ${this.activeSection === "aircraft" ? html`
+          <div class="aircraft-controls" aria-label="Aircraft controls">
+            <p class="build-description">Aircraft operations</p>
+            <div class="build-row">
+              <button class="build-button" style="width:auto;height:auto;min-height:42px" @click=${() => this.armAircraftCommand("launch")}>Launch Jet</button>
+              <button class="build-button" style="width:auto;height:auto;min-height:42px" @click=${() => this.armAircraftCommand("aim")}>Follow Cursor</button>
+              <button class="build-button" style="width:auto;height:auto;min-height:42px" @click=${() => this.armAircraftCommand("drop")}>Drop Atomic Bomb</button>
+              <button class="build-button" style="width:auto;height:auto;min-height:42px" @click=${() => this.returnAircraft()}>Return Jet</button>
+            </div>
+            <p class="build-description">${this.aircraftCommandHint || "Launch, then move your cursor over the map to guide the jet for up to 10 seconds."}</p>
+          </div>
+        ` : ""}
       </div>
     `;
+  }
+
+  private armAircraftCommand(mode: "launch" | "aim" | "drop") {
+    this.aircraftCommandMode = mode;
+    this.aircraftCommandHint = mode === "launch" ? "Click a destination on the map to launch." : mode === "aim" ? "Move your cursor over the map to guide the jet." : "Click a target on the map to drop the atomic bomb.";
+    this.hideMenu();
+  }
+
+  private returnAircraft() {
+    this.eventBus.emit(new AircraftCommandIntentEvent("return"));
+    this.aircraftCommandMode = null;
+    this.aircraftCommandHint = "Return command sent.";
+    this.hideMenu();
+  }
+
+  private tileAtScreenPoint(x: number, y: number): TileRef | null {
+    const cell = this.transformHandler.screenToWorldCoordinates(x, y);
+    if (!this.game.isValidCoord(cell.x, cell.y)) return null;
+    return this.game.ref(cell.x, cell.y);
+  }
+
+  private handleAircraftMapClick(x: number, y: number) {
+    const tile = this.tileAtScreenPoint(x, y);
+    if (tile === null) return;
+    const action = this.aircraftCommandMode;
+    if (action === null) return;
+    this.eventBus.emit(new AircraftCommandIntentEvent(action, tile));
+    if (action === "launch") {
+      this.aircraftCommandMode = "aim";
+      this.aircraftCommandHint = "Jet launched. Move your cursor to guide it; choose Drop Atomic Bomb or Return from the Aircraft Menu.";
+      this.lastAircraftAimTile = tile;
+      this.lastAircraftAimAt = Date.now();
+    } else if (action === "drop") {
+      this.aircraftCommandMode = null;
+      this.aircraftCommandHint = "Bomb drop command sent; jet is returning.";
+    } else {
+      this.aircraftCommandMode = null;
+      this.aircraftCommandHint = "Aircraft target updated.";
+    }
+    this.hideMenu();
   }
 
   hideMenu() {
