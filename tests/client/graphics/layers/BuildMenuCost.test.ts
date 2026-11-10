@@ -211,8 +211,11 @@ describe("BuildMenu accessible category tabs", () => {
     )!;
     expect(castleTab.getAttribute("aria-selected")).toBe("true");
     expect(castleTab.tabIndex).toBe(0);
-    expect(menu.renderRoot.querySelector('[role="tabpanel"]')?.getAttribute("aria-labelledby"))
-      .toBe("build-tab-castle");
+    expect(
+      menu.renderRoot
+        .querySelector('[role="tabpanel"]')
+        ?.getAttribute("aria-labelledby"),
+    ).toBe("build-tab-castle");
     expect(document.activeElement).toBe(castleTab);
 
     castleTab.dispatchEvent(
