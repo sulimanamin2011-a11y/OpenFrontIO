@@ -113,6 +113,21 @@ describe("Warship", () => {
     expect(player1.units(UnitType.Shell).length).toBeGreaterThan(0);
   });
 
+  test("Castle defenses do not fire on allied ships", () => {
+    const castleTile = game.ref(coastX - 1, 10);
+    const alliedShipTile = game.ref(coastX + 7, 10);
+    player1.conquer(castleTile);
+    const castle = player1.buildUnit(UnitType.Castle, castleTile, {});
+    player2.buildUnit(UnitType.Warship, alliedShipTile, {
+      patrolTile: alliedShipTile,
+    });
+    vi.spyOn(player1, "isFriendly").mockReturnValue(true);
+    game.addExecution(new CastleExecution(castle));
+
+    executeTicks(game, 2);
+
+    expect(player1.units(UnitType.Shell)).toHaveLength(0);
+  });
   test("Castle upgrades extend its defensive range", () => {
     const castleTile = game.ref(coastX - 1, 10);
     const distantShipTile = game.ref(13, 10);
