@@ -8,19 +8,32 @@ const base = {
   steamAuthed: false,
 };
 
-test("guest can join without Turnstile", () => {
-  expect(planJoinVerify(base)).toEqual({
+test("a guest can join without an account after completing Turnstile", () => {
+  expect(
+    planJoinVerify({ ...base, turnstileToken: "challenge-token" }),
+  ).toEqual({
+    action: "verify",
+    token: "challenge-token",
+  });
+});
+
+test("a first join without Turnstile is rejected for guests", () => {
+  expect(planJoinVerify(base)).toEqual({ action: "reject" });
+});
+
+test("a Steam-authenticated first join can skip Turnstile", () => {
+  expect(planJoinVerify({ ...base, steamAuthed: true })).toEqual({
     action: "verify",
     token: null,
   });
 });
 
-test("account can join without Turnstile", () => {
+test("an account player without Steam must complete Turnstile", () => {
   expect(
-    planJoinVerify({ ...base, steamAuthed: true }),
+    planJoinVerify({ ...base, turnstileToken: "challenge-token" }),
   ).toEqual({
     action: "verify",
-    token: null,
+    token: "challenge-token",
   });
 });
 
@@ -42,4 +55,14 @@ test("readmission skips verification when game has started", () => {
       gameStarted: true,
     }),
   ).toEqual({ action: "skip" });
+});
+
+test("readmission checks changed identity without reusing a spent token", () => {
+  expect(
+    planJoinVerify({
+      ...base,
+      isReadmit: true,
+      turnstileToken: "old-token",
+    }),
+  ).toEqual({ action: "verify", token: null });
 });
