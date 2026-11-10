@@ -3,6 +3,7 @@ import {
   PlayerType,
   UnitType,
 } from "@openfront/engine-api/game/GameTypes";
+import { AircraftExecution } from "@openfront/engine/execution/AircraftExecution";
 import { CastleExecution } from "@openfront/engine/execution/CastleExecution";
 import { ConstructionExecution } from "@openfront/engine/execution/ConstructionExecution";
 import { DoomsdayClockExecution } from "@openfront/engine/execution/DoomsdayClockExecution";
@@ -47,6 +48,21 @@ async function twoPlayers(
 }
 
 describe("structure and missile execution snapshots", () => {
+  test("aircraft sortie, target guidance, cooldown, and pathfinder survive snapshots", async () => {
+    const { game, a } = await twoPlayers(BIG, { instantBuild: true });
+    conquerRect(game, a, 0, 0, 40, 40);
+    const base = a.buildUnit(UnitType.AircraftBase, game.ref(10, 10), {});
+    const aircraft = new AircraftExecution(base);
+    game.addExecution(aircraft);
+    executeTicks(game, 1);
+
+    expect(aircraft.command("launch", game.ref(20, 20))).toBe(true);
+    executeTicks(game, 5);
+    expect(a.units(UnitType.Jet)).toHaveLength(1);
+
+    await expectSnapshotRoundTrip(game, BIG, 80);
+  });
+
   test("construction mid-build, pending, and captured", async () => {
     const { game, a, b } = await twoPlayers(BIG);
     conquerRect(game, a, 0, 0, 40, 40);
