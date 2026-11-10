@@ -261,6 +261,9 @@ export class Config {
           upgradable: true,
         };
         break;
+      case UnitType.Jet:
+        info = { maxHealth: 1_500, damage: 500 };
+        break;
       case UnitType.TransportShip:
       case UnitType.SAMMissile:
       case UnitType.AtomBomb:
