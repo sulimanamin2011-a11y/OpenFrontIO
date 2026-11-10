@@ -614,13 +614,19 @@ export class BuildMenu extends LitElement implements Controller {
           this.activeSection === "aircraft" && this.hasCompletedAircraftBase()
             ? html`
           <div class="aircraft-controls" aria-label="Aircraft controls">
-            <p class="build-description">Aircraft operations — base upgrades unlock F-20 and F-22 jets</p>
+            <p class="build-description" aria-live="polite">
+              ${this.aircraftBaseManagementSummary()}
+            </p>
             <div class="build-row">
               <button
                 class="build-button"
                 style="width:auto;height:auto;min-height:42px"
                 ?disabled=${this.hasActiveAircraftJet()}
-                title=${this.hasActiveAircraftJet() ? "Your aircraft is already airborne." : ""}
+                title=${
+                  this.hasActiveAircraftJet()
+                    ? "Your aircraft is already airborne."
+                    : ""
+                }
                 @click=${() => this.armAircraftCommand("launch")}
               >Launch Jet</button>
               <button
@@ -700,6 +706,28 @@ export class BuildMenu extends LitElement implements Controller {
             aircraftTypes.includes(unit.type()) && unit.isActive(),
         ) ?? false
     );
+  }
+
+  private aircraftBaseManagementSummary(): string {
+    const base = this.game
+      ?.myPlayer?.()
+      ?.units(UnitType.AircraftBase)
+      .find(
+        (unit) => unit.isActive() && !unit.isUnderConstruction(),
+      );
+    if (!base) return "No completed Aircraft Base."; 
+
+    const tier =
+      base.level() >= 3 ? "Gold" : base.level() === 2 ? "Silver" : "Bronze";
+    const aircraft =
+      base.level() >= 3 ? "F-22" : base.level() === 2 ? "F-20" : "Jet";
+    const nextUpgrade =
+      base.level() === 1
+        ? "Silver upgrade: 500K gold"
+        : base.level() === 2
+          ? "Gold upgrade: 1.5M gold"
+          : "Maximum Gold tier reached";
+    return `${tier} Aircraft Base · launches ${aircraft} · ${nextUpgrade}`;
   }
 
   private hasCompletedAircraftBase(): boolean {
