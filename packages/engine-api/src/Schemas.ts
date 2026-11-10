@@ -525,7 +525,7 @@ export const MoveWarshipIntentSchema = z.object({
 
 export const AircraftCommandIntentSchema = z.object({
   type: z.literal("aircraft_command"),
-  action: z.enum(["launch", "return", "drop"]),
+  action: z.enum(["launch", "aim", "return", "drop"]),
   target: zb.uint().optional(),
 });
 
