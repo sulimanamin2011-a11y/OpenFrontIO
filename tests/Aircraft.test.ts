@@ -195,6 +195,23 @@ describe("Aircraft", () => {
     expect(jet.isActive()).toBe(true);
     expect(sam.missileTimerQueue()).toHaveLength(0);
   });
+  test.each([UnitType.Jet, UnitType.F20, UnitType.F22])(
+    "Gold SAM launchers intercept %s aircraft",
+    (aircraftType) => {
+      const samTile = game.ref(4, 10);
+      const aircraftTile = game.ref(7, 10);
+      player.conquer(samTile);
+      opponent.conquer(aircraftTile);
+      const sam = player.buildUnit(UnitType.SAMLauncher, samTile, {});
+      player.upgradeUnit(sam);
+      const aircraft = opponent.buildUnit(aircraftType, aircraftTile, {});
+      game.addExecution(new SAMLauncherExecution(player, null, sam));
+
+      executeTicks(game, 2);
+
+      expect(aircraft.isActive()).toBe(false);
+    },
+  );
   test("Gold SAM launchers destroy enemy jets within range", () => {
     const samTile = game.ref(4, 10);
     const jetTile = game.ref(7, 10);
