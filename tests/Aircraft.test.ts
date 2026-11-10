@@ -42,7 +42,11 @@ describe("Aircraft", () => {
     expect(jet.tile()).not.toBe(baseTile);
 
     expect(aircraft.command("drop", targetTile)).toBe(true);
-    expect(game.executions().some((execution) => execution instanceof NukeExecution)).toBe(true);
+    expect(
+      game
+        .executions()
+        .some((execution) => execution instanceof NukeExecution),
+    ).toBe(true);
     expect(aircraft.command("return")).toBe(true);
   });
 
