@@ -68,7 +68,9 @@ export type UpgradeStructureIntent = z.infer<
   typeof UpgradeStructureIntentSchema
 >;
 export type MoveWarshipIntent = z.infer<typeof MoveWarshipIntentSchema>;
-export type AircraftCommandIntent = z.infer<typeof AircraftCommandIntentSchema>;
+export type AircraftCommandIntent = z.infer<
+  typeof AircraftCommandIntentSchema
+>;
 export type QuickChatIntent = z.infer<typeof QuickChatIntentSchema>;
 export type MarkDisconnectedIntent = z.infer<
   typeof MarkDisconnectedIntentSchema
