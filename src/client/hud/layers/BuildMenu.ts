@@ -449,13 +449,36 @@ export class BuildMenu extends LitElement implements Controller {
       >
         <div class="build-row" role="tablist" aria-label="Build categories">
           ${(["main", "castle", "aircraft"] as const).map((section) => html`
-            <button class="build-button" style="width:auto;height:auto;min-height:36px;padding:8px 14px"
+            <button
+              class="build-button"
+              id="build-tab-${section}"
+              role="tab"
+              aria-controls="build-menu-panel"
               aria-selected=${this.activeSection === section}
-              @click=${() => { this.activeSection = section; this.filteredBuildTable = this.getBuildableUnits(); }}>
+              tabindex=${this.activeSection === section ? 0 : -1}
+              style="width:auto;height:auto;min-height:36px;padding:8px 14px"
+              @click=${() => {
+                this.activeSection = section;
+                this.filteredBuildTable = this.getBuildableUnits();
+              }}
+              @keydown=${(event: KeyboardEvent) => {
+                if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+                event.preventDefault();
+                const sections = ["main", "castle", "aircraft"] as const;
+                const current = sections.indexOf(this.activeSection);
+                const next = (current + (event.key === "ArrowRight" ? 1 : 2)) % 3;
+                this.activeSection = sections[next];
+                this.filteredBuildTable = this.getBuildableUnits();
+                this.renderRoot.querySelector<HTMLButtonElement>(
+                  `#build-tab-${this.activeSection}`,
+                )?.focus();
+              }}
+            >
               ${section === "main" ? "Structures & Weapons" : section === "castle" ? "Castle Menu" : "Aircraft Menu"}
             </button>
           `)}
         </div>
+        <div id="build-menu-panel" role="tabpanel" aria-labelledby="build-tab-${this.activeSection}">
         ${this.filteredBuildTable.map(
           (row) => html`
             <div class="build-row">
@@ -518,6 +541,7 @@ export class BuildMenu extends LitElement implements Controller {
             </div>
           `,
         )}
+        </div>
       </div>
     `;
   }
