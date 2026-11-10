@@ -56,8 +56,6 @@ describe("Aircraft", () => {
     expect(aircraft.command("return")).toBe(true);
   });
 
-
-
   test("accepts cursor guidance immediately after launch", () => {
     const baseTile = game.ref(4, 10);
     const firstTarget = game.ref(10, 10);
@@ -72,6 +70,7 @@ describe("Aircraft", () => {
     expect(aircraft.command("aim", updatedTarget)).toBe(true);
     expect((aircraft as any).target).toBe(updatedTarget);
   });
+
   test("routes multiplayer launch commands to the player's aircraft controller", () => {
     const baseTile = game.ref(4, 10);
     player.conquer(baseTile);
@@ -102,6 +101,7 @@ describe("Aircraft", () => {
     expect(opponent.units(UnitType.Jet)).toHaveLength(0);
     expect(player.units(UnitType.Jet)).toHaveLength(0);
   });
+
   test("enforces the two-minute launch cooldown after a sortie begins", () => {
     const baseTile = game.ref(4, 10);
     player.conquer(baseTile);
