@@ -1,4 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
+import { EventBus } from "@openfront/shared/EventBus";
+import { CloseViewEvent } from "../../../../src/client/InputHandler";
 
 // Side-effect import: the @customElement decorator registers <build-menu>
 // when the module is evaluated, and a type-only reference would not evaluate it.
@@ -127,4 +129,57 @@ it("an older timeout cannot erase a newer successful menu refresh", async () => 
   } finally {
     warning.mockRestore();
   }
+});
+
+
+describe("BuildMenu dedicated structure sections", () => {
+  it("keeps Castle and Aircraft Base in their own menus", () => {
+    const menu = makeMenu();
+    menu.game = {
+      config: () => ({ isUnitDisabled: () => false }),
+    } as any;
+
+    expect((menu as any).getBuildableUnits().flat().map((item: any) => item.unitType))
+      .not.toContain(UnitType.Castle);
+    expect((menu as any).getBuildableUnits().flat().map((item: any) => item.unitType))
+      .not.toContain(UnitType.AircraftBase);
+
+    (menu as any).activeSection = "castle";
+    expect((menu as any).getBuildableUnits().flat().map((item: any) => item.unitType))
+      .toEqual([UnitType.Castle]);
+
+    (menu as any).activeSection = "aircraft";
+    expect((menu as any).getBuildableUnits().flat().map((item: any) => item.unitType))
+      .toEqual([UnitType.AircraftBase]);
+  });
+
+  it("selecting an Aircraft Base starts map ghost placement instead of instant-building", () => {
+    const menu = makeMenu();
+    const eventBus = new EventBus();
+    const emitted: unknown[] = [];
+    vi.spyOn(eventBus, "emit").mockImplementation((event) => {
+      emitted.push(event);
+    });
+    menu.eventBus = eventBus;
+    menu.uiState = {
+      ghostStructure: null,
+      upgradeMultiplier: 0,
+      preventStacking: false,
+    } as any;
+    menu.playerBuildables = [
+      {
+        type: UnitType.AircraftBase,
+        canBuild: 10,
+        canUpgrade: false,
+        cost: 2_500_000n,
+      },
+    ] as BuildableUnit[];
+
+    menu.sendBuildOrUpgrade(menu.playerBuildables[0], 10);
+
+    expect(menu.uiState.ghostStructure).toBe(UnitType.AircraftBase);
+    expect(menu.uiState.upgradeMultiplier).toBe(1);
+    expect(emitted).toHaveLength(1);
+    expect(emitted[0]).toBeInstanceOf(CloseViewEvent);
+  });
 });
