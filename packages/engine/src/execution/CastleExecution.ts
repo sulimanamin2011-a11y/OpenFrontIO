@@ -32,7 +32,7 @@ export class CastleExecution implements Execution {
   private shoot(): void {
     if (this.target === null) return;
     const tier = Math.min(3, this.castle.level());
-    const reloadTicks = tier === 1 ? 80 : tier === 2 ? 60 : 40;
+    const reloadTicks = this.mg.config().castleShellAttackRate(tier);
     if (this.mg.ticks() - this.lastShellAttack < reloadTicks) return;
 
     this.lastShellAttack = this.mg.ticks();
@@ -57,7 +57,7 @@ export class CastleExecution implements Execution {
     const hostiles = this.mg
       .nearbyUnits(
         this.castle.tile(),
-        Math.min(55, 35 + (this.castle.level() - 1) * 10),
+        this.mg.config().castleDefenseRange(this.castle.level()),
         [UnitType.TransportShip, UnitType.Warship],
       )
       .filter(
