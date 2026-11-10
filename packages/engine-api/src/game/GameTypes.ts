@@ -217,6 +217,8 @@ export enum UnitType {
   Castle = "Castle",
   AircraftBase = "Aircraft Base",
   Jet = "Jet",
+  F20 = "F-20",
+  F22 = "F-22",
 }
 
 export enum TrainType {
