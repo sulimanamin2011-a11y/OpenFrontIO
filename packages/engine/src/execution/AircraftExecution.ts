@@ -24,6 +24,9 @@ import { NukeExecution } from "./NukeExecution";
 
 export type AircraftCommand = "launch" | "aim" | "return" | "drop";
 
+const AIRCRAFT_COOLDOWN_TICKS = 1_200; // 2 minutes at 100 ms per game tick.
+const AIRCRAFT_GUIDANCE_TICKS = 100; // 10 seconds at 100 ms per game tick.
+
 /**
  * Server-authoritative aircraft controller attached to each completed base.
  * A sortie is limited to ten seconds of cursor-following, then the jet returns.
@@ -34,7 +37,7 @@ export class AircraftExecution implements Execution {
   private jet: Unit | null = null;
   private target: TileRef | null = null;
   private mode: "idle" | "outbound" | "following" | "returning" = "idle";
-  private lastLaunchTick = -1200;
+  private lastLaunchTick = -AIRCRAFT_COOLDOWN_TICKS;
   private followUntil = 0;
   private pathFinder: SteppingPathFinder<TileRef> | null = null;
 
@@ -60,7 +63,7 @@ export class AircraftExecution implements Execution {
     if (action === "launch") {
       if (
         this.mode !== "idle" ||
-        this.mg.ticks() - this.lastLaunchTick < 1200
+        this.mg.ticks() - this.lastLaunchTick < AIRCRAFT_COOLDOWN_TICKS
       ) {
         return false;
       }
@@ -152,7 +155,7 @@ export class AircraftExecution implements Execution {
     if (this.target === null || !this.pathFinder) return;
     if (this.mode === "outbound") {
       this.mode = "following";
-      this.followUntil = this.mg.ticks() + 100;
+      this.followUntil = this.mg.ticks() + AIRCRAFT_GUIDANCE_TICKS;
     }
     const speed =
       this.jet.type() === UnitType.F22
