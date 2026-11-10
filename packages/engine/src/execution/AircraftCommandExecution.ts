@@ -4,14 +4,27 @@ import { zInt, zPlayerRef, zTile } from "@openfront/engine-lib/snapshot/Snapshot
 import { z } from "zod";
 import { Execution, Game, Player } from "../game/Game";
 import { execSnapshotType } from "../snapshot/ExecutionSnapshot";
-import type { ExecRecord, SnapshotReader, SnapshotWriter } from "../snapshot/SnapshotContext";
+import type {
+  ExecRecord,
+  SnapshotReader,
+  SnapshotWriter,
+} from "../snapshot/SnapshotContext";
 import { AircraftCommand, AircraftExecution } from "./AircraftExecution";
 
 export class AircraftCommandExecution implements Execution {
-  constructor(private player: Player, private action: AircraftCommand, private target?: TileRef) {}
+  constructor(
+    private player: Player,
+    private action: AircraftCommand,
+    private target?: TileRef,
+  ) {}
 
   init(mg: Game, _ticks: number): void {
-    const base = this.player.units().find((u) => u.type() === UnitType.AircraftBase && u.isActive());
+    const base = this.player
+      .units()
+      .find(
+        (unit) =>
+          unit.type() === UnitType.AircraftBase && unit.isActive(),
+      );
     if (!base) return;
     const controller = mg.executions().find(
       (execution): execution is AircraftExecution =>
@@ -21,8 +34,14 @@ export class AircraftCommandExecution implements Execution {
   }
 
   tick(_ticks: number): void {}
-  isActive(): boolean { return false; }
-  activeDuringSpawnPhase(): boolean { return false; }
+
+  isActive(): boolean {
+    return false;
+  }
+
+  activeDuringSpawnPhase(): boolean {
+    return false;
+  }
 
   snapshot(w: SnapshotWriter): ExecRecord {
     return AircraftCommandExecutionSnapshot.write({
