@@ -53,6 +53,7 @@ describe("Warship", () => {
     expect(config.warshipPassiveHealingRange(2)).toBe(165);
     expect(config.warshipPassiveHealingRange(3)).toBe(180);
   });
+
   test("Defense Post Bronze, Silver, and Gold tiers scale range and reload", () => {
     const config = game.config();
 
@@ -66,6 +67,7 @@ describe("Warship", () => {
     expect(config.defensePostDefenseBonus(2)).toBe(5.5);
     expect(config.defensePostDefenseBonus(3)).toBe(6);
   });
+
   test("Castle Bronze, Silver, and Gold tiers scale range and reload", () => {
     const config = game.config();
 
@@ -76,6 +78,7 @@ describe("Warship", () => {
     expect(config.castleShellAttackRate(2)).toBe(60);
     expect(config.castleShellAttackRate(3)).toBe(40);
   });
+
   test("Castle fires its first defensive shell without an initial cooldown", () => {
     const castleTile = game.ref(coastX - 1, 10);
     const enemyWarshipTile = game.ref(coastX + 7, 10);
@@ -91,8 +94,6 @@ describe("Warship", () => {
     executeTicks(game, 2);
     expect(player1.units(UnitType.Shell).length).toBeGreaterThan(0);
   });
-
-
 
   test("Castle upgrades extend its defensive range", () => {
     const castleTile = game.ref(coastX - 1, 10);
