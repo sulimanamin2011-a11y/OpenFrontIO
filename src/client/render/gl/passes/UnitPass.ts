@@ -40,6 +40,7 @@ import {
   TrainType,
   UT_ATOM_BOMB,
   UT_HYDROGEN_BOMB,
+  UT_JET,
   UT_MIRV,
   UT_MIRV_WARHEAD,
   UT_SAM_MISSILE,
@@ -397,9 +398,24 @@ export class UnitPass {
     img.crossOrigin = "anonymous";
     img.src = unitAtlasUrl;
     await img.decode();
+
+    // Append the standalone jet sprite as the final atlas column while keeping
+    // every existing unit's original atlas UVs unchanged.
+    const jet = new Image();
+    jet.src = assetUrl("images/JetSprite.svg");
+    await jet.decode();
+    const cellWidth = img.width / (UNIT_ORDER.length - 1);
+    const atlas = document.createElement("canvas");
+    atlas.width = img.width + cellWidth;
+    atlas.height = img.height;
+    const ctx = atlas.getContext("2d");
+    if (!ctx) throw new Error("Unable to create aircraft unit atlas");
+    ctx.drawImage(img, 0, 0);
+    ctx.drawImage(jet, img.width, 0, cellWidth, img.height);
+
     const gl = this.gl;
     gl.bindTexture(gl.TEXTURE_2D, this.atlasTex);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, atlas);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
   }
