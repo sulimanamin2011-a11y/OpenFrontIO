@@ -75,7 +75,7 @@ export class AircraftExecution implements Execution {
       if (
         target === undefined ||
         !this.mg.isValidRef(target) ||
-        this.mode !== "following"
+        (this.mode !== "following" && this.mode !== "outbound")
       ) {
         return false;
       }
