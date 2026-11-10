@@ -143,15 +143,15 @@ describe("PurchaseButton", () => {
   it("starts the rising particles at the first real button, not a held line", async () => {
     button = document.createElement("purchase-button") as PurchaseButton;
     button.rarity = "epic";
-    button.priceHard = 99;
-    button.onPurchaseHard = async () => undefined;
-    button.reserveDollar = true;
+    button.priceSoft = 50;
+    button.onPurchaseSoft = async () => undefined;
+    button.reserveHard = true;
     document.body.appendChild(button);
     await button.updateComplete;
 
     const wrap = () =>
       button!.querySelector<HTMLElement>(".purchase-btn-wrap")!;
-    // One held line above (min-h-11 plus the column's gap-1) = 3rem.
+    // One held hard-currency line above (min-h-11 plus gap-1) = 3rem.
     expect(wrap().style.getPropertyValue("--purchase-particle-top")).toBe(
       "3rem",
     );
@@ -159,7 +159,7 @@ describe("PurchaseButton", () => {
       document.getElementById("purchase-button-styles")?.textContent,
     ).toContain("top: var(--purchase-particle-top, 0px)");
 
-    button.reserveDollar = false;
+    button.reserveHard = false;
     await button.updateComplete;
     expect(wrap().style.getPropertyValue("--purchase-particle-top")).toBe(
       "0rem",
@@ -185,15 +185,15 @@ describe("PurchaseButton", () => {
 
     it("reserves only the currencies present in each row", async () => {
       const root = document.createElement("div");
-      const [rowOneDollar, rowOneHard, rowTwoHard] = [
-        make(0, "dollar"),
+      const [rowOneSoft, rowOneHard, rowTwoHard] = [
+        make(0, "soft"),
         make(0, "hard"),
         make(200, "hard"),
       ];
-      root.append(rowOneDollar, rowOneHard, rowTwoHard);
+      root.append(rowOneSoft, rowOneHard, rowTwoHard);
       document.body.appendChild(root);
       await Promise.all(
-        [rowOneDollar, rowOneHard, rowTwoHard].map((el) => el.updateComplete),
+        [rowOneSoft, rowOneHard, rowTwoHard].map((el) => el.updateComplete),
       );
 
       alignPurchaseRows(root);
@@ -201,13 +201,14 @@ describe("PurchaseButton", () => {
         [rowOneDollar, rowOneHard, rowTwoHard].map((el) => el.updateComplete),
       );
 
-      // Row one mixes dollars and plutonium, so both cards keep both lines.
-      expect(rowOneDollar.reserveHard).toBe(true);
-      expect(rowOneHard.reserveDollar).toBe(true);
-      // Row two is plutonium-only: no dollar line, and no caps line anywhere.
+      // Row one mixes hard and soft currency, so both cards reserve both lines.
+      expect(rowOneSoft.reserveHard).toBe(true);
+      expect(rowOneHard.reserveSoft).toBe(true);
+      // Row two has only hard currency: no soft or cash line.
       expect(rowTwoHard.reserveDollar).toBe(false);
-      expect(rowTwoHard.reserveHard).toBe(true);
-      expect(rowOneDollar.reserveSoft).toBe(false);
+      expect(rowTwoHard.reserveHard).toBe(false);
+      expect(rowOneSoft.reserveDollar).toBe(false);
+      expect(rowOneSoft.reserveSoft).toBe(true);
       expect(rowTwoHard.reserveSoft).toBe(false);
       expect(rowTwoHard.querySelectorAll(".flex.flex-col > *")).toHaveLength(1);
 
