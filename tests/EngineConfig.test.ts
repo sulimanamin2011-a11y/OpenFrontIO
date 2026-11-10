@@ -41,5 +41,7 @@ describe("EngineConfig DOMINION economy", () => {
 
     expect(engine.portPassiveGold(1, player)).toBe(200_000n);
     expect(engine.portPassiveGold(2, player)).toBe(600_000n);
+    expect(engine.factoryTrainGold(1, player)).toBe(50_000n);
+    expect(engine.factoryTrainGold(2, player)).toBe(300_000n);
   });
 });
