@@ -9,7 +9,8 @@ import type {
   SnapshotReader,
   SnapshotWriter,
 } from "../snapshot/SnapshotContext";
-import { AircraftCommand, AircraftExecution } from "./AircraftExecution";
+import { AircraftExecution } from "./AircraftExecution";
+import type { AircraftCommand } from "./AircraftExecution";
 
 export class AircraftCommandExecution implements Execution {
   constructor(
@@ -28,7 +29,8 @@ export class AircraftCommandExecution implements Execution {
     if (!base) return;
     const controller = mg.executions().find(
       (execution): execution is AircraftExecution =>
-        execution instanceof AircraftExecution && execution.owns(base),
+        execution instanceof AircraftExecution &&
+        execution.owns(base),
     );
     controller?.command(this.action, this.target);
   }
