@@ -169,6 +169,66 @@ describe("BuildMenu structure management guidance", () => {
   });
 });
 
+describe("BuildMenu live structure management", () => {
+  it("shows owned Castle tiers and the selected Castle upgrade price", async () => {
+    const menu = makeMenu();
+    const castles = [
+      { level: () => 1, isActive: () => true, isUnderConstruction: () => false },
+      { level: () => 2, isActive: () => true, isUnderConstruction: () => false },
+      { level: () => 3, isActive: () => true, isUnderConstruction: () => false },
+    ];
+    menu.game = {
+      config: () => ({ isUnitDisabled: () => false }),
+      myPlayer: () => ({ units: (type?: UnitType) => type === UnitType.Castle ? castles : [] }),
+    } as any;
+    menu.playerBuildables = [
+      { type: UnitType.Castle, canBuild: false, canUpgrade: 77, cost: 500_000n },
+    ] as BuildableUnit[];
+    (menu as any).activeSection = "castle";
+    document.body.appendChild(menu);
+    await menu.updateComplete;
+
+    expect(menu.textContent).toContain("Owned Castles: 3");
+    expect(menu.textContent).toContain("Bronze 1");
+    expect(menu.textContent).toContain("Silver 1");
+    expect(menu.textContent).toContain("Gold 1");
+    expect(menu.textContent).toContain("Selected Castle upgrade: 500K");
+    menu.remove();
+  });
+
+  it("only enables flight controls while an aircraft is airborne", async () => {
+    const menu = makeMenu();
+    let airborne = false;
+    const base = { isActive: () => true, isUnderConstruction: () => false };
+    const jet = { type: () => UnitType.Jet, isActive: () => airborne };
+    menu.game = {
+      config: () => ({ isUnitDisabled: () => false }),
+      myPlayer: () => ({
+        units: (type?: UnitType) => type === UnitType.AircraftBase ? [base] : type === undefined ? (airborne ? [base, jet] : [base]) : [],
+      }),
+    } as any;
+    (menu as any).activeSection = "aircraft";
+    document.body.appendChild(menu);
+    await menu.updateComplete;
+
+    const button = (label: string) =>
+      [...menu.renderRoot.querySelectorAll<HTMLButtonElement>("button")].find(
+        (candidate) => candidate.textContent?.includes(label),
+      )!;
+    expect(button("Launch Jet").disabled).toBe(false);
+    expect(button("Guide & Click to Drop").disabled).toBe(true);
+    expect(button("Return Jet").disabled).toBe(true);
+
+    airborne = true;
+    await menu.updateComplete;
+    menu.requestUpdate();
+    await menu.updateComplete;
+    expect(button("Launch Jet").disabled).toBe(true);
+    expect(button("Guide & Click to Drop").disabled).toBe(false);
+    expect(button("Return Jet").disabled).toBe(false);
+    menu.remove();
+  });
+});
 describe("BuildMenu dedicated structure sections", () => {
   it("keeps Castle and Aircraft Base in their own menus", () => {
     const menu = makeMenu();
