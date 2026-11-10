@@ -67,6 +67,8 @@ describe("Aircraft", () => {
     executeTicks(game, 5);
     expect(player.units(UnitType.Jet)).toHaveLength(0);
     expect(aircraft.command("launch", game.ref(6, 10))).toBe(false);
+    executeTicks(game, 1_195);
+    expect(aircraft.command("launch", game.ref(6, 10))).toBe(true);
   });
 
 
