@@ -133,6 +133,41 @@ it("an older timeout cannot erase a newer successful menu refresh", async () => 
 });
 
 
+describe("BuildMenu structure management guidance", () => {
+  it("explains Castle defensive tiers in the Castle menu", async () => {
+    const menu = makeMenu();
+    menu.game = {
+      config: () => ({ isUnitDisabled: () => false }),
+    } as any;
+    (menu as any).activeSection = "castle";
+    document.body.appendChild(menu);
+    await menu.updateComplete;
+
+    expect(menu.textContent).toContain("35-tile range");
+    expect(menu.textContent).toContain("45-tile range");
+    expect(menu.textContent).toContain("55-tile range");
+    menu.remove();
+  });
+
+  it("does not show aircraft command buttons until a base is complete", async () => {
+    const menu = makeMenu();
+    menu.game = {
+      config: () => ({ isUnitDisabled: () => false }),
+      myPlayer: () => ({
+        units: () => [
+          { isActive: () => true, isUnderConstruction: () => true },
+        ],
+      }),
+    } as any;
+    (menu as any).activeSection = "aircraft";
+    document.body.appendChild(menu);
+    await menu.updateComplete;
+
+    expect(menu.textContent).toContain("Build and complete an Aircraft Base");
+    expect(menu.textContent).not.toContain("Launch Jet");
+    menu.remove();
+  });
+});
 describe("BuildMenu dedicated structure sections", () => {
   it("keeps Castle and Aircraft Base in their own menus", () => {
     const menu = makeMenu();
@@ -267,7 +302,14 @@ describe("BuildMenu aircraft click-to-drop", () => {
 describe("BuildMenu aircraft controls", () => {
   it("shows launch, cursor guidance, bomb-drop and return controls in the aircraft tab", async () => {
     const menu = makeMenu();
-    menu.game = { config: () => ({ isUnitDisabled: () => false }) } as any;
+    menu.game = {
+      config: () => ({ isUnitDisabled: () => false }),
+      myPlayer: () => ({
+        units: () => [
+          { isActive: () => true, isUnderConstruction: () => false },
+        ],
+      }),
+    } as any;
     (menu as any).activeSection = "aircraft";
     document.body.appendChild(menu);
     await menu.updateComplete;
