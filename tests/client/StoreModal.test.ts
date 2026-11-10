@@ -326,6 +326,19 @@ async function openStoreOnTab(tab: "packs" | "subscriptions" | "bundles") {
   return store;
 }
 
+describe("StoreModal cash-free configuration", () => {
+  it("does not expose real-money currency packs or subscription tabs", () => {
+    const modal = document.createElement("store-modal") as StoreModal;
+    const tabs = (modal as any).modalConfig().tabs as { key: string }[];
+
+    expect(tabs.map((tab) => tab.key)).toEqual([
+      "bundles",
+      "cosmetics",
+      "effects",
+      "tribes",
+    ]);
+  });
+});
 describe("StoreModal cosmetic browser", () => {
   Element.prototype.animate ??= () => ({ cancel: () => {} }) as Animation;
 
