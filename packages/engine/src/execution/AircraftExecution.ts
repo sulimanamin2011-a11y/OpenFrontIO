@@ -32,6 +32,8 @@ export class AircraftExecution implements Execution {
 
   constructor(private base: Unit) {}
 
+  owns(base: Unit): boolean { return this.base === base; }
+
   command(action: AircraftCommand, target?: TileRef): boolean {
     if (!this.base.isActive() || this.base.isUnderConstruction()) return false;
     if (action === "launch") {
