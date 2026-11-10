@@ -241,6 +241,13 @@ export class MoveWarshipIntentEvent implements GameEvent {
   ) {}
 }
 
+export class AircraftCommandIntentEvent implements GameEvent {
+  constructor(
+    public readonly action: "launch" | "aim" | "return" | "drop",
+    public readonly target?: number,
+  ) {}
+}
+
 // One-shot marker that this lobby has already sent us to a sibling, so a
 // redirect can never become a bounce.
 const poolRedirectLatch = (gameID: string) => `pool-redirect:${gameID}`;
@@ -360,6 +367,10 @@ export class Transport {
 
     this.subscribe(MoveWarshipIntentEvent, (e) => {
       this.onMoveWarshipEvent(e);
+    });
+
+    this.subscribe(AircraftCommandIntentEvent, (e) => {
+      this.sendIntent({ type: "aircraft_command", action: e.action, target: e.target });
     });
 
     this.subscribe(SendDeleteUnitIntentEvent, (e) =>
