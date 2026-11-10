@@ -621,7 +621,9 @@ export class StoreModal extends BaseModal {
       .rarity=${priced?.rarity ?? "common"}
       .itemName=${cosmeticSelectionLabel(resolved)}
       .dollarLabelKey=${
-        resolved.type === "subscription" && userHasSubscription
+        REAL_MONEY_PURCHASES_ENABLED &&
+        resolved.type === "subscription" &&
+        userHasSubscription
           ? "store.switch_button"
           : ""
       }
