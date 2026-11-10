@@ -604,7 +604,7 @@ export class BuildMenu extends LitElement implements Controller {
                 @click=${() => this.returnAircraft()}
               >Return Jet</button>
             </div>
-            <p class="build-description">${this.aircraftCommandHint || "Launch, then move your cursor over the map to guide the jet for up to 10 seconds."}</p>
+            <p class="build-description">${this.aircraftCommandHint || "Launch, then guide the jet with your cursor for up to 10 seconds. Launch cooldown: 2 minutes."}</p>
           </div>
         ` : ""}
       </div>
