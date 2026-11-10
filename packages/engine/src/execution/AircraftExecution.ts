@@ -14,7 +14,7 @@ import {
 import type { ExecRecord, SnapshotReader, SnapshotWriter } from "../snapshot/SnapshotContext";
 import { NukeExecution } from "./NukeExecution";
 
-export type AircraftCommand = "launch" | "return" | "drop";
+export type AircraftCommand = "launch" | "aim" | "return" | "drop";
 
 /**
  * Server-authoritative aircraft controller attached to each completed base.
@@ -48,6 +48,12 @@ export class AircraftExecution implements Execution {
       return true;
     }
     if (!this.jet || !this.jet.isActive()) return false;
+    if (action === "aim") {
+      if (target === undefined || !this.mg.isValidRef(target) || this.mode !== "following") return false;
+      this.target = target;
+      this.pathFinder?.invalidate();
+      return true;
+    }
     if (action === "return") {
       this.target = this.base.tile();
       this.mode = "returning";
