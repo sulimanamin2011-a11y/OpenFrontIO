@@ -434,6 +434,7 @@ export class EngineConfig extends Config {
           const nextLevel = base.level() + extraLevels;
           return nextLevel <= 1 ? 500_000n : 1_500_000n;
         };
+      case UnitType.Jet:
       case UnitType.TransportShip:
       case UnitType.Shell:
       case UnitType.SAMMissile:
