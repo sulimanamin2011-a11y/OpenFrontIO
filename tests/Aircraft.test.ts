@@ -87,6 +87,21 @@ describe("Aircraft", () => {
     expect(player.units(UnitType.Jet)).toHaveLength(1);
   });
 
+  test("an aircraft command cannot control another player's base", () => {
+    const baseTile = game.ref(40, 40);
+    opponent.conquer(baseTile);
+    const base = opponent.buildUnit(UnitType.AircraftBase, baseTile, {});
+    game.addExecution(new AircraftExecution(base));
+    executeTicks(game, 1);
+
+    game.addExecution(
+      new AircraftCommandExecution(player, "launch", game.ref(45, 40)),
+    );
+    executeTicks(game, 1);
+
+    expect(opponent.units(UnitType.Jet)).toHaveLength(0);
+    expect(player.units(UnitType.Jet)).toHaveLength(0);
+  });
   test("enforces the two-minute launch cooldown after a sortie begins", () => {
     const baseTile = game.ref(4, 10);
     player.conquer(baseTile);
