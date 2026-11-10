@@ -4,6 +4,7 @@ import {
   UnitType,
 } from "@openfront/engine-api/game/GameTypes";
 import { AircraftExecution } from "@openfront/engine/execution/AircraftExecution";
+import { AircraftCommandExecution } from "@openfront/engine/execution/AircraftCommandExecution";
 import { NukeExecution } from "@openfront/engine/execution/NukeExecution";
 import { SAMLauncherExecution } from "@openfront/engine/execution/SAMLauncherExecution";
 import { Game, Player } from "@openfront/engine/game/Game";
@@ -52,6 +53,23 @@ describe("Aircraft", () => {
         .some((execution) => execution instanceof NukeExecution),
     ).toBe(true);
     expect(aircraft.command("return")).toBe(true);
+  });
+
+
+
+  test("routes multiplayer launch commands to the player's aircraft controller", () => {
+    const baseTile = game.ref(4, 10);
+    player.conquer(baseTile);
+    const base = player.buildUnit(UnitType.AircraftBase, baseTile, {});
+    game.addExecution(new AircraftExecution(base));
+    executeTicks(game, 1);
+
+    game.addExecution(
+      new AircraftCommandExecution(player, "launch", game.ref(12, 10)),
+    );
+    executeTicks(game, 1);
+
+    expect(player.units(UnitType.Jet)).toHaveLength(1);
   });
 
   test("enforces the two-minute launch cooldown after a sortie begins", () => {
