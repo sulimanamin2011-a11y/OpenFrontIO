@@ -39,6 +39,8 @@ describe("TrainStation", () => {
       config: vi.fn().mockReturnValue({
         trainGold: (rel: string, _tradeStopsVisited: number) =>
           rel !== "other" ? BigInt(1000) : BigInt(500),
+        factoryTrainGold: (level: number) =>
+          level >= 2 ? 150_000n : 25_000n,
       }),
       addUpdate: vi.fn(),
       addExecution: vi.fn(),
@@ -78,6 +80,22 @@ describe("TrainStation", () => {
     station.onTrainStop(trainExecution);
 
     expect(unit.owner().addGold).toHaveBeenCalledWith(1000n, unit.tile());
+  });
+
+  it("pays the factory owner 25K at Bronze and 150K at Gold train stops", () => {
+    unit.type.mockReturnValue(UnitType.Factory);
+    unit.level.mockReturnValue(2);
+    const station = new TrainStation(game, unit);
+
+    station.onTrainStop(trainExecution);
+
+    expect(game.config().factoryTrainGold).toHaveBeenCalledWith(2, player);
+    expect(player.addGold).toHaveBeenCalledWith(150_000n, unit.tile());
+    expect(player.addTrainGold).toHaveBeenCalledWith(150_000n);
+    expect(gameStats.trainExternalTrade).toHaveBeenCalledWith(
+      player,
+      150_000n,
+    );
   });
 
   it("handles allied trade", () => {
