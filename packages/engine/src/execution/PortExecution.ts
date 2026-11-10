@@ -73,7 +73,7 @@ export class PortExecution implements Execution {
     const incomeInterval = incomeLevel >= 2 ? 100 : 150;
     if (ticks - (this.lastPassiveIncomeTick ?? ticks) >= incomeInterval) {
       this.port.owner().addGold(
-        incomeLevel >= 2 ? 300_000n : 100_000n,
+        this.mg.config().portPassiveGold(incomeLevel, this.port.owner()),
         this.port.tile(),
       );
       this.lastPassiveIncomeTick = ticks;
