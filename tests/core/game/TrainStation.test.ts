@@ -110,6 +110,7 @@ describe("TrainStation", () => {
     expect(player.addGold).toHaveBeenCalledWith(25_000n, unit.tile());
     expect(player.addTrainGold).toHaveBeenCalledWith(25_000n);
   });
+
   it("handles allied trade", () => {
     unit.type.mockReturnValue(UnitType.City);
     player.isFriendly.mockReturnValue(true);
