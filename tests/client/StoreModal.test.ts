@@ -1581,11 +1581,13 @@ describe("StoreModal on the Steam rail", () => {
   });
 
   it("does not offer custom cash top-ups on the web", async () => {
+    resolvedCatalog = [pack];
     const modal = await openStoreOnTab("packs");
     expect(modal.querySelector("custom-currency-card")).toBeNull();
   });
 
   it("does not offer custom cash top-ups on Steam", async () => {
+    resolvedCatalog = [pack];
     installSteamShell();
     const modal = await openStoreOnTab("packs");
     expect(modal.querySelector("custom-currency-card")).toBeNull();
@@ -1595,6 +1597,7 @@ describe("StoreModal on the Steam rail", () => {
   // its "something arrived" nudge is contentless, so one that fires before any
   // window exists is heard by nobody. subscribe() alone never surfaces it.
   it("drains parked Steam authorizations every time it opens", async () => {
+    resolvedCatalog = [pack];
     const microTxn = installSteamShell();
     await openStoreOnTab("packs");
     await vi.waitFor(() => expect(microTxn.consumePending).toHaveBeenCalled());
@@ -1613,6 +1616,7 @@ describe("StoreModal on the Steam rail", () => {
   });
 
   it("tells the player about an approval it can no longer finalize", async () => {
+    resolvedCatalog = [pack];
     const microTxn = installSteamShell();
     microTxn.consumePending.mockResolvedValueOnce([
       { appId: 480, orderId: "77770000", authorized: true },
