@@ -592,7 +592,7 @@ export class BuildMenu extends LitElement implements Controller {
                 class="build-button"
                 style="width:auto;height:auto;min-height:42px"
                 @click=${() => this.armAircraftCommand("aim")}
-              >Follow Cursor</button>
+              >Guide & Click to Drop</button>
               <button
                 class="build-button"
                 style="width:auto;height:auto;min-height:42px"
@@ -640,13 +640,15 @@ export class BuildMenu extends LitElement implements Controller {
     if (tile === null) return;
     const action = this.aircraftCommandMode;
     if (action === null) return;
-    this.eventBus.emit(new AircraftCommandIntentEvent(action, tile));
+    this.eventBus.emit(
+      new AircraftCommandIntentEvent(action === "aim" ? "drop" : action, tile),
+    );
     if (action === "launch") {
       this.aircraftCommandMode = "aim";
       this.aircraftCommandHint = "Jet launched. Move your cursor to guide it; choose Drop Atomic Bomb or Return from the Aircraft Menu.";
       this.lastAircraftAimTile = tile;
       this.lastAircraftAimAt = Date.now();
-    } else if (action === "drop") {
+    } else if (action === "drop" || action === "aim") {
       this.aircraftCommandMode = null;
       this.aircraftCommandHint = "Bomb drop command sent; jet is returning.";
     } else {
