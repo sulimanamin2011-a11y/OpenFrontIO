@@ -149,6 +149,15 @@ export class EngineConfig extends Config {
     return 5 - falloutRatio * 2;
   }
 
+  /** Castle ranks extend coastal defense range and shorten shell reloads. */
+  castleDefenseRange(level: number = 1): number {
+    return 35 + Math.min(2, Math.max(0, level - 1)) * 10;
+  }
+
+  castleShellAttackRate(level: number = 1): number {
+    return Math.max(40, 80 - Math.min(2, Math.max(0, level - 1)) * 20);
+  }
+
   defensePostRange(level: number = 1): number {
     return super.defensePostRange() + Math.min(2, Math.max(0, level - 1)) * 15;
   }
