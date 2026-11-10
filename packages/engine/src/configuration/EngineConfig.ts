@@ -435,6 +435,8 @@ export class EngineConfig extends Config {
           return nextLevel <= 1 ? 500_000n : 1_500_000n;
         };
       case UnitType.Jet:
+      case UnitType.F20:
+      case UnitType.F22:
       case UnitType.TransportShip:
       case UnitType.Shell:
       case UnitType.SAMMissile:
