@@ -209,6 +209,7 @@ describe("BuildMenu live structure management", () => {
     let airborne = false;
     const base = {
       type: () => UnitType.AircraftBase,
+      level: () => 1,
       isActive: () => true,
       isUnderConstruction: () => false,
     };
@@ -234,6 +235,8 @@ describe("BuildMenu live structure management", () => {
     expect(button("Launch Jet").disabled).toBe(false);
     expect(button("Guide & Click to Drop").disabled).toBe(true);
     expect(button("Return Jet").disabled).toBe(true);
+    expect(menu.textContent).toContain("Bronze Aircraft Base");
+    expect(menu.textContent).toContain("Silver upgrade: 500K gold");
 
     airborne = true;
     await menu.updateComplete;
