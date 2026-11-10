@@ -8,6 +8,7 @@ import { AircraftCommandExecution } from "@openfront/engine/execution/AircraftCo
 import { NukeExecution } from "@openfront/engine/execution/NukeExecution";
 import { SAMLauncherExecution } from "@openfront/engine/execution/SAMLauncherExecution";
 import { Game, Player } from "@openfront/engine/game/Game";
+import { vi } from "vitest";
 import { setup } from "./util/Setup";
 import { executeTicks } from "./util/utils";
 
