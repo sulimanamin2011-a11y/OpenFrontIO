@@ -187,6 +187,7 @@ export class BuildMenu extends LitElement implements Controller {
     this.eventBus.on(MouseDownEvent, (event) => {
       if (this.aircraftCommandMode !== null) {
         this.handleAircraftMapClick(event.x, event.y);
+        event.handled = true;
         return;
       }
       this.hideMenu();
