@@ -30,7 +30,7 @@ describe("Aircraft", () => {
     executeTicks(game, 50);
   });
 
-  test("launches a visible jet, accepts a bomb drop, and returns to its base", () => {
+  test("launches a jet, accepts a bomb drop, and returns to its base", () => {
     const baseTile = game.ref(4, 10);
     const targetTile = game.ref(8, 10);
     player.conquer(baseTile);
