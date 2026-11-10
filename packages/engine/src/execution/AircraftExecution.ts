@@ -40,7 +40,12 @@ export class AircraftExecution implements Execution {
     return this.base === base;
   }
 
+  isReady(): boolean {
+    return this.mg !== undefined;
+  }
+
   command(action: AircraftCommand, target?: TileRef): boolean {
+    if (!this.isReady()) return false;
     if (!this.base.isActive() || this.base.isUnderConstruction()) {
       return false;
     }
