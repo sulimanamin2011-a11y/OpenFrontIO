@@ -1,7 +1,11 @@
-import { html, LitElement } from "lit";
+import { html, LitElement, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { showInGameAlert } from "../InGameModal";
-import { purchaseOutcomeMessage, startPurchase } from "../Payments";
+import {
+  purchaseOutcomeMessage,
+  REAL_MONEY_PURCHASES_ENABLED,
+  startPurchase,
+} from "../Payments";
 import { translateText } from "../Utils";
 import "./PlutoniumIcon";
 import "./PurchaseButton";
@@ -56,6 +60,7 @@ export class CustomCurrencyCard extends LitElement {
   };
 
   render() {
+    if (!REAL_MONEY_PURCHASES_ENABLED) return nothing;
     const price = `${this.priceDollars}`;
     // Mirrors cosmetic-card: the name leads, the artwork box is square, and
     // the width comes from the host so the card shrinks with the grid on
