@@ -69,6 +69,28 @@ describe("Aircraft", () => {
     expect(aircraft.command("launch", game.ref(6, 10))).toBe(false);
   });
 
+
+  test("upgraded bases launch F-20 and F-22 aircraft", () => {
+    const firstTile = game.ref(4, 10);
+    const secondTile = game.ref(6, 10);
+    player.conquer(firstTile);
+    opponent.conquer(secondTile);
+    const f20Base = player.buildUnit(UnitType.AircraftBase, firstTile, {});
+    const f22Base = opponent.buildUnit(UnitType.AircraftBase, secondTile, {});
+    player.upgradeUnit(f20Base);
+    opponent.upgradeUnit(f22Base);
+    opponent.upgradeUnit(f22Base);
+    const f20Controller = new AircraftExecution(f20Base);
+    const f22Controller = new AircraftExecution(f22Base);
+    game.addExecution(f20Controller, f22Controller);
+    executeTicks(game, 1);
+
+    expect(f20Controller.command("launch", game.ref(5, 10))).toBe(true);
+    expect(f22Controller.command("launch", game.ref(7, 10))).toBe(true);
+    expect(player.units(UnitType.F20)).toHaveLength(1);
+    expect(opponent.units(UnitType.F22)).toHaveLength(1);
+  });
+
   test("Gold SAM launchers destroy enemy jets within range", () => {
     const samTile = game.ref(4, 10);
     const jetTile = game.ref(7, 10);
