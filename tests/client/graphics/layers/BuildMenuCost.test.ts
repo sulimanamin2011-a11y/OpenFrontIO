@@ -183,3 +183,50 @@ describe("BuildMenu dedicated structure sections", () => {
     expect(emitted[0]).toBeInstanceOf(CloseViewEvent);
   });
 });
+
+
+describe("BuildMenu accessible category tabs", () => {
+  it("supports arrow-key navigation between main, castle, and aircraft tabs", async () => {
+    const menu = makeMenu();
+    menu.game = {
+      config: () => ({ isUnitDisabled: () => false }),
+    } as any;
+    document.body.appendChild(menu);
+    await menu.updateComplete;
+
+    const mainTab = menu.renderRoot.querySelector<HTMLButtonElement>(
+      "#build-tab-main",
+    )!;
+    mainTab.focus();
+    mainTab.dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: "ArrowRight",
+        bubbles: true,
+      }),
+    );
+    await menu.updateComplete;
+
+    const castleTab = menu.renderRoot.querySelector<HTMLButtonElement>(
+      "#build-tab-castle",
+    )!;
+    expect(castleTab.getAttribute("aria-selected")).toBe("true");
+    expect(castleTab.tabIndex).toBe(0);
+    expect(menu.renderRoot.querySelector('[role="tabpanel"]')?.getAttribute("aria-labelledby"))
+      .toBe("build-tab-castle");
+    expect(document.activeElement).toBe(castleTab);
+
+    castleTab.dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: "ArrowRight",
+        bubbles: true,
+      }),
+    );
+    await menu.updateComplete;
+    expect(
+      menu.renderRoot
+        .querySelector<HTMLButtonElement>("#build-tab-aircraft")
+        ?.getAttribute("aria-selected"),
+    ).toBe("true");
+    menu.remove();
+  });
+});
