@@ -370,7 +370,11 @@ export class Transport {
     });
 
     this.subscribe(AircraftCommandIntentEvent, (e) => {
-      this.sendIntent({ type: "aircraft_command", action: e.action, target: e.target });
+      this.sendIntent({
+        type: "aircraft_command",
+        action: e.action,
+        target: e.target,
+      });
     });
 
     this.subscribe(SendDeleteUnitIntentEvent, (e) =>
