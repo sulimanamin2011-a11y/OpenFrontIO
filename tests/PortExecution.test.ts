@@ -54,6 +54,17 @@ describe("PortExecution", () => {
     expect(player.gold() - before).toBe(300_000n);
   });
 
+  test("does not generate passive gold while under construction", () => {
+    player.conquer(game.ref(7, 10));
+    const port = player.buildUnit(UnitType.Port, game.ref(7, 10), {});
+    port.setUnderConstruction(true);
+    const execution = new PortExecution(port);
+    execution.init(game, 0);
+    const before = player.gold();
+
+    execution.tick(150);
+    expect(player.gold()).toBe(before);
+  });
   test("Destination ports chances scale with level", () => {
     game.config().proximityBonusPortsNb = () => 0;
     game.config().tradeShipShortRangeDebuff = () => 0;
