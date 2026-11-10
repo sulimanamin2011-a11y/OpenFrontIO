@@ -47,7 +47,7 @@ describe("Warship", () => {
     expect(warship.level()).toBe(3);
     expect(player1.canUpgradeUnit(warship)).toBe(false);
 
-    const defenseTile = game.ref(coastX - 1, 10);
+    const defenseTile = game.ref(0, 0);
     player1.conquer(defenseTile);
     const defense = player1.buildUnit(UnitType.DefensePost, defenseTile, {});
     player1.upgradeUnit(defense);
