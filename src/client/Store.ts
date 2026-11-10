@@ -558,9 +558,8 @@ export class StoreModal extends BaseModal {
       rarity?: string;
     } | null;
     const isPurchasable = resolved.relationship === "purchasable";
-    // Only packs and subscriptions still check out in USD; cosmetics are
-    // currency-only (their catalog product is always null now, but a cached
-    // cosmetics.json may still carry one — never render a dollar button).
+    // Preserve catalog metadata for the store cards, but DOMINION never
+    // attaches a cash checkout callback; PurchaseButton also fails closed.
     const product =
       isPurchasable &&
       (resolved.type === "pack" || resolved.type === "subscription")
