@@ -39,7 +39,11 @@ export class PortExecution implements Execution {
   }
 
   tick(ticks: number): void {
-    if (this.mg === null || this.random === null || this.checkOffset === null) {
+    if (
+      this.mg === undefined ||
+      this.random === undefined ||
+      this.checkOffset === undefined
+    ) {
       throw new Error("Not initialized");
     }
 
