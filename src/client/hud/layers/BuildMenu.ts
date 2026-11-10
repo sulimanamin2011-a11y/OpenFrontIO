@@ -629,8 +629,8 @@ export class BuildMenu extends LitElement implements Controller {
       this.aircraftCommandMode = null;
       this.aircraftCommandHint = "Bomb drop command sent; jet is returning.";
     } else {
-      this.aircraftCommandMode = null;
-      this.aircraftCommandHint = "Aircraft target updated.";
+      this.aircraftCommandMode = "aim";
+      this.aircraftCommandHint = "Aircraft target updated. Cursor guidance remains active.";
     }
     this.hideMenu();
   }
