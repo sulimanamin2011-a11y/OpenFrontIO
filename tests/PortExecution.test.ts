@@ -25,8 +25,6 @@ describe("PortExecution", () => {
     game.config().structureMinDist = () => 10;
   });
 
-
-
   test("Silver ports generate 100,000 gold every 15 seconds", () => {
     player.conquer(game.ref(7, 10));
     const port = player.buildUnit(UnitType.Port, game.ref(7, 10), {});
@@ -65,6 +63,7 @@ describe("PortExecution", () => {
     execution.tick(150);
     expect(player.gold()).toBe(before);
   });
+
   test("Destination ports chances scale with level", () => {
     game.config().proximityBonusPortsNb = () => 0;
     game.config().tradeShipShortRangeDebuff = () => 0;
