@@ -82,7 +82,11 @@ export class Executor {
       case "move_warship":
         return new MoveWarshipExecution(player, intent.unitIds, intent.tile);
       case "aircraft_command":
-        return new AircraftCommandExecution(player, intent.action, intent.target);
+        return new AircraftCommandExecution(
+          player,
+          intent.action,
+          intent.target,
+        );
       case "spawn":
         // fromIntent: this one came off the wire, so it is subject to the
         // spawn-phase gate that internal spawns are not.
