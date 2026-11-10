@@ -103,10 +103,13 @@ describe("Aircraft", () => {
     game.addExecution(f20Controller, f22Controller);
     executeTicks(game, 1);
 
-    expect(f20Controller.command("launch", game.ref(5, 10))).toBe(true);
-    expect(f22Controller.command("launch", game.ref(7, 10))).toBe(true);
+    expect(f20Controller.command("launch", game.ref(20, 10))).toBe(true);
+    expect(f22Controller.command("launch", game.ref(25, 10))).toBe(true);
     expect(player.units(UnitType.F20)).toHaveLength(1);
     expect(opponent.units(UnitType.F22)).toHaveLength(1);
+    executeTicks(game, 1);
+    expect(game.manhattanDist(firstTile, player.units(UnitType.F20)[0].tile())).toBe(2);
+    expect(game.manhattanDist(secondTile, opponent.units(UnitType.F22)[0].tile())).toBe(3);
   });
 
   test("Gold SAM launchers destroy enemy jets within range", () => {
