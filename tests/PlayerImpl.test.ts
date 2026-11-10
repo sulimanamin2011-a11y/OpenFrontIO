@@ -56,15 +56,17 @@ describe("PlayerImpl", () => {
     expect(buildableBase!.canBuild).not.toBe(false);
   });
 
-  test("a player cannot build a second Aircraft Base", () => {
+  test("a player cannot build a second Aircraft Base but can still upgrade the first", () => {
     player.addGold(BigInt(5_000_000));
-    player.buildUnit(UnitType.AircraftBase, game.ref(0, 0), {});
+    const base = player.buildUnit(UnitType.AircraftBase, game.ref(0, 0), {});
 
     expect(player.canBuild(UnitType.AircraftBase, game.ref(0, 0))).toBe(false);
-    expect(
-      player.buildableUnits(game.ref(0, 0), [UnitType.AircraftBase])[0]
-        .canBuild,
-    ).toBe(false);
+    const buildableBase = player.buildableUnits(
+      game.ref(0, 0),
+      [UnitType.AircraftBase],
+    )[0];
+    expect(buildableBase.canBuild).toBe(false);
+    expect(buildableBase.canUpgrade).toBe(base.id());
   });
 
   test("opt-in new placement rail preview is available beside an upgradeable factory", () => {
