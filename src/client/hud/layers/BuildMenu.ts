@@ -594,8 +594,14 @@ export class BuildMenu extends LitElement implements Controller {
             ${
               this.selectedCastleCanUpgrade()
                 ? html`<p class="build-description">
-                    Selected Castle upgrade: ${renderNumber(this.selectedCastleUpgradeCost())}
-                    <img src=${goldCoinIcon} alt="gold" width="12" height="12" />
+                    Selected Castle upgrade:
+                    ${renderNumber(this.selectedCastleUpgradeCost())}
+                    <img
+                      src=${goldCoinIcon}
+                      alt="gold"
+                      width="12"
+                      height="12"
+                    />
                   </p>`
                 : html`<p class="build-description">
                     Select an owned Castle on the map to see its next upgrade
@@ -666,7 +672,8 @@ export class BuildMenu extends LitElement implements Controller {
   private selectedCastleCanUpgrade(): boolean {
     return (
       this.playerBuildables?.some(
-        (unit) => unit.type === UnitType.Castle && unit.canUpgrade !== false,
+        (unit) =>
+          unit.type === UnitType.Castle && unit.canUpgrade !== false,
       ) ?? false
     );
   }
@@ -679,13 +686,18 @@ export class BuildMenu extends LitElement implements Controller {
   }
 
   private hasActiveAircraftJet(): boolean {
-    const aircraftTypes = [UnitType.Jet, UnitType.F20, UnitType.F22];
+    const aircraftTypes = [
+      UnitType.Jet,
+      UnitType.F20,
+      UnitType.F22,
+    ];
     return (
       this.game
         ?.myPlayer?.()
         ?.units()
         .some(
-          (unit) => aircraftTypes.includes(unit.type()) && unit.isActive(),
+          (unit) =>
+            aircraftTypes.includes(unit.type()) && unit.isActive(),
         ) ?? false
     );
   }
