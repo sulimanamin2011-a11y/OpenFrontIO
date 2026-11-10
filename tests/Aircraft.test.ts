@@ -26,6 +26,7 @@ describe("Aircraft", () => {
     );
     player = game.player("pilot_id");
     opponent = game.player("opponent_id");
+    executeTicks(game, 50);
   });
 
   test("launches a visible jet, accepts a bomb drop, and returns to its base", () => {
