@@ -1,4 +1,5 @@
 import { TileRef } from "@openfront/engine-api/game/GameMap";
+import { UnitType } from "@openfront/engine-api/game/GameTypes";
 import { zInt, zPlayerRef, zTile } from "@openfront/engine-lib/snapshot/SnapshotType";
 import { z } from "zod";
 import { Execution, Game, Player } from "../game/Game";
@@ -10,7 +11,7 @@ export class AircraftCommandExecution implements Execution {
   constructor(private player: Player, private action: AircraftCommand, private target?: TileRef) {}
 
   init(mg: Game, _ticks: number): void {
-    const base = this.player.units().find((u) => u.type() === "AircraftBase" && u.isActive());
+    const base = this.player.units().find((u) => u.type() === UnitType.AircraftBase && u.isActive());
     if (!base) return;
     const controller = mg.executions().find(
       (execution): execution is AircraftExecution =>
