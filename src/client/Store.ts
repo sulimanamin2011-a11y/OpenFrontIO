@@ -827,20 +827,6 @@ export class StoreModal extends BaseModal {
     return html``;
   }
 
-  private renderLegacyPackGrid(): TemplateResult {
-    return this.renderBrowser(this.visibleGroups, {
-      emptyTranslationKey: "store.no_packs",
-      trailingContent: html`<custom-currency-card
-        class="block w-[calc(50%-0.5rem)] max-w-48 shrink-0 sm:w-48"
-      ></custom-currency-card>`,
-      gridClass:
-        "flex flex-wrap items-stretch justify-center content-start gap-4 p-4 sm:p-8",
-      cardClass: "block w-[calc(50%-0.5rem)] max-w-48 shrink-0 sm:w-48",
-      emptyClass:
-        "w-full py-8 text-center text-sm font-bold uppercase tracking-wider text-white/40",
-    });
-  }
-
   private renderBundleGrid(): TemplateResult {
     return html`${this.renderBrowser(this.visibleGroups, {
       emptyTranslationKey: "store.no_bundles",
@@ -856,33 +842,6 @@ export class StoreModal extends BaseModal {
           ></pack-contents-dialog>`
         : ""
     }`;
-  }
-
-  private renderSubscriptionGrid(): TemplateResult {
-    // Drives the "Switch" label on the other tiers' buy buttons. A granted
-    // player is deliberately NOT counted (OPE-440): they have nothing to
-    // switch from — nobody is billing them — so every tier, theirs included,
-    // is a first purchase and reads as a plain price.
-    const sub =
-      this.userMeResponse === false
-        ? null
-        : this.userMeResponse.player.subscription;
-    const userHasSubscription = sub !== null && !isGrantedSubscription(sub);
-    // The Steam store lists one tier; a lone card in the narrow tile column
-    // reads as a cramped list, so it gets a wider card and a larger preview.
-    const lone = this.visibleGroups.length === 1;
-    return this.renderBrowser(this.visibleGroups, {
-      emptyTranslationKey: "store.no_subscriptions",
-      userHasSubscription,
-      gridClass:
-        "flex flex-wrap items-stretch justify-center content-start gap-4 p-4 sm:p-8",
-      cardClass: lone
-        ? "block w-full max-w-xs shrink-0"
-        : "block w-[calc(50%-0.5rem)] max-w-48 shrink-0 sm:w-48",
-      previewSize: lone ? "detail" : "card",
-      emptyClass:
-        "w-full py-8 text-center text-sm font-bold uppercase tracking-wider text-white/40",
-    });
   }
 
   /** One line per running sale, under the header. */
