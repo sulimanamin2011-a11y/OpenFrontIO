@@ -39,8 +39,9 @@ describe("TrainStation", () => {
       config: vi.fn().mockReturnValue({
         trainGold: (rel: string, _tradeStopsVisited: number) =>
           rel !== "other" ? BigInt(1000) : BigInt(500),
-        factoryTrainGold: (level: number) =>
+        factoryTrainGold: vi.fn((level: number) =>
           level >= 2 ? 150_000n : 25_000n,
+        ),
       }),
       addUpdate: vi.fn(),
       addExecution: vi.fn(),
