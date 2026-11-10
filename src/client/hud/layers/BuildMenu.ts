@@ -462,11 +462,14 @@ export class BuildMenu extends LitElement implements Controller {
                 this.filteredBuildTable = this.getBuildableUnits();
               }}
               @keydown=${(event: KeyboardEvent) => {
-                if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+                if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") {
+                  return;
+                }
                 event.preventDefault();
                 const sections = ["main", "castle", "aircraft"] as const;
                 const current = sections.indexOf(this.activeSection);
-                const next = (current + (event.key === "ArrowRight" ? 1 : 2)) % 3;
+                const next =
+                  (current + (event.key === "ArrowRight" ? 1 : 2)) % 3;
                 this.activeSection = sections[next];
                 this.filteredBuildTable = this.getBuildableUnits();
                 this.renderRoot.querySelector<HTMLButtonElement>(
@@ -474,11 +477,21 @@ export class BuildMenu extends LitElement implements Controller {
                 )?.focus();
               }}
             >
-              ${section === "main" ? "Structures & Weapons" : section === "castle" ? "Castle Menu" : "Aircraft Menu"}
+              ${
+                section === "main"
+                  ? "Structures & Weapons"
+                  : section === "castle"
+                    ? "Castle Menu"
+                    : "Aircraft Menu"
+              }
             </button>
           `)}
         </div>
-        <div id="build-menu-panel" role="tabpanel" aria-labelledby="build-tab-${this.activeSection}">
+        <div
+          id="build-menu-panel"
+          role="tabpanel"
+          aria-labelledby="build-tab-${this.activeSection}"
+        >
         ${this.filteredBuildTable.map(
           (row) => html`
             <div class="build-row">
