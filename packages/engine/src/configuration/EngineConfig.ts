@@ -282,6 +282,12 @@ export class EngineConfig extends Config {
     return toInt(gold * this.goldMultiplierFor(player));
   }
 
+  /** Passive gold paid by a port at each Silver or Gold income interval. */
+  portPassiveGold(level: number, player: PlayerLike): Gold {
+    const baseGold = level >= 2 ? 300_000 : 100_000;
+    return toInt(baseGold * this.goldMultiplierFor(player));
+  }
+
   /** Gold paid to a factory owner whenever a train stops there. */
   factoryTrainGold(level: number, player: PlayerLike): Gold {
     const baseGold = level >= 2 ? 150_000 : 25_000;
