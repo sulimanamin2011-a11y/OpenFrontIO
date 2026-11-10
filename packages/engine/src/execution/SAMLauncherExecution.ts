@@ -384,6 +384,28 @@ export class SAMLauncherExecution implements Execution {
 
     this.pseudoRandom ??= new PseudoRandom(this.sam.id());
 
+    // DOMINION: Gold SAM launchers can intercept enemy aircraft. This is
+    // intentionally gated at level 2 (Silver is level 1) and shares the
+    // launcher's normal missile cooldown with nuclear interceptions.
+    if (this.sam.level() >= 2) {
+      const aircraft = this.mg.nearbyUnits(
+        this.sam.tile(),
+        this.mg.config().dynamicSamRange(this.sam, ticks),
+        UnitType.Jet,
+      );
+      const hostileJet = aircraft.find(
+        ({ unit }) =>
+          unit.isActive() &&
+          unit.owner() !== this.sam!.owner() &&
+          !this.sam!.owner().isFriendly(unit.owner()),
+      );
+      if (hostileJet) {
+        this.sam.launch();
+        hostileJet.unit.delete(true, this.sam.owner());
+        return;
+      }
+    }
+
     // No nuke in flight anywhere: nothing to target, skip the grid query. Every SAM ran it every
     // tick (~7 % of a long headless game with 150 launchers). Exact: with no nukes the query is
     // empty and the targeting loop a no-op; the only side effect skipped is pruning cache entries
