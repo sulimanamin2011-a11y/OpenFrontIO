@@ -148,6 +148,37 @@ describe("Aircraft", () => {
     ).toBe(3);
   });
 
+  test("Silver SAM launchers cannot intercept aircraft", () => {
+    const samTile = game.ref(4, 10);
+    const jetTile = game.ref(7, 10);
+    player.conquer(samTile);
+    opponent.conquer(jetTile);
+    const sam = player.buildUnit(UnitType.SAMLauncher, samTile, {});
+    const jet = opponent.buildUnit(UnitType.Jet, jetTile, {});
+    game.addExecution(new SAMLauncherExecution(player, null, sam));
+
+    executeTicks(game, 2);
+
+    expect(sam.level()).toBe(1);
+    expect(jet.isActive()).toBe(true);
+  });
+
+  test("Gold SAM launchers ignore allied aircraft", () => {
+    const samTile = game.ref(4, 10);
+    const jetTile = game.ref(7, 10);
+    player.conquer(samTile);
+    opponent.conquer(jetTile);
+    const sam = player.buildUnit(UnitType.SAMLauncher, samTile, {});
+    player.upgradeUnit(sam);
+    const jet = opponent.buildUnit(UnitType.Jet, jetTile, {});
+    vi.spyOn(player, "isFriendly").mockReturnValue(true);
+    game.addExecution(new SAMLauncherExecution(player, null, sam));
+
+    executeTicks(game, 2);
+
+    expect(jet.isActive()).toBe(true);
+    expect(sam.missileTimerQueue()).toHaveLength(0);
+  });
   test("Gold SAM launchers destroy enemy jets within range", () => {
     const samTile = game.ref(4, 10);
     const jetTile = game.ref(7, 10);
