@@ -69,6 +69,21 @@ describe("PlayerImpl", () => {
     expect(buildableBase.canUpgrade).toBe(base.id());
   });
 
+  test("an Aircraft Base under construction already reserves the player's one-base limit", () => {
+    player.addGold(BigInt(5_000_000));
+    const base = player.buildUnit(UnitType.AircraftBase, game.ref(0, 0), {});
+    base.setUnderConstruction(true);
+
+    expect(player.unitsOwned(UnitType.AircraftBase)).toBe(1);
+    expect(player.canBuild(UnitType.AircraftBase, game.ref(0, 0))).toBe(false);
+    const buildableBase = player.buildableUnits(
+      game.ref(0, 0),
+      [UnitType.AircraftBase],
+    )[0];
+    expect(buildableBase.canBuild).toBe(false);
+    expect(buildableBase.canUpgrade).toBe(false);
+  });
+
   test("opt-in new placement rail preview is available beside an upgradeable factory", () => {
     for (let x = 0; x < 100; x++) {
       for (let y = 0; y < 100; y++) player.conquer(game.ref(x, y));
