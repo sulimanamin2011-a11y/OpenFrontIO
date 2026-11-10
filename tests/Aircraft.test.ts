@@ -72,6 +72,22 @@ describe("Aircraft", () => {
   });
 
 
+
+
+  test("automatically returns after the ten-second cursor-guidance window", () => {
+    const baseTile = game.ref(4, 10);
+    player.conquer(baseTile);
+    const base = player.buildUnit(UnitType.AircraftBase, baseTile, {});
+    const aircraft = new AircraftExecution(base);
+    game.addExecution(aircraft);
+    executeTicks(game, 1);
+
+    expect(aircraft.command("launch", game.ref(20, 10))).toBe(true);
+    executeTicks(game, 125);
+
+    expect(player.units(UnitType.Jet)).toHaveLength(0);
+  });
+
   test("upgraded bases launch F-20 and F-22 aircraft", () => {
     const firstTile = game.ref(4, 10);
     const secondTile = game.ref(6, 10);
