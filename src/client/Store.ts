@@ -45,7 +45,6 @@ import {
 import { matchesStoreItem } from "./EquippedCosmetics";
 import {
   priceStringToCents,
-  REAL_MONEY_PURCHASES_ENABLED,
   reportPendingSteamAuthorizations,
 } from "./Payments";
 import { lastUserMeResponse } from "./UserMeBroadcast";
@@ -197,6 +196,7 @@ export class StoreModal extends BaseModal {
       showScrollToTop: true,
       tabs: [
         { key: "packs", label: translateText("store.packs") },
+        { key: "subscriptions", label: translateText("store.subscriptions") },
         { key: "bundles", label: translateText("store.bundles") },
         { key: "cosmetics", label: translateText("store.cosmetics") },
         { key: "effects", label: translateText("store.effects") },
@@ -849,7 +849,6 @@ export class StoreModal extends BaseModal {
   }
 
   private renderSubscriptionGrid(): TemplateResult {
-    if (!REAL_MONEY_PURCHASES_ENABLED) return html``;
     // Drives the "Switch" label on the other tiers' buy buttons. A granted
     // player is deliberately NOT counted (OPE-440): they have nothing to
     // switch from — nobody is billing them — so every tier, theirs included,
