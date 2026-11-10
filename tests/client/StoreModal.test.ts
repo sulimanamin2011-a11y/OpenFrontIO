@@ -327,7 +327,7 @@ async function openStoreOnTab(tab: "packs" | "subscriptions" | "bundles") {
 }
 
 describe("StoreModal cash-free configuration", () => {
-  it("marks cash-only store sections unavailable and exposes no paid checkout tabs", () => {
+  it("marks cash-only store sections as unavailable", () => {
     const modal = document.createElement("store-modal") as StoreModal;
     const tabs = (modal as any).modalConfig().tabs as { key: string }[];
 
@@ -1215,7 +1215,7 @@ describe("StoreModal cosmetic browser", () => {
     expect(dialog()).toBeTruthy();
   });
 
-  it("uses the browser shell and exact resolved pack purchase", async () => {
+  it("uses the browser shell for cash-only pack listings without checkout", async () => {
     resolvedCatalog = [pack];
     const modal = await openStoreOnTab("packs");
 
@@ -1244,7 +1244,7 @@ describe("StoreModal cosmetic browser", () => {
     expect(purchaseCosmetic).not.toHaveBeenCalled();
   });
 
-  it("keeps each currency on its own line across mixed-payment cards", async () => {
+  it("keeps earned-currency lines aligned without cash checkout", async () => {
     const hardPack: ResolvedCosmetic = {
       ...pack,
       cosmetic: {
@@ -1278,7 +1278,7 @@ describe("StoreModal cosmetic browser", () => {
     expect(lines(hardPack.key)).toEqual(["hard"]);
   });
 
-  it("sells a tier with no Stripe product at its own price", async () => {
+  it("does not offer a paid tier without a Stripe product", async () => {
     const steamPlus: ResolvedCosmetic = {
       ...platinumSubscription,
       cosmetic: {
@@ -1329,7 +1329,7 @@ describe("StoreModal cosmetic browser", () => {
     }
   });
 
-  it("shows subscription status and a switch action for another tier", async () => {
+  it("shows subscription status without a paid switch action", async () => {
     resolvedCatalog = [goldSubscription, platinumSubscription];
     const modal = await openStoreOnTab("subscriptions");
     await modal.onUserMe({
@@ -1367,13 +1367,8 @@ describe("StoreModal cosmetic browser", () => {
     expect(purchaseCosmetic).not.toHaveBeenCalled();
   });
 
-  // OPE-440. A grant (`provider: null`) is free access nobody is billing, so
-  // the player is not switching anything — every tier, the one their grant
-  // confers included, is a first purchase. resolveCosmetics is what stops
-  // calling the granted tier "owned" (covered in
-  // GrantedSubscriptionPurchase.test.ts); what this asserts is the store's
-  // half: a purchasable tier renders its buy button and no dead status box,
-  // and the "Switch" label is not applied to a granted player.
+  // A granted subscription still has no paid checkout path in DOMINION;
+  // this keeps the account status visible without offering a cash purchase.
   it("does not offer paid subscription checkout to a granted subscriber", async () => {
     resolvedCatalog = [
       { ...goldSubscription, relationship: "purchasable" },
