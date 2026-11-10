@@ -645,15 +645,13 @@ export class BuildMenu extends LitElement implements Controller {
     );
     if (action === "launch") {
       this.aircraftCommandMode = "aim";
-      this.aircraftCommandHint = "Jet launched. Move your cursor to guide it; click the map to drop the bomb, or reopen the Aircraft Menu to return.";
+      this.aircraftCommandHint =
+        "Jet launched. Move your cursor to guide it; click the map to drop the bomb, or reopen the Aircraft Menu to return.";
       this.lastAircraftAimTile = tile;
       this.lastAircraftAimAt = Date.now();
     } else if (action === "drop" || action === "aim") {
       this.aircraftCommandMode = null;
       this.aircraftCommandHint = "Bomb drop command sent; jet is returning.";
-    } else {
-      this.aircraftCommandMode = "aim";
-      this.aircraftCommandHint = "Aircraft target updated. Cursor guidance remains active.";
     }
     this.hideMenu();
   }
