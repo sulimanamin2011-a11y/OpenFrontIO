@@ -52,6 +52,22 @@ describe("PortExecution", () => {
     expect(player.gold() - before).toBe(300_000n);
   });
 
+  test("restarts the passive income timer when a port is upgraded", () => {
+    player.conquer(game.ref(7, 10));
+    const port = player.buildUnit(UnitType.Port, game.ref(7, 10), {});
+    const execution = new PortExecution(port);
+    execution.init(game, 0);
+    const before = player.gold();
+
+    execution.tick(149);
+    expect(player.gold()).toBe(before);
+    port.increaseLevel();
+    execution.tick(150);
+    execution.tick(249);
+    expect(player.gold()).toBe(before);
+    execution.tick(250);
+    expect(player.gold() - before).toBe(300_000n);
+  });
   test("does not generate passive gold while under construction", () => {
     player.conquer(game.ref(7, 10));
     const port = player.buildUnit(UnitType.Port, game.ref(7, 10), {});
