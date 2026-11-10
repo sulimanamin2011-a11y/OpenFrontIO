@@ -1,4 +1,4 @@
-import type { UserMeResponse } from "@openfront/shared/ApiSchemas";
+import { isGrantedSubscription, type UserMeResponse } from "@openfront/shared/ApiSchemas";
 import {
   CosmeticPack,
   Cosmetics,
@@ -39,6 +39,7 @@ import {
   ResolvedCosmetic,
 } from "./Cosmetics";
 import { matchesStoreItem } from "./EquippedCosmetics";
+import { REAL_MONEY_PURCHASES_ENABLED } from "./PurchasePolicy";
 import {
   priceStringToCents,
   reportPendingSteamAuthorizations,
@@ -191,6 +192,8 @@ export class StoreModal extends BaseModal {
     return {
       showScrollToTop: true,
       tabs: [
+        { key: "packs", label: translateText("store.packs") },
+        { key: "subscriptions", label: translateText("store.subscriptions") },
         { key: "bundles", label: translateText("store.bundles") },
         { key: "cosmetics", label: translateText("store.cosmetics") },
         { key: "effects", label: translateText("store.effects") },
@@ -295,13 +298,7 @@ export class StoreModal extends BaseModal {
       this.cosmetics,
       this.userMeResponse,
       this.affiliateCode,
-    ).filter((resolved) => {
-      if (resolved.relationship !== "purchasable") return false;
-      const item = resolved.cosmetic as
-        | { priceHard?: number; priceSoft?: number }
-        | null;
-      return item?.priceHard !== undefined || item?.priceSoft !== undefined;
-    });
+    ).filter((resolved) => resolved.relationship === "purchasable");
   }
 
   private cosmeticsGroups(
@@ -634,7 +631,7 @@ export class StoreModal extends BaseModal {
           : ""
       }
       .onPurchaseDollar=${
-        product || subscriptionDollarPrice
+        REAL_MONEY_PURCHASES_ENABLED && (product || subscriptionDollarPrice)
           ? () => purchase("dollar")
           : undefined
       }
