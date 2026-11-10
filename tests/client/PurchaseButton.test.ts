@@ -19,49 +19,18 @@ describe("PurchaseButton", () => {
     vi.restoreAllMocks();
   });
 
-  it("shows busy state and suppresses duplicate standalone dollar purchases", async () => {
-    let resolvePurchase:
-      | ((value: undefined | PromiseLike<undefined>) => void)
-      | undefined;
-    const purchase = vi.fn(
-      () =>
-        new Promise<undefined>((resolve) => {
-          resolvePurchase = resolve;
-        }),
-    );
+  it("does not render or invoke real-money checkout in DOMINION", async () => {
+    const purchase = vi.fn(async () => undefined);
     button = document.createElement("purchase-button") as PurchaseButton;
     button.dollarPrice = "$5";
     button.onPurchaseDollar = purchase;
     document.body.appendChild(button);
     await button.updateComplete;
 
-    const dollarButton = button.querySelector<HTMLButtonElement>(
-      ".purchase-sparkle-btn",
-    )!;
-    dollarButton.click();
-    dollarButton.click();
-    await button.updateComplete;
-
-    expect(
-      button.querySelector(".purchase-btn-wrap")?.getAttribute("aria-busy"),
-    ).toBe("true");
-    expect(button.querySelector(".cosmetic-loading-spinner")).toBeTruthy();
-    expect(dollarButton.disabled).toBe(true);
-    expect(purchase).toHaveBeenCalledTimes(1);
-
-    resolvePurchase!(undefined);
-    await vi.waitFor(() =>
-      expect(
-        button!.querySelector(".purchase-btn-wrap")?.getAttribute("aria-busy"),
-      ).toBeNull(),
-    );
-    expect(button.querySelector(".cosmetic-loading-spinner")).toBeNull();
-    expect(
-      button.querySelector<HTMLButtonElement>(".purchase-sparkle-btn")!
-        .disabled,
-    ).toBe(false);
+    expect(button.offersDollar).toBe(false);
+    expect(button.querySelector(".purchase-sparkle-btn")).toBeNull();
+    expect(purchase).not.toHaveBeenCalled();
   });
-
   it("uses blue purchase controls instead of equipped-state green", async () => {
     button = document.createElement("purchase-button") as PurchaseButton;
     button.dollarPrice = "$5";
@@ -71,10 +40,8 @@ describe("PurchaseButton", () => {
     document.body.appendChild(button);
     await button.updateComplete;
 
-    for (const selector of [
-      ".purchase-sparkle-btn",
-      ".purchase-sparkle-btn-hard",
-    ]) {
+    expect(button.querySelector(".purchase-sparkle-btn")).toBeNull();
+    for (const selector of [".purchase-sparkle-btn-hard"]) {
       const purchase = button.querySelector<HTMLButtonElement>(selector)!;
       expect(purchase.className).toMatch(/blue/);
       expect(purchase.className).not.toMatch(/green|emerald/);
@@ -108,14 +75,14 @@ describe("PurchaseButton", () => {
     vi.mocked(showInGameAlert).mockClear();
     vi.spyOn(console, "error").mockImplementation(() => undefined);
     button = document.createElement("purchase-button") as PurchaseButton;
-    button.dollarPrice = "$5";
-    button.onPurchaseDollar = () => {
+    button.priceHard = 100;
+    button.onPurchaseHard = () => {
       throw new Error("sync purchase failure");
     };
     document.body.appendChild(button);
     await button.updateComplete;
 
-    button.querySelector<HTMLButtonElement>(".purchase-sparkle-btn")!.click();
+    button.querySelector<HTMLButtonElement>(".purchase-sparkle-btn-hard")!.click();
 
     await vi.waitFor(() =>
       expect(showInGameAlert).toHaveBeenCalledWith("store.purchase_failed"),
@@ -129,14 +96,14 @@ describe("PurchaseButton", () => {
     vi.mocked(showInGameAlert).mockClear();
     vi.spyOn(console, "error").mockImplementation(() => undefined);
     button = document.createElement("purchase-button") as PurchaseButton;
-    button.dollarPrice = "$5";
-    button.onPurchaseDollar = async () => {
+    button.priceHard = 100;
+    button.onPurchaseHard = async () => {
       throw new Error("rejected purchase failure");
     };
     document.body.appendChild(button);
     await button.updateComplete;
 
-    button.querySelector<HTMLButtonElement>(".purchase-sparkle-btn")!.click();
+    button.querySelector<HTMLButtonElement>(".purchase-sparkle-btn-hard")!.click();
 
     await vi.waitFor(() =>
       expect(showInGameAlert).toHaveBeenCalledWith("store.purchase_failed"),
