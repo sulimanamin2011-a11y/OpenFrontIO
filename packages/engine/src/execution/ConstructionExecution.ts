@@ -14,6 +14,7 @@ import type {
   SnapshotReader,
   SnapshotWriter,
 } from "../snapshot/SnapshotContext";
+import { AircraftExecution } from "./AircraftExecution";
 import { CastleExecution } from "./CastleExecution";
 import { CityExecution } from "./CityExecution";
 import { DefensePostExecution } from "./DefensePostExecution";
@@ -169,7 +170,7 @@ export class ConstructionExecution implements Execution {
         this.mg.addExecution(new CastleExecution(this.structure!));
         break;
       case UnitType.AircraftBase:
-        // Aircraft operations are attached in the aircraft systems pass.
+        this.mg.addExecution(new AircraftExecution(this.structure!));
         break;
       default:
         console.warn(
