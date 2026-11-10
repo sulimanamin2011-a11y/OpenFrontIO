@@ -580,7 +580,16 @@ export class BuildMenu extends LitElement implements Controller {
           `,
         )}
         </div>
-        ${this.activeSection === "aircraft" ? html`
+        ${this.activeSection === "castle" ? html`
+          <div class="castle-management" aria-label="Castle management">
+            <p class="build-description">
+              Castles automatically defend against hostile transport ships and warships.
+              Bronze: 35-tile range / 8-second reload. Silver: 45-tile range / 6-second reload.
+              Gold: 55-tile range / 4-second reload. Select an existing Castle to upgrade it.
+            </p>
+          </div>
+        ` : ""}
+        ${this.activeSection === "aircraft" && this.hasCompletedAircraftBase() ? html`
           <div class="aircraft-controls" aria-label="Aircraft controls">
             <p class="build-description">Aircraft operations — base upgrades unlock F-20 and F-22 jets</p>
             <div class="build-row">
@@ -607,9 +616,22 @@ export class BuildMenu extends LitElement implements Controller {
             </div>
             <p class="build-description">${this.aircraftCommandHint || "Launch, then guide the jet with your cursor for up to 10 seconds. Launch cooldown: 2 minutes."}</p>
           </div>
+        ` : this.activeSection === "aircraft" ? html`
+          <p class="build-description">
+            Build and complete an Aircraft Base to unlock aircraft operations.
+            The first base costs 2.5M gold; Silver upgrades cost 500K and Gold upgrades cost 1.5M.
+          </p>
         ` : ""}
       </div>
     `;
+  }
+
+  private hasCompletedAircraftBase(): boolean {
+    return (
+      this.game.myPlayer()?.units(UnitType.AircraftBase).some(
+        (base) => base.isActive() && !base.isUnderConstruction(),
+      ) ?? false
+    );
   }
 
   private armAircraftCommand(mode: "launch" | "aim" | "drop") {
