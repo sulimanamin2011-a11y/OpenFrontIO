@@ -11,7 +11,11 @@ import {
   AirPathFinderSchema,
   restoreAirPathFinder,
 } from "../snapshot/PathfinderSnapshots";
-import type { ExecRecord, SnapshotReader, SnapshotWriter } from "../snapshot/SnapshotContext";
+import type {
+  ExecRecord,
+  SnapshotReader,
+  SnapshotWriter,
+} from "../snapshot/SnapshotContext";
 import { NukeExecution } from "./NukeExecution";
 
 export type AircraftCommand = "launch" | "aim" | "return" | "drop";
@@ -32,12 +36,19 @@ export class AircraftExecution implements Execution {
 
   constructor(private base: Unit) {}
 
-  owns(base: Unit): boolean { return this.base === base; }
+  owns(base: Unit): boolean {
+    return this.base === base;
+  }
 
   command(action: AircraftCommand, target?: TileRef): boolean {
     if (!this.base.isActive() || this.base.isUnderConstruction()) return false;
     if (action === "launch") {
-      if (this.mode !== "idle" || this.mg.ticks() - this.lastLaunchTick < 1200) return false;
+      if (
+        this.mode !== "idle" ||
+        this.mg.ticks() - this.lastLaunchTick < 1200
+      ) {
+        return false;
+      }
       if (target === undefined || !this.mg.isValidRef(target)) return false;
       this.jet = this.base.owner().buildUnit(UnitType.Jet, this.base.tile(), {});
       this.lastLaunchTick = this.mg.ticks();
@@ -49,7 +60,13 @@ export class AircraftExecution implements Execution {
     }
     if (!this.jet || !this.jet.isActive()) return false;
     if (action === "aim") {
-      if (target === undefined || !this.mg.isValidRef(target) || this.mode !== "following") return false;
+      if (
+        target === undefined ||
+        !this.mg.isValidRef(target) ||
+        this.mode !== "following"
+      ) {
+        return false;
+      }
       this.target = target;
       this.pathFinder?.invalidate();
       return true;
@@ -62,7 +79,14 @@ export class AircraftExecution implements Execution {
     }
     if (action === "drop") {
       if (target === undefined || !this.mg.isValidRef(target) || this.mode === "returning") return false;
-      this.mg.addExecution(new NukeExecution(UnitType.AtomBomb, this.base.owner(), target, this.jet.tile()));
+      this.mg.addExecution(
+        new NukeExecution(
+          UnitType.AtomBomb,
+          this.base.owner(),
+          target,
+          this.jet.tile(),
+        ),
+      );
       this.target = this.base.tile();
       this.mode = "returning";
       this.pathFinder?.invalidate();
@@ -113,8 +137,13 @@ export class AircraftExecution implements Execution {
     }
   }
 
-  isActive(): boolean { return this.active; }
-  activeDuringSpawnPhase(): boolean { return false; }
+  isActive(): boolean {
+    return this.active;
+  }
+
+  activeDuringSpawnPhase(): boolean {
+    return false;
+  }
 
   snapshot(w: SnapshotWriter): ExecRecord {
     return AircraftExecutionSnapshot.write({
