@@ -61,6 +61,7 @@ describe("PlayerImpl", () => {
     )[0];
     expect(buildableFactory.canUpgrade).toBe(false);
   });
+
   test("a SAM Launcher cannot be upgraded beyond the Gold tier", () => {
     player.addGold(BigInt(10_000_000));
     player.conquer(game.ref(21, 20));
@@ -75,6 +76,7 @@ describe("PlayerImpl", () => {
     )[0];
     expect(buildableSam.canUpgrade).toBe(false);
   });
+
   test("a Castle cannot be upgraded beyond the Gold tier", () => {
     player.addGold(BigInt(3_000_000));
     const castle = player.buildUnit(UnitType.Castle, game.ref(0, 0), {});
@@ -89,6 +91,7 @@ describe("PlayerImpl", () => {
     )[0];
     expect(buildableCastle.canUpgrade).toBe(false);
   });
+
   test("Aircraft Base is available as a separate placeable structure", () => {
     player.addGold(BigInt(2_500_000));
     const buildableBase = player
@@ -125,6 +128,7 @@ describe("PlayerImpl", () => {
     )[0];
     expect(buildableBase.canUpgrade).toBe(false);
   });
+
   test("an Aircraft Base under construction already reserves the player's one-base limit", () => {
     player.addGold(BigInt(5_000_000));
     const base = player.buildUnit(UnitType.AircraftBase, game.ref(0, 0), {});
