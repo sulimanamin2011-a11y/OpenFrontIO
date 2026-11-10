@@ -31,6 +31,7 @@ describe("PurchaseButton", () => {
     expect(button.querySelector(".purchase-sparkle-btn")).toBeNull();
     expect(purchase).not.toHaveBeenCalled();
   });
+
   it("uses blue purchase controls instead of equipped-state green", async () => {
     button = document.createElement("purchase-button") as PurchaseButton;
     button.dollarPrice = "$5";
