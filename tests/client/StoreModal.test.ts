@@ -327,35 +327,27 @@ async function openStoreOnTab(tab: "packs" | "subscriptions" | "bundles") {
 }
 
 describe("StoreModal cash-free configuration", () => {
-  it("does not expose real-money currency packs or subscription tabs", () => {
+  it("marks cash-only store sections unavailable and exposes no paid checkout tabs", () => {
     const modal = document.createElement("store-modal") as StoreModal;
     const tabs = (modal as any).modalConfig().tabs as { key: string }[];
 
     expect(tabs.map((tab) => tab.key)).toEqual([
+      "packs",
+      "subscriptions",
       "bundles",
       "cosmetics",
       "effects",
       "tribes",
     ]);
-  });
-
-  it("filters dollar-only catalog items from the cosmetic browser", () => {
-    const cashOnly: ResolvedCosmetic = {
-      ...red,
-      cosmetic: {
-        name: "cash-only",
-        product: { id: "cash-only" },
-      } as never,
-      key: "pattern:cash-only",
-    };
-    resolvedCatalog = [...resolvedCatalog, cashOnly];
-    const modal = document.createElement("store-modal") as StoreModal;
-    const purchasable = (modal as any).resolvedPurchasables();
-
-    expect(purchasable).toContain(red);
-    expect(purchasable).not.toContain(cashOnly);
+    expect((modal as any).renderPackGrid().strings.join(" ")).toContain(
+      "Real-money purchases are disabled in DOMINION.",
+    );
+    expect((modal as any).renderSubscriptionGrid().strings.join(" ")).toContain(
+      "Paid subscriptions are disabled in DOMINION.",
+    );
   });
 });
+
 describe("StoreModal cosmetic browser", () => {
   Element.prototype.animate ??= () => ({ cancel: () => {} }) as Animation;
 
@@ -1229,16 +1221,11 @@ describe("StoreModal cosmetic browser", () => {
 
     expect(modal.querySelector("[data-store-browser]")).toBeTruthy();
     expect(modal.querySelector("[data-store-grid]")).toBeTruthy();
-    expect(modal.querySelector("[data-store-grid] custom-currency-card")).toBe(
-      modal.querySelector("custom-currency-card"),
-    );
+    expect(modal.querySelector("custom-currency-card")).toBeNull();
     expect(modal.querySelector("[data-store-grid]")?.className).toMatch(
       /flex-wrap/,
     );
-    for (const el of [
-      card(modal, pack.key),
-      modal.querySelector("custom-currency-card"),
-    ]) {
+    for (const el of [card(modal, pack.key)]) {
       // Half-width (minus the gap) below sm so phones fit two per row, as the
       // cosmetics and effects grids already do; a fixed w-48 from sm up.
       expect(el?.className).toContain("w-[calc(50%-0.5rem)]");
@@ -1250,9 +1237,11 @@ describe("StoreModal cosmetic browser", () => {
       card(modal, pack.key),
     );
 
-    await purchaseButton(modal, pack.key).onPurchaseDollar!();
-
-    expect(purchaseCosmetic).toHaveBeenCalledWith(pack, "dollar");
+    const button = purchaseButton(modal, pack.key);
+    expect(button.offersDollar).toBe(false);
+    expect(button.onPurchaseDollar).toBeUndefined();
+    expect(button.querySelector(".purchase-sparkle-btn")).toBeNull();
+    expect(purchaseCosmetic).not.toHaveBeenCalled();
   });
 
   it("keeps each currency on its own line across mixed-payment cards", async () => {
