@@ -86,6 +86,7 @@ const UNIT_ORDER = [
   "TrainEngine",
   "TrainCarriage",
   "TrainCarriageLoaded",
+  UT_JET,
 ] as const;
 
 const ATLAS_COLS = UNIT_ORDER.length;
