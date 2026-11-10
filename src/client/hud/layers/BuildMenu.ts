@@ -715,7 +715,7 @@ export class BuildMenu extends LitElement implements Controller {
       .find(
         (unit) => unit.isActive() && !unit.isUnderConstruction(),
       );
-    if (!base) return "No completed Aircraft Base."; 
+    if (!base) return "No completed Aircraft Base.";
 
     const tier =
       base.level() >= 3 ? "Gold" : base.level() === 2 ? "Silver" : "Bronze";
