@@ -50,7 +50,13 @@ export class AircraftExecution implements Execution {
         return false;
       }
       if (target === undefined || !this.mg.isValidRef(target)) return false;
-      this.jet = this.base.owner().buildUnit(UnitType.Jet, this.base.tile(), {});
+      const jetType =
+        this.base.level() >= 3
+          ? UnitType.F22
+          : this.base.level() === 2
+            ? UnitType.F20
+            : UnitType.Jet;
+      this.jet = this.base.owner().buildUnit(jetType, this.base.tile(), {});
       this.lastLaunchTick = this.mg.ticks();
       this.target = target;
       this.mode = "outbound";
@@ -123,7 +129,13 @@ export class AircraftExecution implements Execution {
       this.mode = "following";
       this.followUntil = this.mg.ticks() + 100;
     }
-    const result = this.pathFinder.next(this.jet.tile(), this.target, 1);
+    const speed =
+      this.jet.type() === UnitType.F22
+        ? 3
+        : this.jet.type() === UnitType.F20
+          ? 2
+          : 1;
+    const result = this.pathFinder.next(this.jet.tile(), this.target, speed);
     if (result.status === PathStatus.NEXT) {
       this.jet.move(result.node);
     } else if (result.status === PathStatus.COMPLETE) {
