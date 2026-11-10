@@ -31,12 +31,12 @@ describe("PortExecution", () => {
     player.conquer(game.ref(7, 10));
     const port = player.buildUnit(UnitType.Port, game.ref(7, 10), {});
     const execution = new PortExecution(port);
-    execution.init(game, 0);
+    execution.init(game, 47);
     const before = player.gold();
 
-    execution.tick(149);
+    execution.tick(196);
     expect(player.gold()).toBe(before);
-    execution.tick(150);
+    execution.tick(197);
     expect(player.gold() - before).toBe(100_000n);
   });
 
@@ -45,12 +45,12 @@ describe("PortExecution", () => {
     const port = player.buildUnit(UnitType.Port, game.ref(7, 10), {});
     port.increaseLevel();
     const execution = new PortExecution(port);
-    execution.init(game, 0);
+    execution.init(game, 47);
     const before = player.gold();
 
-    execution.tick(99);
+    execution.tick(146);
     expect(player.gold()).toBe(before);
-    execution.tick(100);
+    execution.tick(147);
     expect(player.gold() - before).toBe(300_000n);
   });
 
