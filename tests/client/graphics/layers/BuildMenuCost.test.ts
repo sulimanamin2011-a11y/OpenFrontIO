@@ -238,6 +238,7 @@ describe("BuildMenu accessible category tabs", () => {
 
 
 
+describe("BuildMenu aircraft click-to-drop", () => {
   it("drops the atomic bomb when the player clicks while guiding the jet", () => {
     const menu = makeMenu();
     const eventBus = new EventBus();
@@ -261,6 +262,7 @@ describe("BuildMenu accessible category tabs", () => {
     expect(emitted[0]).toMatchObject({ action: "drop", target: 42 });
     expect((menu as any).aircraftCommandMode).toBeNull();
   });
+});
 
 describe("BuildMenu aircraft controls", () => {
   it("shows launch, cursor guidance, bomb-drop and return controls in the aircraft tab", async () => {
