@@ -172,17 +172,25 @@ describe("BuildMenu structure management guidance", () => {
 describe("BuildMenu live structure management", () => {
   it("shows owned Castle tiers and the selected Castle upgrade price", async () => {
     const menu = makeMenu();
-    const castles = [
-      { level: () => 1, isActive: () => true, isUnderConstruction: () => false },
-      { level: () => 2, isActive: () => true, isUnderConstruction: () => false },
-      { level: () => 3, isActive: () => true, isUnderConstruction: () => false },
-    ];
+    const castles = [1, 2, 3].map((level) => ({
+      level: () => level,
+      isActive: () => true,
+      isUnderConstruction: () => false,
+    }));
     menu.game = {
       config: () => ({ isUnitDisabled: () => false }),
-      myPlayer: () => ({ units: (type?: UnitType) => type === UnitType.Castle ? castles : [] }),
+      myPlayer: () => ({
+        units: (type?: UnitType) =>
+          type === UnitType.Castle ? castles : [],
+      }),
     } as any;
     menu.playerBuildables = [
-      { type: UnitType.Castle, canBuild: false, canUpgrade: 77, cost: 500_000n },
+      {
+        type: UnitType.Castle,
+        canBuild: false,
+        canUpgrade: 77,
+        cost: 500_000n,
+      },
     ] as BuildableUnit[];
     (menu as any).activeSection = "castle";
     document.body.appendChild(menu);
@@ -199,12 +207,20 @@ describe("BuildMenu live structure management", () => {
   it("only enables flight controls while an aircraft is airborne", async () => {
     const menu = makeMenu();
     let airborne = false;
-    const base = { type: () => UnitType.AircraftBase, isActive: () => true, isUnderConstruction: () => false };
+    const base = {
+      type: () => UnitType.AircraftBase,
+      isActive: () => true,
+      isUnderConstruction: () => false,
+    };
     const jet = { type: () => UnitType.Jet, isActive: () => airborne };
     menu.game = {
       config: () => ({ isUnitDisabled: () => false }),
       myPlayer: () => ({
-        units: (type?: UnitType) => type === UnitType.AircraftBase ? [base] : type === undefined ? (airborne ? [base, jet] : [base]) : [],
+        units: (type?: UnitType) => {
+          if (type === UnitType.AircraftBase) return [base];
+          if (type === undefined) return airborne ? [base, jet] : [base];
+          return [];
+        },
       }),
     } as any;
     (menu as any).activeSection = "aircraft";
