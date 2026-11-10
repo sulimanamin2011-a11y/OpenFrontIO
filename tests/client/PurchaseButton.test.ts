@@ -206,7 +206,7 @@ describe("PurchaseButton", () => {
       expect(rowOneHard.reserveSoft).toBe(true);
       // Row two has only hard currency: no soft or cash line.
       expect(rowTwoHard.reserveDollar).toBe(false);
-      expect(rowTwoHard.reserveHard).toBe(false);
+      expect(rowTwoHard.reserveHard).toBe(true);
       expect(rowOneSoft.reserveDollar).toBe(false);
       expect(rowOneSoft.reserveSoft).toBe(true);
       expect(rowTwoHard.reserveSoft).toBe(false);
