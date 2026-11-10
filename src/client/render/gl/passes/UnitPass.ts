@@ -41,6 +41,8 @@ import {
   UT_ATOM_BOMB,
   UT_HYDROGEN_BOMB,
   UT_JET,
+  UT_F20,
+  UT_F22,
   UT_MIRV,
   UT_MIRV_WARHEAD,
   UT_SAM_MISSILE,
@@ -87,6 +89,8 @@ const UNIT_ORDER = [
   "TrainCarriage",
   "TrainCarriageLoaded",
   UT_JET,
+  UT_F20,
+  UT_F22,
 ] as const;
 
 const ATLAS_COLS = UNIT_ORDER.length;
@@ -144,6 +148,8 @@ const FLICKER_TYPES: ReadonlySet<string> = new Set([
  *  Ground/sea units (boats, trains) render below structures. */
 const MISSILE_TYPES: ReadonlySet<string> = new Set([
   UT_JET,
+  UT_F20,
+  UT_F22,
   UT_ATOM_BOMB,
   UT_HYDROGEN_BOMB,
   UT_MIRV,
@@ -406,14 +412,16 @@ export class UnitPass {
     const jet = new Image();
     jet.src = assetUrl("images/JetSprite.svg");
     await jet.decode();
-    const cellWidth = img.width / (UNIT_ORDER.length - 1);
+    const cellWidth = img.width / (UNIT_ORDER.length - 3);
     const atlas = document.createElement("canvas");
-    atlas.width = img.width + cellWidth;
+    atlas.width = img.width + cellWidth * 3;
     atlas.height = img.height;
     const ctx = atlas.getContext("2d");
     if (!ctx) throw new Error("Unable to create aircraft unit atlas");
     ctx.drawImage(img, 0, 0);
-    ctx.drawImage(jet, img.width, 0, cellWidth, img.height);
+    for (let tier = 0; tier < 3; tier++) {
+      ctx.drawImage(jet, img.width + cellWidth * tier, 0, cellWidth, img.height);
+    }
 
     const gl = this.gl;
     gl.bindTexture(gl.TEXTURE_2D, this.atlasTex);
