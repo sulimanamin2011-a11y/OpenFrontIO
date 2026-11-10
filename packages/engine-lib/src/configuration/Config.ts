@@ -264,6 +264,12 @@ export class Config {
       case UnitType.Jet:
         info = { maxHealth: 1_500, damage: 500 };
         break;
+      case UnitType.F20:
+        info = { maxHealth: 2_500, damage: 800 };
+        break;
+      case UnitType.F22:
+        info = { maxHealth: 4_000, damage: 1_200 };
+        break;
       case UnitType.TransportShip:
       case UnitType.SAMMissile:
       case UnitType.AtomBomb:
