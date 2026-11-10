@@ -10,6 +10,9 @@ import { showToast, translateText } from "./Utils";
 
 export type { PaymentsProvider };
 
+// DOMINION does not sell currency, cosmetics, or subscriptions for cash.
+export const REAL_MONEY_PURCHASES_ENABLED = false;
+
 /**
  * Which payment rail this client buys on.
  *
