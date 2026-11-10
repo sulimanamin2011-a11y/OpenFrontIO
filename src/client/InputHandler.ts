@@ -53,6 +53,8 @@ export class UnitSelectionEvent implements GameEvent {
 }
 
 export class MouseDownEvent implements GameEvent {
+  public handled = false;
+
   constructor(
     public readonly x: number,
     public readonly y: number,
@@ -388,6 +390,7 @@ export class InputHandler {
   private longPressTimer: ReturnType<typeof setTimeout> | null = null;
   private longPressActive: boolean = false;
   private suppressNextTap: boolean = false;
+  private suppressNextPointerUp: boolean = false;
   private touchPlacementDragState: "idle" | "candidate" | "active" = "idle";
   private readonly LONG_PRESS_MS = 800;
 
@@ -506,6 +509,7 @@ export class InputHandler {
     }
     this.longPressActive = false;
     this.suppressNextTap = false;
+    this.suppressNextPointerUp = false;
     this.touchPlacementDragState = "idle";
     this.selectionBoxActive = false;
     this.multiSelectionActive = false;
@@ -1138,7 +1142,12 @@ export class InputHandler {
       // gesture (eg. a pinch) must not swallow this one's tap.
       this.suppressNextTap = false;
 
-      this.eventBus.emit(new MouseDownEvent(event.clientX, event.clientY));
+      const mouseDown = new MouseDownEvent(event.clientX, event.clientY);
+      this.eventBus.emit(mouseDown);
+      if (mouseDown.handled) {
+        this.suppressNextPointerUp = true;
+        event.preventDefault();
+      }
 
       this.touchPlacementDragState = "idle";
       if (
@@ -1306,12 +1315,19 @@ export class InputHandler {
       return;
     }
     if (event.type === "pointercancel") {
+      this.suppressNextPointerUp = false;
       this.suppressNextTap = false;
       this.canvas.style.cursor = "";
       if (this.selectionBoxActive) {
         this.selectionBoxActive = false;
         this.eventBus.emit(new WarshipSelectionBoxCancelEvent());
       }
+      event.preventDefault();
+      return;
+    }
+    if (this.suppressNextPointerUp) {
+      this.suppressNextPointerUp = false;
+      this.suppressNextTap = false;
       event.preventDefault();
       return;
     }
