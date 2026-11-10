@@ -1272,10 +1272,10 @@ describe("StoreModal cosmetic browser", () => {
             : "dollar",
       );
 
-    // The dollar-only pack holds the plutonium line open and vice versa, so
-    // both cards put the same currency at the same height.
-    expect(lines(pack.key)).toEqual(["dollar", "reserved"]);
-    expect(lines(hardPack.key)).toEqual(["reserved", "hard"]);
+    // The cash-only pack has no purchase line; the hard-currency pack keeps
+    // its earned-currency purchase button.
+    expect(lines(pack.key)).toEqual([]);
+    expect(lines(hardPack.key)).toEqual(["hard"]);
   });
 
   it("sells a tier with no Stripe product at its own price", async () => {
@@ -1297,8 +1297,10 @@ describe("StoreModal cosmetic browser", () => {
     const button = purchaseButton(modal, steamPlus.key);
     expect(button.product).toBeNull();
     expect(button.dollarPrice).toBe("$4.99");
-    await button.onPurchaseDollar!();
-    expect(purchaseCosmetic).toHaveBeenCalledWith(steamPlus, "dollar");
+    expect(button.offersDollar).toBe(false);
+    expect(button.onPurchaseDollar).toBeUndefined();
+    expect(button.querySelector(".purchase-sparkle-btn")).toBeNull();
+    expect(purchaseCosmetic).not.toHaveBeenCalled();
   });
 
   it("widens a lone subscription card and enlarges its preview", async () => {
@@ -1359,13 +1361,10 @@ describe("StoreModal cosmetic browser", () => {
 
     await focusCard(modal, platinumSubscription.key);
     const switchButton = purchaseButton(modal, platinumSubscription.key);
-    expect(switchButton.dollarLabelKey).toBe("store.switch_button");
+    expect(switchButton.dollarLabelKey).toBe("");
+    expect(switchButton.onPurchaseDollar).toBeUndefined();
 
-    await switchButton.onPurchaseDollar!();
-    expect(purchaseCosmetic).toHaveBeenCalledWith(
-      platinumSubscription,
-      "dollar",
-    );
+    expect(purchaseCosmetic).not.toHaveBeenCalled();
   });
 
   // OPE-440. A grant (`provider: null`) is free access nobody is billing, so
@@ -1375,7 +1374,7 @@ describe("StoreModal cosmetic browser", () => {
   // GrantedSubscriptionPurchase.test.ts); what this asserts is the store's
   // half: a purchasable tier renders its buy button and no dead status box,
   // and the "Switch" label is not applied to a granted player.
-  it("offers a plain buy button on every tier to a granted subscriber", async () => {
+  it("does not offer paid subscription checkout to a granted subscriber", async () => {
     resolvedCatalog = [
       { ...goldSubscription, relationship: "purchasable" },
       platinumSubscription,
@@ -1388,7 +1387,6 @@ describe("StoreModal cosmetic browser", () => {
     } as never);
     await modal.updateComplete;
 
-    // The "Subscribed" box was the whole bug: it replaced the buy button.
     expect(
       product(modal, goldSubscription.key)?.querySelector(
         "[data-store-status]",
@@ -1396,20 +1394,15 @@ describe("StoreModal cosmetic browser", () => {
     ).toBeFalsy();
 
     const gold = purchaseButton(modal, goldSubscription.key);
-    expect(gold.onPurchaseDollar).toBeTypeOf("function");
+    expect(gold.offersDollar).toBe(false);
+    expect(gold.onPurchaseDollar).toBeUndefined();
     expect(gold.dollarLabelKey).toBe("");
 
     await focusCard(modal, platinumSubscription.key);
-    // Not "Switch": there is no paid plan to switch away from.
     expect(purchaseButton(modal, platinumSubscription.key).dollarLabelKey).toBe(
       "",
     );
-
-    await gold.onPurchaseDollar!();
-    expect(purchaseCosmetic).toHaveBeenCalledWith(
-      { ...goldSubscription, relationship: "purchasable" },
-      "dollar",
-    );
+    expect(purchaseCosmetic).not.toHaveBeenCalled();
   });
 
   it("sells a cosmetic bundle for plutonium with its contents listed", async () => {
@@ -1592,15 +1585,15 @@ describe("StoreModal on the Steam rail", () => {
     localStorage.clear();
   });
 
-  it("offers the custom-amount card on the web", async () => {
+  it("does not offer custom cash top-ups on the web", async () => {
     const modal = await openStoreOnTab("packs");
-    expect(modal.querySelector("custom-currency-card")).toBeTruthy();
+    expect(modal.querySelector("custom-currency-card")).toBeNull();
   });
 
-  it("offers the custom-amount card on Steam too", async () => {
+  it("does not offer custom cash top-ups on Steam", async () => {
     installSteamShell();
     const modal = await openStoreOnTab("packs");
-    expect(modal.querySelector("custom-currency-card")).toBeTruthy();
+    expect(modal.querySelector("custom-currency-card")).toBeNull();
   });
 
   // REQUIRED, not an optimisation: the main process parks authorizations and
