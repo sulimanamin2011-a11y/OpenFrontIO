@@ -1478,6 +1478,10 @@ export class PlayerImpl implements Player {
   }
 
   private isUnitValidToUpgrade(unit: Unit): boolean {
+    // Aircraft Bases have exactly three tiers: Bronze, Silver, and Gold.
+    if (unit.type() === UnitType.AircraftBase && unit.level() >= 3) {
+      return false;
+    }
     if (unit.isUnderConstruction()) {
       return false;
     }
