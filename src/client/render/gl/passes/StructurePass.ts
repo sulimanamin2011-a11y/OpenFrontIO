@@ -46,7 +46,8 @@ const iconAtlasUrl = assetUrl("atlases/icon-atlas.png");
 
 /**
  * Structure types in atlas column order.
- * Index = atlas column index.
+ * Index = atlas column index. DOMINION's Castle and Aircraft Base sprites
+ * are appended to the original six-column atlas at load time.
  */
 const STRUCTURE_ORDER = [
   UT_CITY,
@@ -55,6 +56,8 @@ const STRUCTURE_ORDER = [
   UT_DEFENSE_POST,
   UT_SAM_LAUNCHER,
   UT_MISSILE_SILO,
+  UT_CASTLE,
+  UT_AIRCRAFT_BASE,
 ] as const;
 
 const ATLAS_COLS = STRUCTURE_ORDER.length;
@@ -117,7 +120,7 @@ export class StructurePass {
 
   private instanceCount = 0;
 
-  /** unitType string → atlas column index (0–5) */
+  /** unitType string → atlas column index (0–7) */
   private typeToAtlasCol = new Map<string, number>();
   private mapW: number;
 
@@ -149,13 +152,6 @@ export class StructurePass {
       );
       if (col >= 0) {
         this.typeToAtlasCol.set(header.unitTypes[i], col);
-      } else if (header.unitTypes[i] === UT_CASTLE) {
-        // Until the dedicated castle sprite is added, render it with the
-        // existing city silhouette rather than hiding a valid structure.
-        this.typeToAtlasCol.set(header.unitTypes[i], STRUCTURE_ORDER.indexOf(UT_CITY));
-      } else if (header.unitTypes[i] === UT_AIRCRAFT_BASE) {
-        // Temporary aircraft-hangar silhouette; replaced by its own atlas art.
-        this.typeToAtlasCol.set(header.unitTypes[i], STRUCTURE_ORDER.indexOf(UT_FACTORY));
       }
     }
 
@@ -292,10 +288,47 @@ export class StructurePass {
     img.crossOrigin = "anonymous";
     img.src = iconAtlasUrl;
     await img.decode();
+
+    const spriteUrls = [
+      "images/CastleIconWhite.svg",
+      "images/AircraftBaseIconWhite.svg",
+    ];
+    const sprites = await Promise.all(
+      spriteUrls.map(async (url) => {
+        const sprite = new Image();
+        sprite.src = assetUrl(url);
+        await sprite.decode();
+        return sprite;
+      }),
+    );
+    const cellWidth = img.width / (STRUCTURE_ORDER.length - sprites.length);
+    const atlas = document.createElement("canvas");
+    atlas.width = img.width + cellWidth * sprites.length;
+    atlas.height = img.height;
+    const ctx = atlas.getContext("2d");
+    if (!ctx) throw new Error("Unable to create DOMINION structure atlas");
+    ctx.drawImage(img, 0, 0);
+    sprites.forEach((sprite, index) => {
+      ctx.drawImage(
+        sprite,
+        img.width + cellWidth * index,
+        0,
+        cellWidth,
+        img.height,
+      );
+    });
+
     const gl = this.gl;
     gl.activeTexture(gl.TEXTURE1);
     gl.bindTexture(gl.TEXTURE_2D, this.atlasTex);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+    gl.texImage2D(
+      gl.TEXTURE_2D,
+      0,
+      gl.RGBA,
+      gl.RGBA,
+      gl.UNSIGNED_BYTE,
+      atlas,
+    );
     gl.generateMipmap(gl.TEXTURE_2D);
     gl.texParameteri(
       gl.TEXTURE_2D,
