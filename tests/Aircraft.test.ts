@@ -140,7 +140,8 @@ describe("Aircraft", () => {
     const jet = opponent.buildUnit(UnitType.Jet, jetTile, {});
     game.addExecution(new SAMLauncherExecution(player, null, sam));
 
-    executeTicks(game, 1);
+    // First tick initializes the launcher; the next tick performs interception.
+    executeTicks(game, 2);
 
     expect(sam.level()).toBe(2);
     expect(jet.isActive()).toBe(false);
