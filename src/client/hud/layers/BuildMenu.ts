@@ -192,7 +192,7 @@ export class BuildMenu extends LitElement implements Controller {
       this.hideMenu();
     });
     this.eventBus.on(MouseMoveEvent, (event) => {
-      if (this.aircraftCommandMode !== "aim") return;
+      if (this.aircraftCommandMode !== "aim" || !this._hidden) return;
       const tile = this.tileAtScreenPoint(event.x, event.y);
       if (tile === null || tile === this.lastAircraftAimTile) return;
       const now = Date.now();
