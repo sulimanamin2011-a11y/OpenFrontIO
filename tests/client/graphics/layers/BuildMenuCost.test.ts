@@ -244,7 +244,7 @@ describe("BuildMenu aircraft controls", () => {
     await menu.updateComplete;
 
     expect(menu.textContent).toContain("Launch Jet");
-    expect(menu.textContent).toContain("Follow Cursor");
+    expect(menu.textContent).toContain("Guide & Click to Drop");
     expect(menu.textContent).toContain("Drop Atomic Bomb");
     expect(menu.textContent).toContain("Return Jet");
     menu.remove();
