@@ -41,7 +41,9 @@ export class AircraftExecution implements Execution {
   }
 
   command(action: AircraftCommand, target?: TileRef): boolean {
-    if (!this.base.isActive() || this.base.isUnderConstruction()) return false;
+    if (!this.base.isActive() || this.base.isUnderConstruction()) {
+      return false;
+    }
     if (action === "launch") {
       if (
         this.mode !== "idle" ||
@@ -56,7 +58,9 @@ export class AircraftExecution implements Execution {
           : this.base.level() === 2
             ? UnitType.F20
             : UnitType.Jet;
-      this.jet = this.base.owner().buildUnit(jetType, this.base.tile(), {});
+      this.jet = this.base
+        .owner()
+        .buildUnit(jetType, this.base.tile(), {});
       this.lastLaunchTick = this.mg.ticks();
       this.target = target;
       this.mode = "outbound";
@@ -64,7 +68,9 @@ export class AircraftExecution implements Execution {
       this.jet.touch();
       return true;
     }
-    if (!this.jet || !this.jet.isActive()) return false;
+    if (!this.jet || !this.jet.isActive()) {
+      return false;
+    }
     if (action === "aim") {
       if (
         target === undefined ||
@@ -84,7 +90,13 @@ export class AircraftExecution implements Execution {
       return true;
     }
     if (action === "drop") {
-      if (target === undefined || !this.mg.isValidRef(target) || this.mode === "returning") return false;
+      if (
+        target === undefined ||
+        !this.mg.isValidRef(target) ||
+        this.mode === "returning"
+      ) {
+        return false;
+      }
       this.mg.addExecution(
         new NukeExecution(
           UnitType.AtomBomb,
@@ -180,7 +192,9 @@ export class AircraftExecution implements Execution {
     this.mode = s.mode;
     this.lastLaunchTick = s.lastLaunchTick;
     this.followUntil = s.followUntil;
-    this.pathFinder = s.pathFinder ? restoreAirPathFinder(r.game, s.pathFinder) : null;
+    this.pathFinder = s.pathFinder
+      ? restoreAirPathFinder(r.game, s.pathFinder)
+      : null;
   }
 }
 
