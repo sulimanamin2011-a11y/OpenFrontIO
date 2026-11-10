@@ -57,6 +57,20 @@ describe("Aircraft", () => {
 
 
 
+  test("accepts cursor guidance immediately after launch", () => {
+    const baseTile = game.ref(4, 10);
+    const firstTarget = game.ref(10, 10);
+    const updatedTarget = game.ref(12, 10);
+    player.conquer(baseTile);
+    const base = player.buildUnit(UnitType.AircraftBase, baseTile, {});
+    const aircraft = new AircraftExecution(base);
+    game.addExecution(aircraft);
+    executeTicks(game, 1);
+
+    expect(aircraft.command("launch", firstTarget)).toBe(true);
+    expect(aircraft.command("aim", updatedTarget)).toBe(true);
+    expect((aircraft as any).target).toBe(updatedTarget);
+  });
   test("routes multiplayer launch commands to the player's aircraft controller", () => {
     const baseTile = game.ref(4, 10);
     player.conquer(baseTile);
