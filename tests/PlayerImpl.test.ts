@@ -61,6 +61,20 @@ describe("PlayerImpl", () => {
     )[0];
     expect(buildableFactory.canUpgrade).toBe(false);
   });
+  test("a SAM Launcher cannot be upgraded beyond the Gold tier", () => {
+    player.addGold(BigInt(10_000_000));
+    player.conquer(game.ref(21, 20));
+    const sam = player.buildUnit(UnitType.SAMLauncher, game.ref(21, 20), {});
+    player.upgradeUnit(sam);
+
+    expect(sam.level()).toBe(2);
+    expect(player.canUpgradeUnit(sam)).toBe(false);
+    const buildableSam = player.buildableUnits(
+      game.ref(21, 20),
+      [UnitType.SAMLauncher],
+    )[0];
+    expect(buildableSam.canUpgrade).toBe(false);
+  });
   test("a Castle cannot be upgraded beyond the Gold tier", () => {
     player.addGold(BigInt(3_000_000));
     const castle = player.buildUnit(UnitType.Castle, game.ref(0, 0), {});
