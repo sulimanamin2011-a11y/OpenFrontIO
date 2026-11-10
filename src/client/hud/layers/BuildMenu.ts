@@ -581,7 +581,7 @@ export class BuildMenu extends LitElement implements Controller {
         </div>
         ${this.activeSection === "aircraft" ? html`
           <div class="aircraft-controls" aria-label="Aircraft controls">
-            <p class="build-description">Aircraft operations</p>
+            <p class="build-description">Aircraft operations — base upgrades unlock F-20 and F-22 jets</p>
             <div class="build-row">
               <button
                 class="build-button"
