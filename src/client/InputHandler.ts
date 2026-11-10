@@ -1147,6 +1147,7 @@ export class InputHandler {
       if (mouseDown.handled) {
         this.suppressNextPointerUp = true;
         event.preventDefault();
+        return;
       }
 
       this.touchPlacementDragState = "idle";
