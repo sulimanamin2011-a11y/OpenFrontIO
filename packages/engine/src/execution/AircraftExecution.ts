@@ -50,7 +50,11 @@ export class AircraftExecution implements Execution {
 
   command(action: AircraftCommand, target?: TileRef): boolean {
     if (!this.isReady()) return false;
-    if (!this.base.isActive() || this.base.isUnderConstruction()) {
+    if (
+      !this.base.isActive() ||
+      this.base.isUnderConstruction() ||
+      !this.base.owner().isAlive()
+    ) {
       return false;
     }
     if (action === "launch") {
@@ -102,7 +106,7 @@ export class AircraftExecution implements Execution {
       if (
         target === undefined ||
         !this.mg.isValidRef(target) ||
-        this.mode === "returning"
+        (this.mode !== "following" && this.mode !== "outbound")
       ) {
         return false;
       }
