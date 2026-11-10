@@ -116,7 +116,8 @@ describe("Warship", () => {
   test("Castle upgrades extend its defensive range", () => {
     const castleTile = game.ref(coastX - 1, 10);
     const distantShipTile = game.ref(13, 10);
-    game.config().castleDefenseRange = (level) => (level >= 2 ? 7 : 6);
+    game.config().castleDefenseRange = (level = 1) =>
+      level >= 2 ? 7 : 6;
     player1.conquer(castleTile);
     const castle = player1.buildUnit(UnitType.Castle, castleTile, {});
     player2.buildUnit(UnitType.Warship, distantShipTile, {
