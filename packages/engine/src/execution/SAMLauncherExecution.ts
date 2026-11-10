@@ -391,7 +391,7 @@ export class SAMLauncherExecution implements Execution {
       const aircraft = this.mg.nearbyUnits(
         this.sam.tile(),
         this.mg.config().dynamicSamRange(this.sam, ticks),
-        UnitType.Jet,
+        [UnitType.Jet, UnitType.F20, UnitType.F22],
       );
       const hostileJet = aircraft.find(
         ({ unit }) =>
