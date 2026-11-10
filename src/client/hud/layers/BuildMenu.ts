@@ -627,8 +627,9 @@ export class BuildMenu extends LitElement implements Controller {
   }
 
   private hasCompletedAircraftBase(): boolean {
+    const player = this.game?.myPlayer?.();
     return (
-      this.game.myPlayer()?.units(UnitType.AircraftBase).some(
+      player?.units(UnitType.AircraftBase).some(
         (base) => base.isActive() && !base.isUnderConstruction(),
       ) ?? false
     );
