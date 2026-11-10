@@ -1482,6 +1482,7 @@ export class PlayerImpl implements Player {
     switch (unit.type()) {
       case UnitType.Port:
       case UnitType.Factory:
+      case UnitType.SAMLauncher:
         if (unit.level() >= 2) return false;
         break;
       case UnitType.Warship:
