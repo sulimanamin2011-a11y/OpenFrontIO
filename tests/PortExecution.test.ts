@@ -69,6 +69,7 @@ describe("PortExecution", () => {
     expect(player.gold() - before).toBe(300_000n);
   });
   test("a Gold port cannot be upgraded beyond its final income tier", () => {
+    player.addGold(BigInt(10_000_000));
     player.conquer(game.ref(7, 10));
     const port = player.buildUnit(UnitType.Port, game.ref(7, 10), {});
     port.increaseLevel();
