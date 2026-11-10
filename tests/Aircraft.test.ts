@@ -18,7 +18,7 @@ let opponent: Player;
 describe("Aircraft", () => {
   beforeEach(async () => {
     game = await setup(
-      "half_land_half_ocean",
+      "plains",
       { infiniteGold: true, instantBuild: true },
       [
         new PlayerInfo("pilot", PlayerType.Human, null, "pilot_id"),
