@@ -108,7 +108,7 @@ const TRAIN_FIRST_COL = UNIT_ORDER.indexOf("TrainEngine");
 /**
  * Per-instance data (16 bytes):
  *   float x, y, ownerID   — 12 bytes (3 floats)
- *   uint8 atlasIdx         —  1 byte  (atlas column 0–11)
+ *   uint8 atlasIdx         —  1 byte  (atlas column 0–12)
  *   uint8 flags            —  1 byte  (0 = normal, 1 = flicker, 2 = angry, 3 = trade-friendly, 4 = retreating, 5 = flicker-untargetable)
  *   uint8 flickerHash      —  1 byte  (per-instance flicker phase offset)
  *   1 byte padding         — aligns to 4-byte boundary
