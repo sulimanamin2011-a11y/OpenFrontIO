@@ -12,6 +12,7 @@ import { AllianceRejectExecution } from "./alliance/AllianceRejectExecution";
 import { AllianceRequestExecution } from "./alliance/AllianceRequestExecution";
 import { BreakAllianceExecution } from "./alliance/BreakAllianceExecution";
 import { AttackExecution } from "./AttackExecution";
+import { AircraftCommandExecution } from "./AircraftCommandExecution";
 import { BoatRetreatExecution } from "./BoatRetreatExecution";
 import { ConstructionExecution } from "./ConstructionExecution";
 import { DeleteUnitExecution } from "./DeleteUnitExecution";
@@ -80,6 +81,8 @@ export class Executor {
         return new BoatRetreatExecution(player, intent.unitID);
       case "move_warship":
         return new MoveWarshipExecution(player, intent.unitIds, intent.tile);
+      case "aircraft_command":
+        return new AircraftCommandExecution(player, intent.action, intent.target);
       case "spawn":
         // fromIntent: this one came off the wire, so it is subject to the
         // spawn-phase gate that internal spawns are not.
