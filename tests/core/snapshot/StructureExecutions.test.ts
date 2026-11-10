@@ -57,6 +57,7 @@ describe("structure and missile execution snapshots", () => {
 
     await expectSnapshotRoundTrip(game, BIG, 100);
   });
+
   test("aircraft sortie, target guidance, cooldown, and pathfinder survive snapshots", async () => {
     const { game, a } = await twoPlayers(BIG, { instantBuild: true });
     conquerRect(game, a, 0, 0, 40, 40);
