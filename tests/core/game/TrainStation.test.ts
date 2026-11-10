@@ -98,6 +98,17 @@ describe("TrainStation", () => {
     );
   });
 
+  it("pays 25K when a Bronze factory receives a train", () => {
+    unit.type.mockReturnValue(UnitType.Factory);
+    unit.level.mockReturnValue(1);
+    const station = new TrainStation(game, unit);
+
+    station.onTrainStop(trainExecution);
+
+    expect(game.config().factoryTrainGold).toHaveBeenCalledWith(1, player);
+    expect(player.addGold).toHaveBeenCalledWith(25_000n, unit.tile());
+    expect(player.addTrainGold).toHaveBeenCalledWith(25_000n);
+  });
   it("handles allied trade", () => {
     unit.type.mockReturnValue(UnitType.City);
     player.isFriendly.mockReturnValue(true);
