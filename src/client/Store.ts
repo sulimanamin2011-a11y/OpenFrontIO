@@ -195,8 +195,6 @@ export class StoreModal extends BaseModal {
     return {
       showScrollToTop: true,
       tabs: [
-        { key: "packs", label: translateText("store.packs") },
-        { key: "subscriptions", label: translateText("store.subscriptions") },
         { key: "bundles", label: translateText("store.bundles") },
         { key: "cosmetics", label: translateText("store.cosmetics") },
         { key: "effects", label: translateText("store.effects") },
@@ -301,7 +299,13 @@ export class StoreModal extends BaseModal {
       this.cosmetics,
       this.userMeResponse,
       this.affiliateCode,
-    ).filter((resolved) => resolved.relationship === "purchasable");
+    ).filter((resolved) => {
+      if (resolved.relationship !== "purchasable") return false;
+      const item = resolved.cosmetic as
+        | { priceHard?: number; priceSoft?: number }
+        | null;
+      return item?.priceHard !== undefined || item?.priceSoft !== undefined;
+    });
   }
 
   private cosmeticsGroups(
@@ -814,10 +818,16 @@ export class StoreModal extends BaseModal {
   }
 
   private renderPackGrid(): TemplateResult {
-    // The custom-amount card is always purchasable (priced inline server-side,
-    // no catalog entry), and follows the fixed packs at the end of the grid.
-    // On BOTH rails: the Steam rail sells custom amounts since OPE-337, so
-    // there is no longer a rail on which this card is a dead button.
+    // Cash-only currency packs and custom top-ups are disabled in DOMINION.
+    return html``;
+  }
+
+  private renderSubscriptionGrid(): TemplateResult {
+    // DOMINION has no paid subscription tiers.
+    return html``;
+  }
+
+  private renderLegacyPackGrid(): TemplateResult {
     return this.renderBrowser(this.visibleGroups, {
       emptyTranslationKey: "store.no_packs",
       trailingContent: html`<custom-currency-card
