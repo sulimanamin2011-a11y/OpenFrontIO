@@ -126,8 +126,12 @@ describe("Aircraft", () => {
     expect(player.units(UnitType.F20)).toHaveLength(1);
     expect(opponent.units(UnitType.F22)).toHaveLength(1);
     executeTicks(game, 1);
-    expect(game.manhattanDist(firstTile, player.units(UnitType.F20)[0].tile())).toBe(2);
-    expect(game.manhattanDist(secondTile, opponent.units(UnitType.F22)[0].tile())).toBe(3);
+    expect(
+      game.manhattanDist(firstTile, player.units(UnitType.F20)[0].tile()),
+    ).toBe(2);
+    expect(
+      game.manhattanDist(secondTile, opponent.units(UnitType.F22)[0].tile()),
+    ).toBe(3);
   });
 
   test("Gold SAM launchers destroy enemy jets within range", () => {
