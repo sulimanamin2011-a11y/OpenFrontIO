@@ -121,7 +121,7 @@ describe("Warship", () => {
     player2.buildUnit(UnitType.Warship, alliedShipTile, {
       patrolTile: alliedShipTile,
     });
-    vi.spyOn(player1, "isFriendly").mockReturnValue(true);
+    vi.spyOn(player2, "isFriendly").mockReturnValue(true);
     game.addExecution(new CastleExecution(castle));
 
     executeTicks(game, 2);
