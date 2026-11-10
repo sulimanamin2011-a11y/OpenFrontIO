@@ -123,6 +123,14 @@ export interface UnitParamsMap {
   [UnitType.Jet]: {
     targetTile?: TileRef;
   };
+
+  [UnitType.F20]: {
+    targetTile?: TileRef;
+  };
+
+  [UnitType.F22]: {
+    targetTile?: TileRef;
+  };
 }
 
 // Type helper to get params type for a specific unit type
