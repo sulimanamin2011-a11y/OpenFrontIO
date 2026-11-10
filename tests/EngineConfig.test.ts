@@ -30,3 +30,16 @@ describe("EngineConfig.unitInfo", () => {
     expect(engine.unitInfo(UnitType.City)).toBe(engine.unitInfo(UnitType.City));
   });
 });
+
+describe("EngineConfig DOMINION economy", () => {
+  it("scales passive port income with the game gold multiplier", () => {
+    const player = { isLobbyCreator: () => false } as any;
+    const engine = new EngineConfig(
+      { goldMultiplier: 2 } as unknown as GameConfig,
+      false,
+    );
+
+    expect(engine.portPassiveGold(1, player)).toBe(200_000n);
+    expect(engine.portPassiveGold(2, player)).toBe(600_000n);
+  });
+});
