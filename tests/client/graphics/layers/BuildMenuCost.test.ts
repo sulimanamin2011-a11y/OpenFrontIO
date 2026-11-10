@@ -248,6 +248,7 @@ describe("BuildMenu live structure management", () => {
     menu.remove();
   });
 });
+
 describe("BuildMenu dedicated structure sections", () => {
   it("keeps Castle and Aircraft Base in their own menus", () => {
     const menu = makeMenu();
