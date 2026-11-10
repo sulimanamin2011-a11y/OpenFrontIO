@@ -96,7 +96,8 @@ describe("Warship", () => {
 
   test("Castle upgrades extend its defensive range", () => {
     const castleTile = game.ref(coastX - 1, 10);
-    const distantShipTile = game.ref(45, 10);
+    const distantShipTile = game.ref(13, 10);
+    game.config().castleDefenseRange = (level) => (level >= 2 ? 7 : 6);
     player1.conquer(castleTile);
     const castle = player1.buildUnit(UnitType.Castle, castleTile, {});
     player2.buildUnit(UnitType.Warship, distantShipTile, {
@@ -104,11 +105,11 @@ describe("Warship", () => {
     });
     game.addExecution(new CastleExecution(castle));
 
-    // The hostile ship is outside a Bronze Castle's 35-tile range.
+    // The hostile ship is outside the configured Bronze Castle range.
     executeTicks(game, 2);
     expect(player1.units(UnitType.Shell)).toHaveLength(0);
 
-    // Silver extends the Castle's range to 45 tiles.
+    // Silver extends the Castle's range to include the hostile ship.
     player1.upgradeUnit(castle);
     executeTicks(game, 2);
     expect(player1.units(UnitType.Shell).length).toBeGreaterThan(0);
