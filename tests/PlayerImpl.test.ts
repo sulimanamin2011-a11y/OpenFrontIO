@@ -69,6 +69,20 @@ describe("PlayerImpl", () => {
     expect(buildableBase.canUpgrade).toBe(base.id());
   });
 
+  test("an Aircraft Base cannot be upgraded beyond the Gold tier", () => {
+    player.addGold(BigInt(5_000_000));
+    const base = player.buildUnit(UnitType.AircraftBase, game.ref(0, 0), {});
+    player.upgradeUnit(base);
+    player.upgradeUnit(base);
+
+    expect(base.level()).toBe(3);
+    expect(player.canUpgradeUnit(base)).toBe(false);
+    const buildableBase = player.buildableUnits(
+      game.ref(0, 0),
+      [UnitType.AircraftBase],
+    )[0];
+    expect(buildableBase.canUpgrade).toBe(false);
+  });
   test("an Aircraft Base under construction already reserves the player's one-base limit", () => {
     player.addGold(BigInt(5_000_000));
     const base = player.buildUnit(UnitType.AircraftBase, game.ref(0, 0), {});
