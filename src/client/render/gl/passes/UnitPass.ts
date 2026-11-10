@@ -409,9 +409,19 @@ export class UnitPass {
 
     // Append the standalone jet sprite for all three aircraft tiers while keeping
     // every existing unit's original atlas UVs unchanged.
-    const jet = new Image();
-    jet.src = assetUrl("images/JetSprite.svg");
-    await jet.decode();
+    const spriteUrls = [
+      "images/JetSprite.svg",
+      "images/F20Sprite.svg",
+      "images/F22Sprite.svg",
+    ];
+    const aircraftSprites = await Promise.all(
+      spriteUrls.map(async (url) => {
+        const sprite = new Image();
+        sprite.src = assetUrl(url);
+        await sprite.decode();
+        return sprite;
+      }),
+    );
     const cellWidth = img.width / (UNIT_ORDER.length - 3);
     const atlas = document.createElement("canvas");
     atlas.width = img.width + cellWidth * 3;
@@ -419,8 +429,14 @@ export class UnitPass {
     const ctx = atlas.getContext("2d");
     if (!ctx) throw new Error("Unable to create aircraft unit atlas");
     ctx.drawImage(img, 0, 0);
-    for (let tier = 0; tier < 3; tier++) {
-      ctx.drawImage(jet, img.width + cellWidth * tier, 0, cellWidth, img.height);
+    for (let tier = 0; tier < aircraftSprites.length; tier++) {
+      ctx.drawImage(
+        aircraftSprites[tier],
+        img.width + cellWidth * tier,
+        0,
+        cellWidth,
+        img.height,
+      );
     }
 
     const gl = this.gl;
