@@ -1,4 +1,5 @@
 import {
+  AircraftCommandIntentSchema,
   AttackIntentSchema,
   BoatAttackIntentSchema,
   BuildUnitIntentSchema,
@@ -61,6 +62,45 @@ describe("intent schemas: tile refs are non-negative integers", () => {
   }
 });
 
+describe("aircraft command intent schema", () => {
+  it("accepts launch, aim, and drop targets as integer tile refs", () => {
+    for (const action of ["launch", "aim", "drop"] as const) {
+      expect(
+        AircraftCommandIntentSchema.safeParse({
+          type: "aircraft_command",
+          action,
+          target: 4040,
+        }).success,
+      ).toBe(true);
+    }
+  });
+
+  it("accepts return without a target", () => {
+    expect(
+      AircraftCommandIntentSchema.safeParse({
+        type: "aircraft_command",
+        action: "return",
+      }).success,
+    ).toBe(true);
+  });
+
+  it("rejects fractional targets and unknown commands", () => {
+    expect(
+      AircraftCommandIntentSchema.safeParse({
+        type: "aircraft_command",
+        action: "launch",
+        target: 4.5,
+      }).success,
+    ).toBe(false);
+    expect(
+      AircraftCommandIntentSchema.safeParse({
+        type: "aircraft_command",
+        action: "teleport",
+        target: 4,
+      }).success,
+    ).toBe(false);
+  });
+});
 describe("intent schemas: unit ids are non-negative integers", () => {
   it("upgrade_structure", () => {
     const ok = { type: "upgrade_structure", unit: "City", unitId: 3 };
