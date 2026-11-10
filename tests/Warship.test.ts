@@ -37,6 +37,22 @@ describe("Warship", () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
+  test("Warship Bronze, Silver, and Gold tiers scale combat and repair", () => {
+    const config = game.config();
+
+    expect(config.warshipShellAttackRate(1)).toBe(20);
+    expect(config.warshipShellAttackRate(2)).toBe(17);
+    expect(config.warshipShellAttackRate(3)).toBe(14);
+    expect(config.warshipTierShellDamageBonus(1)).toBe(0);
+    expect(config.warshipTierShellDamageBonus(2)).toBe(10);
+    expect(config.warshipTierShellDamageBonus(3)).toBe(20);
+    expect(config.warshipPassiveHealing(1)).toBe(1);
+    expect(config.warshipPassiveHealing(2)).toBe(2);
+    expect(config.warshipPassiveHealing(3)).toBe(3);
+    expect(config.warshipPassiveHealingRange(1)).toBe(150);
+    expect(config.warshipPassiveHealingRange(2)).toBe(165);
+    expect(config.warshipPassiveHealingRange(3)).toBe(180);
+  });
   test("Castle fires its first defensive shell without an initial cooldown", () => {
     const castleTile = game.ref(coastX - 1, 10);
     const enemyWarshipTile = game.ref(coastX + 7, 10);
