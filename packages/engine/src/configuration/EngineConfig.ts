@@ -408,7 +408,7 @@ export class EngineConfig extends Config {
         );
       case UnitType.SAMLauncher:
         // DOMINION: the first launcher is Silver (1M); upgrading it to
-        // Gold costs 4M. Further levels retain the Gold-tier price.
+        // Gold costs 4M. Gold is the final tier.
         return this.costWrapper(
           (numUnits: number) => (numUnits === 0 ? 1_000_000 : 4_000_000),
           UnitType.SAMLauncher,
