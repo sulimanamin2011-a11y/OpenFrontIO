@@ -55,6 +55,7 @@ describe("Warship", () => {
     expect(defense.level()).toBe(3);
     expect(player1.canUpgradeUnit(defense)).toBe(false);
   });
+
   test("Warship Bronze, Silver, and Gold tiers scale combat and repair", () => {
     const config = game.config();
 
