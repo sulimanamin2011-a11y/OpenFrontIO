@@ -41,7 +41,7 @@ export class AircraftCommandExecution implements Execution {
 
 const AircraftCommandStateSchema = z.object({
   player: zPlayerRef(),
-  action: z.enum(["launch", "return", "drop"]),
+  action: z.enum(["launch", "aim", "return", "drop"]),
   target: zTile().nullable(),
 });
 type AircraftCommandState = z.infer<typeof AircraftCommandStateSchema>;
