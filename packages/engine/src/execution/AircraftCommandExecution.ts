@@ -1,7 +1,6 @@
 import { TileRef } from "@openfront/engine-api/game/GameMap";
 import { UnitType } from "@openfront/engine-api/game/GameTypes";
 import {
-  zInt,
   zPlayerRef,
   zTile,
 } from "@openfront/engine-lib/snapshot/SnapshotType";
