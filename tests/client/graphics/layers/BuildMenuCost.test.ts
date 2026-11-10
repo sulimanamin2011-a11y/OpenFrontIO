@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { EventBus } from "@openfront/shared/EventBus";
 import { CloseViewEvent } from "../../../../src/client/InputHandler";
+import { AircraftCommandIntentEvent } from "../../../../src/client/Transport";
 
 // Side-effect import: the @customElement decorator registers <build-menu>
 // when the module is evaluated, and a type-only reference would not evaluate it.
@@ -234,6 +235,32 @@ describe("BuildMenu accessible category tabs", () => {
   });
 });
 
+
+
+
+  it("drops the atomic bomb when the player clicks while guiding the jet", () => {
+    const menu = makeMenu();
+    const eventBus = new EventBus();
+    const emitted: unknown[] = [];
+    vi.spyOn(eventBus, "emit").mockImplementation((event) => {
+      emitted.push(event);
+    });
+    menu.eventBus = eventBus;
+    menu.game = {
+      isValidCoord: () => true,
+      ref: () => 42,
+    } as any;
+    menu.transformHandler = {
+      screenToWorldCoordinates: () => ({ x: 1, y: 1 }),
+    } as any;
+    (menu as any).aircraftCommandMode = "aim";
+
+    (menu as any).handleAircraftMapClick(100, 100);
+
+    expect(emitted[0]).toBeInstanceOf(AircraftCommandIntentEvent);
+    expect(emitted[0]).toMatchObject({ action: "drop", target: 42 });
+    expect((menu as any).aircraftCommandMode).toBeNull();
+  });
 
 describe("BuildMenu aircraft controls", () => {
   it("shows launch, cursor guidance, bomb-drop and return controls in the aircraft tab", async () => {
