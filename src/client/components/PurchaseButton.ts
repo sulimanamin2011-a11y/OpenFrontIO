@@ -3,6 +3,7 @@ import { html, LitElement, nothing, type TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import type { InsufficientCurrency, PurchaseResult } from "../Cosmetics";
 import { showInGameAlert } from "../InGameModal";
+import { REAL_MONEY_PURCHASES_ENABLED } from "../Payments";
 import { translateText } from "../Utils";
 import "./CapIcon";
 import "./ConfirmDialog";
@@ -342,7 +343,10 @@ export class PurchaseButton extends LitElement {
   }
 
   get offersDollar(): boolean {
-    return Boolean((this.product ?? this.dollarPrice) && this.onPurchaseDollar);
+    return (
+      REAL_MONEY_PURCHASES_ENABLED &&
+      Boolean((this.product ?? this.dollarPrice) && this.onPurchaseDollar)
+    );
   }
 
   get offersHard(): boolean {
