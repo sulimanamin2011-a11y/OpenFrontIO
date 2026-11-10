@@ -583,10 +583,26 @@ export class BuildMenu extends LitElement implements Controller {
           <div class="aircraft-controls" aria-label="Aircraft controls">
             <p class="build-description">Aircraft operations</p>
             <div class="build-row">
-              <button class="build-button" style="width:auto;height:auto;min-height:42px" @click=${() => this.armAircraftCommand("launch")}>Launch Jet</button>
-              <button class="build-button" style="width:auto;height:auto;min-height:42px" @click=${() => this.armAircraftCommand("aim")}>Follow Cursor</button>
-              <button class="build-button" style="width:auto;height:auto;min-height:42px" @click=${() => this.armAircraftCommand("drop")}>Drop Atomic Bomb</button>
-              <button class="build-button" style="width:auto;height:auto;min-height:42px" @click=${() => this.returnAircraft()}>Return Jet</button>
+              <button
+                class="build-button"
+                style="width:auto;height:auto;min-height:42px"
+                @click=${() => this.armAircraftCommand("launch")}
+              >Launch Jet</button>
+              <button
+                class="build-button"
+                style="width:auto;height:auto;min-height:42px"
+                @click=${() => this.armAircraftCommand("aim")}
+              >Follow Cursor</button>
+              <button
+                class="build-button"
+                style="width:auto;height:auto;min-height:42px"
+                @click=${() => this.armAircraftCommand("drop")}
+              >Drop Atomic Bomb</button>
+              <button
+                class="build-button"
+                style="width:auto;height:auto;min-height:42px"
+                @click=${() => this.returnAircraft()}
+              >Return Jet</button>
             </div>
             <p class="build-description">${this.aircraftCommandHint || "Launch, then move your cursor over the map to guide the jet for up to 10 seconds."}</p>
           </div>
@@ -597,7 +613,12 @@ export class BuildMenu extends LitElement implements Controller {
 
   private armAircraftCommand(mode: "launch" | "aim" | "drop") {
     this.aircraftCommandMode = mode;
-    this.aircraftCommandHint = mode === "launch" ? "Click a destination on the map to launch." : mode === "aim" ? "Move your cursor over the map to guide the jet." : "Click a target on the map to drop the atomic bomb.";
+    this.aircraftCommandHint =
+      mode === "launch"
+        ? "Click a destination on the map to launch."
+        : mode === "aim"
+          ? "Move your cursor over the map to guide the jet."
+          : "Click a target on the map to drop the atomic bomb.";
     this.hideMenu();
   }
 
