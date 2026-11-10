@@ -119,6 +119,10 @@ export interface UnitParamsMap {
   [UnitType.Castle]: Record<string, never>;
 
   [UnitType.AircraftBase]: Record<string, never>;
+
+  [UnitType.Jet]: {
+    targetTile?: TileRef;
+  };
 }
 
 // Type helper to get params type for a specific unit type
