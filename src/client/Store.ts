@@ -811,13 +811,45 @@ export class StoreModal extends BaseModal {
   }
 
   private renderPackGrid(): TemplateResult {
-    // Cash-only currency packs and custom top-ups are disabled in DOMINION.
-    return html``;
+    return html`
+      <p class="px-4 pt-3 text-center text-sm text-white/60">
+        Real-money purchases are disabled in DOMINION.
+      </p>
+      ${this.renderBrowser(this.visibleGroups, {
+        emptyTranslationKey: "store.no_packs",
+        gridClass:
+          "flex flex-wrap items-stretch justify-center content-start gap-4 p-4 sm:p-8",
+        cardClass: "block w-[calc(50%-0.5rem)] max-w-48 shrink-0 sm:w-48",
+        emptyClass:
+          "w-full py-8 text-center text-sm font-bold uppercase tracking-wider text-white/40",
+      })}
+    `;
   }
 
   private renderSubscriptionGrid(): TemplateResult {
-    // DOMINION has no paid subscription tiers.
-    return html``;
+    const sub =
+      this.userMeResponse === false
+        ? null
+        : this.userMeResponse.player.subscription;
+    const userHasSubscription = sub !== null && !isGrantedSubscription(sub);
+    const lone = this.visibleGroups.length === 1;
+    return html`
+      <p class="px-4 pt-3 text-center text-sm text-white/60">
+        Paid subscriptions are disabled in DOMINION.
+      </p>
+      ${this.renderBrowser(this.visibleGroups, {
+        emptyTranslationKey: "store.no_subscriptions",
+        userHasSubscription,
+        gridClass:
+          "flex flex-wrap items-stretch justify-center content-start gap-4 p-4 sm:p-8",
+        cardClass: lone
+          ? "block w-full max-w-xs shrink-0"
+          : "block w-[calc(50%-0.5rem)] max-w-48 shrink-0 sm:w-48",
+        previewSize: lone ? "detail" : "card",
+        emptyClass:
+          "w-full py-8 text-center text-sm font-bold uppercase tracking-wider text-white/40",
+      })}
+    `;
   }
 
   private renderBundleGrid(): TemplateResult {
