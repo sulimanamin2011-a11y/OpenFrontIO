@@ -47,6 +47,20 @@ describe("PlayerImpl", () => {
     expect(buildableCastle!.canUpgrade).toBe(castle.id());
   });
 
+  test("a Castle cannot be upgraded beyond the Gold tier", () => {
+    player.addGold(BigInt(3_000_000));
+    const castle = player.buildUnit(UnitType.Castle, game.ref(0, 0), {});
+    player.upgradeUnit(castle);
+    player.upgradeUnit(castle);
+
+    expect(castle.level()).toBe(3);
+    expect(player.canUpgradeUnit(castle)).toBe(false);
+    const buildableCastle = player.buildableUnits(
+      game.ref(0, 0),
+      [UnitType.Castle],
+    )[0];
+    expect(buildableCastle.canUpgrade).toBe(false);
+  });
   test("Aircraft Base is available as a separate placeable structure", () => {
     player.addGold(BigInt(2_500_000));
     const buildableBase = player
