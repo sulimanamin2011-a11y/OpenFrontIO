@@ -1478,12 +1478,18 @@ export class PlayerImpl implements Player {
   }
 
   private isUnitValidToUpgrade(unit: Unit): boolean {
-    // DOMINION structures with Bronze, Silver, and Gold ranks stop at tier 3.
-    if (
-      (unit.type() === UnitType.AircraftBase || unit.type() === UnitType.Castle) &&
-      unit.level() >= 3
-    ) {
-      return false;
+    // DOMINION tiered structures stop when they reach their final named rank.
+    switch (unit.type()) {
+      case UnitType.Port:
+      case UnitType.Factory:
+        if (unit.level() >= 2) return false;
+        break;
+      case UnitType.Warship:
+      case UnitType.DefensePost:
+      case UnitType.Castle:
+      case UnitType.AircraftBase:
+        if (unit.level() >= 3) return false;
+        break;
     }
     if (unit.isUnderConstruction()) {
       return false;
