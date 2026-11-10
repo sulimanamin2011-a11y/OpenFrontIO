@@ -92,9 +92,14 @@ export function planJoinVerify(args: {
   steamAuthed: boolean;
 }): JoinVerifyPlan {
   if (!args.isReadmit) {
-    // Guest and account players can join without a Turnstile challenge.
-    // The API still screens their usernames when the token is null.
-    return { action: "verify", token: null };
+    // Guests do not need an account, but a first join still needs the
+    // anonymous Turnstile challenge. Steam ownership is the sole exception:
+    // its signed provider claim is the anti-abuse signal.
+    if (args.steamAuthed) return { action: "verify", token: null };
+    if (args.turnstileToken === null || args.turnstileToken.length === 0) {
+      return { action: "reject" };
+    }
+    return { action: "verify", token: args.turnstileToken };
   }
   if (args.gameStarted || args.identityUnchanged) {
     return { action: "skip" };
