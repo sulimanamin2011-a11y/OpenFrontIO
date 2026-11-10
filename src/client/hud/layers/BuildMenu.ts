@@ -586,8 +586,22 @@ export class BuildMenu extends LitElement implements Controller {
               Castles automatically defend against hostile transport ships and
               warships. Bronze: 35-tile range / 8-second reload. Silver:
               45-tile range / 6-second reload. Gold: 55-tile range / 4-second
-              reload. Select an existing Castle to upgrade it.
+              reload.
             </p>
+            <p class="build-description" aria-live="polite">
+              ${this.castleManagementSummary()}
+            </p>
+            ${
+              this.selectedCastleCanUpgrade()
+                ? html`<p class="build-description">
+                    Selected Castle upgrade: ${renderNumber(this.selectedCastleUpgradeCost())}
+                    <img src=${goldCoinIcon} alt="gold" width="12" height="12" />
+                  </p>`
+                : html`<p class="build-description">
+                    Select an owned Castle on the map to see its next upgrade
+                    price, or choose Castle above to place a new one.
+                  </p>`
+            }
           </div>
         ` : ""}
         ${
@@ -599,21 +613,26 @@ export class BuildMenu extends LitElement implements Controller {
               <button
                 class="build-button"
                 style="width:auto;height:auto;min-height:42px"
+                ?disabled=${this.hasActiveAircraftJet()}
+                title=${this.hasActiveAircraftJet() ? "Your aircraft is already airborne." : ""}
                 @click=${() => this.armAircraftCommand("launch")}
               >Launch Jet</button>
               <button
                 class="build-button"
                 style="width:auto;height:auto;min-height:42px"
+                ?disabled=${!this.hasActiveAircraftJet()}
                 @click=${() => this.armAircraftCommand("aim")}
               >Guide & Click to Drop</button>
               <button
                 class="build-button"
                 style="width:auto;height:auto;min-height:42px"
+                ?disabled=${!this.hasActiveAircraftJet()}
                 @click=${() => this.armAircraftCommand("drop")}
               >Drop Atomic Bomb</button>
               <button
                 class="build-button"
                 style="width:auto;height:auto;min-height:42px"
+                ?disabled=${!this.hasActiveAircraftJet()}
                 @click=${() => this.returnAircraft()}
               >Return Jet</button>
             </div>
@@ -631,6 +650,44 @@ export class BuildMenu extends LitElement implements Controller {
               : ""}
       </div>
     `;
+  }
+
+  private castleManagementSummary(): string {
+    const castles = this.game?.myPlayer?.()?.units(UnitType.Castle) ?? [];
+    const active = castles.filter(
+      (castle) => castle.isActive() && !castle.isUnderConstruction(),
+    );
+    const bronze = active.filter((castle) => castle.level() <= 1).length;
+    const silver = active.filter((castle) => castle.level() === 2).length;
+    const gold = active.filter((castle) => castle.level() >= 3).length;
+    return `Owned Castles: ${active.length} · Bronze ${bronze} · Silver ${silver} · Gold ${gold}`;
+  }
+
+  private selectedCastleCanUpgrade(): boolean {
+    return (
+      this.playerBuildables?.some(
+        (unit) => unit.type === UnitType.Castle && unit.canUpgrade !== false,
+      ) ?? false
+    );
+  }
+
+  private selectedCastleUpgradeCost(): Gold {
+    return (
+      this.playerBuildables?.find((unit) => unit.type === UnitType.Castle)
+        ?.cost ?? 0n
+    );
+  }
+
+  private hasActiveAircraftJet(): boolean {
+    const aircraftTypes = [UnitType.Jet, UnitType.F20, UnitType.F22];
+    return (
+      this.game
+        ?.myPlayer?.()
+        ?.units()
+        .some(
+          (unit) => aircraftTypes.includes(unit.type()) && unit.isActive(),
+        ) ?? false
+    );
   }
 
   private hasCompletedAircraftBase(): boolean {
