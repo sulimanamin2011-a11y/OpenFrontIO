@@ -407,7 +407,7 @@ export class UnitPass {
     img.src = unitAtlasUrl;
     await img.decode();
 
-    // Append the standalone jet sprite as the final atlas column while keeping
+    // Append the standalone jet sprite for all three aircraft tiers while keeping
     // every existing unit's original atlas UVs unchanged.
     const jet = new Image();
     jet.src = assetUrl("images/JetSprite.svg");
