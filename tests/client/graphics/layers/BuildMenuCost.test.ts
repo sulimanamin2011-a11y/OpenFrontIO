@@ -199,7 +199,7 @@ describe("BuildMenu live structure management", () => {
   it("only enables flight controls while an aircraft is airborne", async () => {
     const menu = makeMenu();
     let airborne = false;
-    const base = { isActive: () => true, isUnderConstruction: () => false };
+    const base = { type: () => UnitType.AircraftBase, isActive: () => true, isUnderConstruction: () => false };
     const jet = { type: () => UnitType.Jet, isActive: () => airborne };
     menu.game = {
       config: () => ({ isUnitDisabled: () => false }),
