@@ -47,6 +47,19 @@ describe("PlayerImpl", () => {
     expect(buildableCastle!.canUpgrade).toBe(castle.id());
   });
 
+  test("a Factory cannot be upgraded beyond the Gold tier", () => {
+    player.addGold(BigInt(1_000_000));
+    const factory = player.buildUnit(UnitType.Factory, game.ref(20, 20), {});
+    player.upgradeUnit(factory);
+
+    expect(factory.level()).toBe(2);
+    expect(player.canUpgradeUnit(factory)).toBe(false);
+    const buildableFactory = player.buildableUnits(
+      game.ref(20, 20),
+      [UnitType.Factory],
+    )[0];
+    expect(buildableFactory.canUpgrade).toBe(false);
+  });
   test("a Castle cannot be upgraded beyond the Gold tier", () => {
     player.addGold(BigInt(3_000_000));
     const castle = player.buildUnit(UnitType.Castle, game.ref(0, 0), {});
