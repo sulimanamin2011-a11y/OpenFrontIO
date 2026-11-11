@@ -122,17 +122,17 @@ describe("mobile UnitDisplay layout", () => {
         display.querySelectorAll<HTMLElement>(".unit-display-grid > *"),
       );
       const castle = items.find((item) =>
-        item.textContent?.includes("castle"),
+        item.querySelector('img[src$="CastleIconWhite.svg"]'),
       );
       const aircraftBase = items.find((item) =>
-        item.textContent?.includes("aircraft_base"),
+        item.querySelector('img[src$="AircraftBaseIconWhite.svg"]'),
       );
 
       expect(items).toHaveLength(12);
       expect(castle).toBeDefined();
       expect(aircraftBase).toBeDefined();
 
-      castle?.querySelector("div > div")?.dispatchEvent(
+      castle?.querySelector(":scope > div")?.dispatchEvent(
         new MouseEvent("click", { bubbles: true }),
       );
       expect(inputHandler.setGhostStructure).toHaveBeenCalledWith(
@@ -140,7 +140,7 @@ describe("mobile UnitDisplay layout", () => {
         "GUIclick",
       );
 
-      aircraftBase?.querySelector("div > div")?.dispatchEvent(
+      aircraftBase?.querySelector(":scope > div")?.dispatchEvent(
         new MouseEvent("click", { bubbles: true }),
       );
       expect(inputHandler.setGhostStructure).toHaveBeenLastCalledWith(
