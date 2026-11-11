@@ -1485,6 +1485,9 @@ export class PlayerImpl implements Player {
       case UnitType.SAMLauncher:
         if (unit.level() >= 2) return false;
         break;
+      case UnitType.City:
+        if (unit.level() >= 3) return false;
+        break;
       case UnitType.Warship:
       case UnitType.DefensePost:
       case UnitType.Castle:
@@ -1521,6 +1524,10 @@ export class PlayerImpl implements Player {
     const cost = this.mg.unitInfo(unit.type()).cost(this.mg, this);
     this.removeGold(cost);
     unit.increaseLevel();
+    if (unit.type() === UnitType.City) {
+      // City ranks grant their troop bonus once, at the moment of upgrade.
+      this.addTroops(unit.level() === 2 ? 30_000 : 50_000);
+    }
     this.recordUnitConstructed(unit.type());
   }
 
