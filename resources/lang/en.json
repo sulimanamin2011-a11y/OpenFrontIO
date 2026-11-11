@@ -194,6 +194,8 @@
     "desc": {
       "atom_bomb": "Small explosion",
       "city": "Increases max population",
+      "castle": "Fortified stronghold that defends nearby coastal waters",
+      "aircraft_base": "Builds and upgrades your commandable jet aircraft",
       "defense_post": "Increases defenses of nearby borders",
       "factory": "Creates railroads and spawns trains",
       "hydrogen_bomb": "Large explosion",
@@ -2699,6 +2701,8 @@
     "atom_bomb": "Atom Bomb",
     "boat": "Boat",
     "city": "City",
+    "castle": "Castle",
+    "aircraft_base": "Aircraft Base",
     "defense_post": "Defense Post",
     "factory": "Factory",
     "hydrogen_bomb": "Hydrogen Bomb",
