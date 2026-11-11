@@ -13,7 +13,7 @@ import { PlayerLike } from "@openfront/engine-api/game/ReadViews";
 import { TeamCountConfig } from "@openfront/engine-api/Schemas";
 import { NukeType } from "@openfront/engine-api/StatsSchemas";
 import { Config } from "@openfront/engine-lib/configuration/Config";
-import { exp, log, pow2 } from "@openfront/engine-lib/DetMath";
+import { exp, log } from "@openfront/engine-lib/DetMath";
 import {
   assertNever,
   sigmoid,
