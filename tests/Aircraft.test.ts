@@ -76,6 +76,25 @@ describe("Aircraft", () => {
     expect((aircraft as any).followUntil).toBe(guidanceDeadline);
   });
 
+  test("allows only one aircraft base while keeping its upgrades available", () => {
+    const baseTile = game.ref(4, 10);
+    const secondTile = game.ref(8, 10);
+    player.conquer(baseTile);
+    player.conquer(secondTile);
+    const base = player.buildUnit(UnitType.AircraftBase, baseTile, {});
+
+    const secondPlacement = player.buildableUnits(secondTile, [
+      UnitType.AircraftBase,
+    ])[0];
+    expect(secondPlacement.canBuild).toBe(false);
+
+    const baseUpgrade = player.buildableUnits(baseTile, [
+      UnitType.AircraftBase,
+    ])[0];
+    expect(baseUpgrade.canUpgrade).toBe(base.id());
+    expect(baseUpgrade.cost).toBe(500_000n);
+  });
+
   test("routes multiplayer launch commands to the player's aircraft controller", () => {
     const baseTile = game.ref(4, 10);
     player.conquer(baseTile);
