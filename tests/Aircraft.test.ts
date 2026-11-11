@@ -124,9 +124,6 @@ describe("Aircraft", () => {
     expect(aircraft.command("launch", game.ref(6, 10))).toBe(true);
   });
 
-
-
-
   test("automatically returns after the ten-second cursor-guidance window", () => {
     const baseTile = game.ref(4, 10);
     player.conquer(baseTile);
