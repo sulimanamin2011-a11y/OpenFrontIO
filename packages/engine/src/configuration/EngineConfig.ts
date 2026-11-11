@@ -284,19 +284,22 @@ export class EngineConfig extends Config {
 
   /** Passive gold paid by a city every 30 seconds, scaled by its rank. */
   cityPassiveGold(level: number, player: PlayerLike): Gold {
-    const baseGold = level >= 3 ? 100_000 : level === 2 ? 50_000 : 25_000;
+    const baseGold =
+      level >= 3 ? 100_000 : level === 2 ? 50_000 : 25_000;
     return toInt(baseGold * this.goldMultiplierFor(player));
   }
 
   /** Passive gold paid by a Silver or Gold port at its tier interval. */
   portPassiveGold(level: number, player: PlayerLike): Gold {
-    const baseGold = level >= 3 ? 300_000 : level === 2 ? 100_000 : 0;
+    const baseGold =
+      level >= 3 ? 300_000 : level === 2 ? 100_000 : 0;
     return toInt(baseGold * this.goldMultiplierFor(player));
   }
 
   /** Gold paid to a factory owner whenever a train stops there. */
   factoryTrainGold(level: number, player: PlayerLike): Gold {
-    const baseGold = level >= 3 ? 150_000 : level === 2 ? 25_000 : 0;
+    const baseGold =
+      level >= 3 ? 150_000 : level === 2 ? 25_000 : 0;
     return toInt(baseGold * this.goldMultiplierFor(player));
   }
 
@@ -413,7 +416,8 @@ export class EngineConfig extends Config {
         return this.costWrapper(() => 1_000_000, UnitType.MissileSilo);
       case UnitType.DefensePost:
         return this.costWrapper(
-          (numUnits: number) => Math.min(250_000, Math.max(1, numUnits) * 50_000),
+          (numUnits: number) =>
+            Math.min(250_000, Math.max(1, numUnits) * 50_000),
           UnitType.DefensePost,
         );
       case UnitType.SAMLauncher:
