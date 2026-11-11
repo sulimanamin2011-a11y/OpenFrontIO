@@ -49,13 +49,15 @@ async function twoPlayers(
 }
 
 describe("structure and missile execution snapshots", () => {
-  test("city passive-income timer and tier survive snapshots", async () => {
+  test("cities pay passive gold and preserve their income timer across snapshots", async () => {
     const { game, a } = await twoPlayers(BIG, { instantBuild: true });
     conquerRect(game, a, 0, 0, 40, 40);
     const city = a.buildUnit(UnitType.City, game.ref(10, 10), {});
     game.addExecution(new CityExecution(city));
-    executeTicks(game, 180);
+    const startingGold = a.gold();
+    executeTicks(game, 301);
 
+    expect(a.gold()).toBe(startingGold + 25_000n);
     await expectSnapshotRoundTrip(game, BIG, 100);
   });
 
