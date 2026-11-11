@@ -32,6 +32,7 @@ const warshipIcon = assetUrl("images/BattleshipIconWhite.svg");
 const cityIcon = assetUrl("images/CityIconWhite.svg");
 const castleIcon = assetUrl("images/CastleIconWhite.svg");
 const aircraftBaseIcon = assetUrl("images/AircraftBaseIconWhite.svg");
+const jetIcon = assetUrl("images/JetIconWhite.svg");
 const factoryIcon = assetUrl("images/FactoryIconWhite.svg");
 const goldCoinIcon = assetUrl("images/GoldCoinIcon.svg");
 const mirvIcon = assetUrl("images/MIRVIcon.svg");
@@ -129,6 +130,7 @@ const buildTable: BuildItemDisplay[][] = [
       description: "Build a fortified stronghold on your territory.",
       key: "Castle",
       countable: true,
+      section: "castle",
     },
     {
       unitType: UnitType.AircraftBase,
@@ -136,6 +138,7 @@ const buildTable: BuildItemDisplay[][] = [
       description: "Build a base for aircraft operations.",
       key: "Aircraft Base",
       countable: true,
+      section: "aircraft",
     },
   ],
 ];
@@ -626,7 +629,7 @@ export class BuildMenu extends LitElement implements Controller {
                     : ""
                 }
                 @click=${() => this.armAircraftCommand("launch")}
-              >Launch Jet</button>
+              ><img src=${jetIcon} alt="" width="22" height="22" class="align-middle inline-block mr-1" />Launch Jet</button>
               <button
                 class="build-button"
                 style="width:auto;height:auto;min-height:42px"
