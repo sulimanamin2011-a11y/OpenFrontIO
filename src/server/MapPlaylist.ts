@@ -30,18 +30,6 @@ const log = logger.child({});
 const CROWDED_COMPACT_PLAYER_COUNT = 60;
 const CROWDED_PLAYER_COUNT = 125;
 
-// Every Nth scheduled public game (FFA, team and special alike, counted in
-// creation order) is trusted-only (GameConfig.trusted): only accounts the API
-// reports as trusted may join. A fixed rotation rather than a roll so the
-// lobbies on offer at any moment are never all locked. Must stay coprime with
-// the 3-type ffa/team/special scheduling cycle (MasterLobbyService), or the
-// trusted slot aliases onto a single game type.
-const TRUSTED_PUBLIC_EVERY = 7;
-
-// Trusted-only lobbies draw from a much smaller pool of eligible accounts, so
-// cap them well below the open-lobby sizes to keep them filling and starting.
-const TRUSTED_MAX_PLAYER_COUNT = 25;
-
 const TEAM_WEIGHTS: { config: TeamCountConfig; weight: number }[] = [
   { config: 2, weight: 10 },
   { config: 3, weight: 10 },
