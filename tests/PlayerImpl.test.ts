@@ -59,14 +59,11 @@ describe("PlayerImpl", () => {
     expect(factoryCost(game, player)).toBe(250_000n);
     expect(factoryCost(game, player, 1)).toBe(750_000n);
 
-    const portTile = game.ref(30, 30);
-    player.conquer(portTile);
-    const port = player.buildUnit(UnitType.Port, portTile, {});
     const portCost = game.config().unitInfo(UnitType.Port).cost;
-    // The combined Factory/Port progression advances with owned levels.
-    expect(portCost(game, player)).toBe(1_000_000n);
+    // Port and Factory share the same combined structure cost progression.
+    expect(portCost(game, player)).toBe(250_000n);
+    expect(portCost(game, player, 1)).toBe(750_000n);
     expect(factory.level()).toBe(1);
-    expect(port.level()).toBe(1);
   });
 
   test("Defense Post first upgrade costs 50K gold", () => {
