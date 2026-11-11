@@ -204,7 +204,13 @@ describe("BuildPreviewController confirm with the pointer off the map", () => {
     return { controller, emitted };
   }
 
-  test.each([UnitType.City, UnitType.Port, UnitType.Warship])(
+  test.each([
+    UnitType.City,
+    UnitType.Port,
+    UnitType.Warship,
+    UnitType.Castle,
+    UnitType.AircraftBase,
+  ])(
     "snapped preview for %s",
     (type) => {
       const { controller } = makeController(3, 4, true);
