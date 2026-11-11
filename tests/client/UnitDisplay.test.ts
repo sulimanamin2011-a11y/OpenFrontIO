@@ -106,8 +106,47 @@ describe("mobile UnitDisplay layout", () => {
       expect(grid?.classList.contains("max-[360px]:auto-cols-[44px]")).toBe(
         true,
       );
-      expect(grid?.children).toHaveLength(10);
-      expect(grid?.style.getPropertyValue("--unit-display-columns")).toBe("10");
+      expect(grid?.children).toHaveLength(12);
+      expect(grid?.style.getPropertyValue("--unit-display-columns")).toBe("12");
+    } finally {
+      display.remove();
+    }
+  });
+
+  test("shows castle and aircraft base as selectable build buttons", async () => {
+    const { display, inputHandler } = makeDisplay();
+    try {
+      await display.updateComplete;
+
+      const items = Array.from(
+        display.querySelectorAll<HTMLElement>(".unit-display-grid > *"),
+      );
+      const castle = items.find((item) =>
+        item.textContent?.includes("castle"),
+      );
+      const aircraftBase = items.find((item) =>
+        item.textContent?.includes("aircraft_base"),
+      );
+
+      expect(items).toHaveLength(12);
+      expect(castle).toBeDefined();
+      expect(aircraftBase).toBeDefined();
+
+      castle?.querySelector("div > div")?.dispatchEvent(
+        new MouseEvent("click", { bubbles: true }),
+      );
+      expect(inputHandler.setGhostStructure).toHaveBeenCalledWith(
+        UnitType.Castle,
+        "GUIclick",
+      );
+
+      aircraftBase?.querySelector("div > div")?.dispatchEvent(
+        new MouseEvent("click", { bubbles: true }),
+      );
+      expect(inputHandler.setGhostStructure).toHaveBeenLastCalledWith(
+        UnitType.AircraftBase,
+        "GUIclick",
+      );
     } finally {
       display.remove();
     }
