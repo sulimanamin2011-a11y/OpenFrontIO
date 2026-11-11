@@ -129,7 +129,6 @@ const buildTable: BuildItemDisplay[][] = [
       description: "Build a fortified stronghold on your territory.",
       key: "Castle",
       countable: true,
-      section: "castle",
     },
     {
       unitType: UnitType.AircraftBase,
@@ -137,7 +136,6 @@ const buildTable: BuildItemDisplay[][] = [
       description: "Build a base for aircraft operations.",
       key: "Aircraft Base",
       countable: true,
-      section: "aircraft",
     },
   ],
 ];
