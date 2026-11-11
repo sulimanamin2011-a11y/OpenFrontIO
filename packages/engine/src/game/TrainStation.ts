@@ -60,6 +60,7 @@ class FactoryStopHandler implements TrainStopHandler {
     const gold = mg
       .config()
       .factoryTrainGold(station.unit.level(), factoryOwner);
+    if (gold <= 0n) return;
     factoryOwner.addGold(gold, station.tile());
     factoryOwner.addTrainGold(gold);
     mg.stats().trainExternalTrade(factoryOwner, gold);
