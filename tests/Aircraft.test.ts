@@ -67,6 +67,7 @@ describe("Aircraft", () => {
     executeTicks(game, 1);
 
     expect(aircraft.command("launch", firstTarget)).toBe(true);
+    executeTicks(game, 1);
     const guidanceDeadline = (aircraft as any).followUntil;
 
     expect(aircraft.command("aim", updatedTarget)).toBe(true);
