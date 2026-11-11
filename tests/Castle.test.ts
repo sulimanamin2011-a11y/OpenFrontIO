@@ -7,6 +7,7 @@ import { CastleExecution } from "@openfront/engine/execution/CastleExecution";
 import { ShellExecution } from "@openfront/engine/execution/ShellExecution";
 import { Game, Player } from "@openfront/engine/game/Game";
 import { setup } from "./util/Setup";
+import { vi } from "vitest";
 import { executeTicks } from "./util/utils";
 
 let game: Game;
