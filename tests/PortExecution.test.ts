@@ -88,6 +88,7 @@ describe("PortExecution", () => {
     execution.tick(401);
     expect(player.gold() - before).toBe(400_000n);
   });
+
   test("a Gold port cannot be upgraded beyond its final income tier", () => {
     player.addGold(BigInt(10_000_000));
     player.conquer(game.ref(7, 10));
@@ -98,6 +99,7 @@ describe("PortExecution", () => {
     expect(port.level()).toBe(3);
     expect(player.canUpgradeUnit(port)).toBe(false);
   });
+
   test("does not generate passive gold while under construction", () => {
     player.conquer(game.ref(7, 10));
     const port = player.buildUnit(UnitType.Port, game.ref(7, 10), {});
