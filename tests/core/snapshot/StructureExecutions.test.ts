@@ -4,8 +4,8 @@ import {
   UnitType,
 } from "@openfront/engine-api/game/GameTypes";
 import { AircraftExecution } from "@openfront/engine/execution/AircraftExecution";
-import { CityExecution } from "@openfront/engine/execution/CityExecution";
 import { CastleExecution } from "@openfront/engine/execution/CastleExecution";
+import { CityExecution } from "@openfront/engine/execution/CityExecution";
 import { ConstructionExecution } from "@openfront/engine/execution/ConstructionExecution";
 import { DoomsdayClockExecution } from "@openfront/engine/execution/DoomsdayClockExecution";
 import { MirvExecution } from "@openfront/engine/execution/MIRVExecution";
