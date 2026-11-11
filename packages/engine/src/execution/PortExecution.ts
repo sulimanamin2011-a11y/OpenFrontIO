@@ -62,21 +62,23 @@ export class PortExecution implements Execution {
       this.createStation();
     }
 
-    // DOMINION port economy: Silver pays 100K every 15 seconds; Gold pays
-    // 300K every 10 seconds. Each port keeps its own timer, starting when
-    // construction completes and restarting when its upgrade tier changes.
+    // Bronze ports trade but do not pay passive income. Silver pays 100K
+    // every 15 seconds; Gold pays 300K every 10 seconds. Each port keeps its
+    // own timer, restarting when construction completes or its tier changes.
     const incomeLevel = this.port.level();
     if (incomeLevel !== this.passiveIncomeLevel) {
       this.passiveIncomeLevel = incomeLevel;
       this.lastPassiveIncomeTick = ticks;
     }
-    const incomeInterval = incomeLevel >= 2 ? 100 : 150;
-    if (ticks - (this.lastPassiveIncomeTick ?? ticks) >= incomeInterval) {
-      this.port.owner().addGold(
-        this.mg.config().portPassiveGold(incomeLevel, this.port.owner()),
-        this.port.tile(),
-      );
-      this.lastPassiveIncomeTick = ticks;
+    if (incomeLevel >= 2) {
+      const incomeInterval = incomeLevel >= 3 ? 100 : 150;
+      if (ticks - (this.lastPassiveIncomeTick ?? ticks) >= incomeInterval) {
+        this.port.owner().addGold(
+          this.mg.config().portPassiveGold(incomeLevel, this.port.owner()),
+          this.port.tile(),
+        );
+        this.lastPassiveIncomeTick = ticks;
+      }
     }
 
     // Only check every 10 ticks for performance.
