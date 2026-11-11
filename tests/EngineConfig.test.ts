@@ -25,6 +25,17 @@ describe("EngineConfig.unitInfo", () => {
     expect(shared.unitInfo(UnitType.AircraftBase).maxHealth).toBe(3_000);
   });
 
+  it("scales Castle range and reload speed across Bronze, Silver, and Gold", () => {
+    const engine = new EngineConfig({} as unknown as GameConfig, false);
+
+    expect([1, 2, 3].map((level) => engine.castleDefenseRange(level))).toEqual([
+      35, 45, 55,
+    ]);
+    expect([1, 2, 3].map((level) => engine.castleShellAttackRate(level))).toEqual([
+      80, 60, 40,
+    ]);
+  });
+
   it("caches per unit type", () => {
     const engine = new EngineConfig({} as unknown as GameConfig, false);
     expect(engine.unitInfo(UnitType.City)).toBe(engine.unitInfo(UnitType.City));
