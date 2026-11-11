@@ -67,8 +67,12 @@ describe("Aircraft", () => {
     executeTicks(game, 1);
 
     expect(aircraft.command("launch", firstTarget)).toBe(true);
+    const guidanceDeadline = (aircraft as any).followUntil;
+
     expect(aircraft.command("aim", updatedTarget)).toBe(true);
     expect((aircraft as any).target).toBe(updatedTarget);
+    // Cursor updates must not extend the original ten-second guidance window.
+    expect((aircraft as any).followUntil).toBe(guidanceDeadline);
   });
 
   test("routes multiplayer launch commands to the player's aircraft controller", () => {
