@@ -222,6 +222,11 @@ describe("PlayerImpl", () => {
     const cost = game.config().unitInfo(UnitType.DefensePost).cost;
     expect(cost(game, player)).toBe(50_000n);
     expect(cost(game, player, 1)).toBe(100_000n);
+    const buildablePost = player.buildableUnits(
+      game.ref(0, 0),
+      [UnitType.DefensePost],
+    )[0];
+    expect(buildablePost.canUpgrade).toBe(post.id());
 
     player.upgradeUnit(post);
     expect(post.level()).toBe(2);
