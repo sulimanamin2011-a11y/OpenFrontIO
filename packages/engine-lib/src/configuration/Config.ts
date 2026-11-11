@@ -230,7 +230,10 @@ export class Config {
         };
         break;
       case UnitType.DefensePost:
-        info = { constructionDuration: this.instantBuild() ? 0 : 5 * 10 };
+        info = {
+          constructionDuration: this.instantBuild() ? 0 : 5 * 10,
+          upgradable: true,
+        };
         break;
       case UnitType.SAMLauncher:
         info = {
