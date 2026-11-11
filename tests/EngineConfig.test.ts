@@ -50,6 +50,9 @@ describe("EngineConfig DOMINION economy", () => {
       false,
     );
 
+    expect(engine.cityPassiveGold(1, player)).toBe(50_000n);
+    expect(engine.cityPassiveGold(2, player)).toBe(100_000n);
+    expect(engine.cityPassiveGold(3, player)).toBe(200_000n);
     expect(engine.portPassiveGold(1, player)).toBe(200_000n);
     expect(engine.portPassiveGold(2, player)).toBe(600_000n);
     expect(engine.factoryTrainGold(1, player)).toBe(50_000n);
