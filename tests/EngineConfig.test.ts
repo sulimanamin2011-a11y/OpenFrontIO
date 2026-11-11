@@ -36,6 +36,23 @@ describe("EngineConfig.unitInfo", () => {
     ).toEqual([80, 60, 40]);
   });
 
+  it("scales Defense Post range and combat bonuses by rank", () => {
+    const engine = new EngineConfig({} as unknown as GameConfig, false);
+    const bronzeRange = engine.defensePostRange(1);
+
+    expect([1, 2, 3].map((level) => engine.defensePostRange(level))).toEqual([
+      bronzeRange,
+      bronzeRange + 15,
+      bronzeRange + 30,
+    ]);
+    expect(
+      [1, 2, 3].map((level) => engine.defensePostDefenseBonus(level)),
+    ).toEqual([5, 5.5, 6]);
+    expect(
+      [1, 2, 3].map((level) => engine.defensePostSpeedBonus(level)),
+    ).toEqual([3, 3.25, 3.5]);
+  });
+
   it("caches per unit type", () => {
     const engine = new EngineConfig({} as unknown as GameConfig, false);
     expect(engine.unitInfo(UnitType.City)).toBe(engine.unitInfo(UnitType.City));
