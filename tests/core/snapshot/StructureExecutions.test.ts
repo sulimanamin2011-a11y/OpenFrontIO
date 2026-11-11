@@ -61,6 +61,25 @@ describe("structure and missile execution snapshots", () => {
     await expectSnapshotRoundTrip(game, BIG, 100);
   });
 
+  test("city passive income increases from Bronze through Silver to Gold", async () => {
+    const { game, a } = await twoPlayers(BIG, { instantBuild: true });
+    conquerRect(game, a, 0, 0, 40, 40);
+    const city = a.buildUnit(UnitType.City, game.ref(10, 10), {});
+    game.addExecution(new CityExecution(city));
+
+    const startingGold = a.gold();
+    executeTicks(game, 301);
+    expect(a.gold()).toBe(startingGold + 25_000n);
+
+    a.upgradeUnit(city);
+    executeTicks(game, 301);
+    expect(a.gold()).toBe(startingGold + 75_000n);
+
+    a.upgradeUnit(city);
+    executeTicks(game, 301);
+    expect(a.gold()).toBe(startingGold + 175_000n);
+  });
+
   test("port passive-income timer and tier survive snapshots", async () => {
     const { game, a } = await twoPlayers(BIG, { instantBuild: true });
     conquerRect(game, a, 0, 0, 40, 40);
