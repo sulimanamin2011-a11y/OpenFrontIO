@@ -28,6 +28,7 @@ describe("PortExecution", () => {
   test("Silver ports generate 100,000 gold every 15 seconds", () => {
     player.conquer(game.ref(7, 10));
     const port = player.buildUnit(UnitType.Port, game.ref(7, 10), {});
+    port.increaseLevel();
     const execution = new PortExecution(port);
     execution.init(game, 47);
     const before = player.gold();
@@ -41,6 +42,7 @@ describe("PortExecution", () => {
   test("Gold ports generate 300,000 gold every 10 seconds", () => {
     player.conquer(game.ref(7, 10));
     const port = player.buildUnit(UnitType.Port, game.ref(7, 10), {});
+    port.increaseLevel();
     port.increaseLevel();
     const execution = new PortExecution(port);
     execution.init(game, 47);
@@ -63,18 +65,26 @@ describe("PortExecution", () => {
     expect(player.gold()).toBe(before);
     port.increaseLevel();
     execution.tick(150);
-    execution.tick(249);
+    execution.tick(299);
     expect(player.gold()).toBe(before);
-    execution.tick(250);
-    expect(player.gold() - before).toBe(300_000n);
+    execution.tick(300);
+    expect(player.gold() - before).toBe(100_000n);
+
+    port.increaseLevel();
+    execution.tick(301);
+    execution.tick(400);
+    expect(player.gold() - before).toBe(100_000n);
+    execution.tick(401);
+    expect(player.gold() - before).toBe(400_000n);
   });
   test("a Gold port cannot be upgraded beyond its final income tier", () => {
     player.addGold(BigInt(10_000_000));
     player.conquer(game.ref(7, 10));
     const port = player.buildUnit(UnitType.Port, game.ref(7, 10), {});
     port.increaseLevel();
+    port.increaseLevel();
 
-    expect(port.level()).toBe(2);
+    expect(port.level()).toBe(3);
     expect(player.canUpgradeUnit(port)).toBe(false);
   });
   test("does not generate passive gold while under construction", () => {
