@@ -52,6 +52,30 @@ describe("PlayerImpl", () => {
     expect(player.canUpgradeUnit(city)).toBe(false);
   });
 
+  test("Factory and Port upgrades cost 250K then 750K gold", () => {
+    player.addGold(10_000_000n);
+    const factory = player.buildUnit(UnitType.Factory, game.ref(20, 20), {});
+    const factoryCost = game.config().unitInfo(UnitType.Factory).cost;
+    expect(factoryCost(game, player)).toBe(250_000n);
+    expect(factoryCost(game, player, 1)).toBe(750_000n);
+
+    const portTile = game.ref(30, 30);
+    player.conquer(portTile);
+    const port = player.buildUnit(UnitType.Port, portTile, {});
+    const portCost = game.config().unitInfo(UnitType.Port).cost;
+    // The combined Factory/Port progression advances with owned levels.
+    expect(portCost(game, player)).toBe(1_000_000n);
+    expect(factory.level()).toBe(1);
+    expect(port.level()).toBe(1);
+  });
+
+  test("Defense Post first upgrade costs 50K gold", () => {
+    const post = player.buildUnit(UnitType.DefensePost, game.ref(0, 0), {});
+    const cost = game.config().unitInfo(UnitType.DefensePost).cost;
+    expect(cost(game, player)).toBe(50_000n);
+    expect(post.level()).toBe(1);
+  });
+
   test("Castle can be upgraded from the Castle menu", () => {
     const castle = player.buildUnit(UnitType.Castle, game.ref(0, 0), {});
     player.addGold(BigInt(1_000_000));
