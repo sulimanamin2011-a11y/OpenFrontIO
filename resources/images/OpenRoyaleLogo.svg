@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 100" role="img" aria-labelledby="title desc">
+  <title id="title">Open Royale</title>
+  <desc id="desc">Open Royale strategy game wordmark with a royal crown.</desc>
+  <defs>
+    <linearGradient id="royal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8bd8ff"/>
+      <stop offset="1" stop-color="#438cff"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe69a"/>
+      <stop offset="1" stop-color="#d49a36"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(8 10)">
+    <path d="M9 34 19 14 36 29 53 7 70 29 87 14 97 34 89 72H17Z" fill="url(#gold)" stroke="#fff0bd" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M18 48H89L84 67H23Z" fill="#17233c"/>
+    <circle cx="19" cy="13" r="5" fill="#fff0bd"/>
+    <circle cx="53" cy="6" r="5" fill="#fff0bd"/>
+    <circle cx="87" cy="13" r="5" fill="#fff0bd"/>
+  </g>
+  <g font-family="Arial Black, Arial, sans-serif" font-weight="900">
+    <text x="122" y="43" font-size="25" letter-spacing="7" fill="#ffffff">OPEN</text>
+    <text x="119" y="82" font-size="43" letter-spacing="1.2" fill="url(#royal)">ROYALE</text>
+  </g>
+</svg>
