@@ -41,7 +41,9 @@ describe("Castle", () => {
     executeTicks(game, 2);
 
     expect(
-      game.executions().some((execution) => execution instanceof ShellExecution),
+      game
+        .executions()
+        .some((execution) => execution instanceof ShellExecution),
     ).toBe(true);
   });
 
@@ -58,7 +60,9 @@ describe("Castle", () => {
     executeTicks(game, 2);
 
     expect(
-      game.executions().some((execution) => execution instanceof ShellExecution),
+      game
+        .executions()
+        .some((execution) => execution instanceof ShellExecution),
     ).toBe(false);
   });
 
