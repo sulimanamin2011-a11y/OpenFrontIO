@@ -43,7 +43,7 @@ describe("EngineConfig.unitInfo", () => {
 });
 
 describe("EngineConfig DOMINION economy", () => {
-  it("scales Port and Factory income with the game gold multiplier", () => {
+  it("scales City, Port, and Factory income with the game gold multiplier", () => {
     const player = { isLobbyCreator: () => false } as any;
     const engine = new EngineConfig(
       { goldMultiplier: 2 } as unknown as GameConfig,
