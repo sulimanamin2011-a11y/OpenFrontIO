@@ -217,13 +217,17 @@ describe("PlayerImpl", () => {
     expect(preview.overlappingRailroads).toEqual([]);
   });
 
-  test("DefensePost cannot be upgraded", () => {
-    player.buildUnit(UnitType.DefensePost, game.ref(0, 0), {});
-    const buDefensePost = player
-      .buildableUnits(game.ref(0, 0))
-      .find((bu) => bu.type === UnitType.DefensePost);
-    expect(buDefensePost).toBeDefined();
-    expect(buDefensePost!.canUpgrade).toBeFalsy();
+  test("Defense Post can be upgraded to Gold with tiered upgrade costs", () => {
+    const post = player.buildUnit(UnitType.DefensePost, game.ref(0, 0), {});
+    const cost = game.config().unitInfo(UnitType.DefensePost).cost;
+    expect(cost(game, player)).toBe(50_000n);
+    expect(cost(game, player, 1)).toBe(100_000n);
+
+    player.upgradeUnit(post);
+    expect(post.level()).toBe(2);
+    player.upgradeUnit(post);
+    expect(post.level()).toBe(3);
+    expect(player.canUpgradeUnit(post)).toBe(false);
   });
 
   test("City can be upgraded from another city", () => {
