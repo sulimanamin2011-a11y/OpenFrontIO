@@ -37,6 +37,21 @@ describe("PlayerImpl", () => {
     expect(buCity!.canUpgrade).toBe(city.id());
   });
 
+  test("City upgrades grant Bronze-to-Silver and Silver-to-Gold troop bonuses", () => {
+    const city = player.buildUnit(UnitType.City, game.ref(0, 0), {});
+    const startingTroops = player.troops();
+    player.addGold(1_000_000n);
+
+    player.upgradeUnit(city);
+    expect(city.level()).toBe(2);
+    expect(player.troops()).toBe(startingTroops + 30_000);
+
+    player.upgradeUnit(city);
+    expect(city.level()).toBe(3);
+    expect(player.troops()).toBe(startingTroops + 80_000);
+    expect(player.canUpgradeUnit(city)).toBe(false);
+  });
+
   test("Castle can be upgraded from the Castle menu", () => {
     const castle = player.buildUnit(UnitType.Castle, game.ref(0, 0), {});
     player.addGold(BigInt(1_000_000));
