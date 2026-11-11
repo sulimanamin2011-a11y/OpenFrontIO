@@ -3,7 +3,7 @@ import { assetUrl } from "@openfront/shared/AssetUrls";
 export const warshipIcon = assetUrl("images/BattleshipIconWhite.svg");
 export const cityIcon = assetUrl("images/CityIconWhite.svg");
 export const castleIcon = assetUrl("images/CastleIconWhite.svg");
-export const aircraftBaseIcon = assetUrl("images/AircraftBaseIconWhite.svg");
+export const aircraftBaseIcon = assetUrl("images/JetIconWhite.svg");
 export const factoryIcon = assetUrl("images/FactoryIconWhite.svg");
 export const goldCoinIcon = assetUrl("images/GoldCoinIcon.svg");
 export const mirvIcon = assetUrl("images/MIRVIcon.svg");
