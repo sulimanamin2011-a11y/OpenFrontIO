@@ -31,9 +31,9 @@ describe("EngineConfig.unitInfo", () => {
     expect([1, 2, 3].map((level) => engine.castleDefenseRange(level))).toEqual([
       35, 45, 55,
     ]);
-    expect([1, 2, 3].map((level) => engine.castleShellAttackRate(level))).toEqual([
-      80, 60, 40,
-    ]);
+    expect(
+      [1, 2, 3].map((level) => engine.castleShellAttackRate(level)),
+    ).toEqual([80, 60, 40]);
   });
 
   it("caches per unit type", () => {
