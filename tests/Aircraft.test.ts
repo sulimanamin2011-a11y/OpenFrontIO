@@ -143,6 +143,26 @@ describe("Aircraft", () => {
     expect(aircraft.command("launch", game.ref(6, 10))).toBe(true);
   });
 
+  test("destroys an airborne jet and shuts down when its base is destroyed", () => {
+    const baseTile = game.ref(4, 10);
+    const targetTile = game.ref(12, 10);
+    player.conquer(baseTile);
+    const base = player.buildUnit(UnitType.AircraftBase, baseTile, {});
+    const aircraft = new AircraftExecution(base);
+    game.addExecution(aircraft);
+    executeTicks(game, 1);
+
+    expect(aircraft.command("launch", targetTile)).toBe(true);
+    const jet = player.units(UnitType.Jet)[0];
+    expect(jet).toBeDefined();
+
+    base.delete(false);
+    executeTicks(game, 1);
+
+    expect(jet.isActive()).toBe(false);
+    expect(aircraft.isActive()).toBe(false);
+  });
+
   test("automatically returns after the ten-second cursor-guidance window", () => {
     const baseTile = game.ref(4, 10);
     player.conquer(baseTile);
