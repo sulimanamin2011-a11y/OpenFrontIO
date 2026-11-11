@@ -25,6 +25,8 @@ import { resolveKeybindLabel, translateText } from "../../Utils";
 import { GameView } from "../../view";
 import {
   atomBombIcon,
+  aircraftBaseIcon,
+  castleIcon,
   cityIcon,
   defensePostIcon,
   factoryIcon,
@@ -53,6 +55,8 @@ export class UnitDisplay extends LitElement implements Controller {
   private keybinds: Record<string, { value: string; key: string }> = {};
   private keyboardLayout = new KeyboardLayoutController(this);
   private _cities = 0;
+  private _castles = 0;
+  private _aircraftBases = 0;
   private _warships = 0;
   private _factories = 0;
   private _missileSilo = 0;
@@ -454,6 +458,8 @@ export class UnitDisplay extends LitElement implements Controller {
       })
       .catch((error) => console.warn("Failed to refresh unit costs", error));
     this._cities = player.totalUnitLevels(UnitType.City);
+    this._castles = player.totalUnitLevels(UnitType.Castle);
+    this._aircraftBases = player.totalUnitLevels(UnitType.AircraftBase);
     this._missileSilo = player.totalUnitLevels(UnitType.MissileSilo);
     this._port = player.totalUnitLevels(UnitType.Port);
     this._defensePost = player.totalUnitLevels(UnitType.DefensePost);
@@ -506,6 +512,20 @@ export class UnitDisplay extends LitElement implements Controller {
               UnitType.City,
               "city",
               this.getHotkey("buildCity", "Digit1"),
+            )}
+            ${this.renderUnitItem(
+              castleIcon,
+              this._castles,
+              UnitType.Castle,
+              "castle",
+              "",
+            )}
+            ${this.renderUnitItem(
+              aircraftBaseIcon,
+              this._aircraftBases,
+              UnitType.AircraftBase,
+              "aircraft_base",
+              "",
             )}
             ${this.renderUnitItem(
               factoryIcon,
