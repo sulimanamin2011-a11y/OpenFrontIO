@@ -78,7 +78,7 @@ describe("Aircraft", () => {
 
   test("allows only one aircraft base while keeping its upgrades available", () => {
     const baseTile = game.ref(4, 10);
-    const secondTile = game.ref(8, 10);
+    const secondTile = game.ref(20, 20);
     player.conquer(baseTile);
     player.conquer(secondTile);
     const base = player.buildUnit(UnitType.AircraftBase, baseTile, {});
