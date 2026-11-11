@@ -237,6 +237,9 @@ describe("BuildMenu live structure management", () => {
     expect(button("Return Jet").disabled).toBe(true);
     expect(menu.textContent).toContain("Bronze Aircraft Base");
     expect(menu.textContent).toContain("Silver upgrade: 500K gold");
+    expect(
+      button("Launch Jet").querySelector("img")?.getAttribute("src"),
+    ).toContain("JetIconWhite.svg");
 
     airborne = true;
     await menu.updateComplete;
