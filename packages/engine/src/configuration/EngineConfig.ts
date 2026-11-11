@@ -387,7 +387,11 @@ export class EngineConfig extends Config {
         );
       case UnitType.Port:
         return this.costWrapper(
-          (numUnits: number) => Math.min(1_000_000, pow2(numUnits) * 125_000),
+          (numUnits: number) =>
+            Math.min(
+              1_000_000,
+              numUnits === 0 ? 125_000 : 125_000 * numUnits * (numUnits + 1),
+            ),
           UnitType.Port,
           UnitType.Factory,
         );
@@ -409,7 +413,7 @@ export class EngineConfig extends Config {
         return this.costWrapper(() => 1_000_000, UnitType.MissileSilo);
       case UnitType.DefensePost:
         return this.costWrapper(
-          (numUnits: number) => Math.min(250_000, (numUnits + 1) * 50_000),
+          (numUnits: number) => Math.min(250_000, Math.max(1, numUnits) * 50_000),
           UnitType.DefensePost,
         );
       case UnitType.SAMLauncher:
@@ -430,7 +434,11 @@ export class EngineConfig extends Config {
         );
       case UnitType.Factory:
         return this.costWrapper(
-          (numUnits: number) => Math.min(1_000_000, pow2(numUnits) * 125_000),
+          (numUnits: number) =>
+            Math.min(
+              1_000_000,
+              numUnits === 0 ? 125_000 : 125_000 * numUnits * (numUnits + 1),
+            ),
           UnitType.Factory,
           UnitType.Port,
         );
