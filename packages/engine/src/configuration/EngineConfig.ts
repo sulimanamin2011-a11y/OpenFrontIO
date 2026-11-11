@@ -282,6 +282,12 @@ export class EngineConfig extends Config {
     return toInt(gold * this.goldMultiplierFor(player));
   }
 
+  /** Passive gold paid by a city every 30 seconds, scaled by its rank. */
+  cityPassiveGold(level: number, player: PlayerLike): Gold {
+    const baseGold = level >= 3 ? 100_000 : level === 2 ? 50_000 : 25_000;
+    return toInt(baseGold * this.goldMultiplierFor(player));
+  }
+
   /** Passive gold paid by a port at each Silver or Gold income interval. */
   portPassiveGold(level: number, player: PlayerLike): Gold {
     const baseGold = level >= 2 ? 300_000 : 100_000;
