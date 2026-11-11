@@ -25,6 +25,17 @@ describe("PortExecution", () => {
     game.config().structureMinDist = () => 10;
   });
 
+  test("Bronze ports do not generate passive gold", () => {
+    player.conquer(game.ref(7, 10));
+    const port = player.buildUnit(UnitType.Port, game.ref(7, 10), {});
+    const execution = new PortExecution(port);
+    execution.init(game, 0);
+    const before = player.gold();
+
+    execution.tick(300);
+    expect(player.gold()).toBe(before);
+  });
+
   test("Silver ports generate 100,000 gold every 15 seconds", () => {
     player.conquer(game.ref(7, 10));
     const port = player.buildUnit(UnitType.Port, game.ref(7, 10), {});
