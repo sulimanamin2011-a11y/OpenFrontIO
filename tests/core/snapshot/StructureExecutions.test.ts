@@ -4,6 +4,7 @@ import {
   UnitType,
 } from "@openfront/engine-api/game/GameTypes";
 import { AircraftExecution } from "@openfront/engine/execution/AircraftExecution";
+import { CityExecution } from "@openfront/engine/execution/CityExecution";
 import { CastleExecution } from "@openfront/engine/execution/CastleExecution";
 import { ConstructionExecution } from "@openfront/engine/execution/ConstructionExecution";
 import { DoomsdayClockExecution } from "@openfront/engine/execution/DoomsdayClockExecution";
@@ -48,6 +49,16 @@ async function twoPlayers(
 }
 
 describe("structure and missile execution snapshots", () => {
+  test("city passive-income timer and tier survive snapshots", async () => {
+    const { game, a } = await twoPlayers(BIG, { instantBuild: true });
+    conquerRect(game, a, 0, 0, 40, 40);
+    const city = a.buildUnit(UnitType.City, game.ref(10, 10), {});
+    game.addExecution(new CityExecution(city));
+    executeTicks(game, 180);
+
+    await expectSnapshotRoundTrip(game, BIG, 100);
+  });
+
   test("port passive-income timer and tier survive snapshots", async () => {
     const { game, a } = await twoPlayers(BIG, { instantBuild: true });
     conquerRect(game, a, 0, 0, 40, 40);
