@@ -280,15 +280,23 @@ describe("BuildPreviewController confirm with the pointer off the map", () => {
     expect(c.isGhostReadyForConfirm()).toBe(true);
   });
 
-  test("valid spawn tile zero builds while upgrading is prevented", () => {
-    const { controller, emitted } = makeController(0, 0);
-    const c = controller as any;
-    c.uiState.preventStacking = true;
-    Object.assign(c.ghostUnit.buildableUnit, { canBuild: 0, canUpgrade: 7 });
-    c.requestConfirmStructure(new MouseUpEvent(0, 0));
-    expect(emitted[0]).toBeInstanceOf(BuildUnitIntentEvent);
-    expect((emitted[0] as BuildUnitIntentEvent).tile).toBe(0);
-  });
+  test.each([UnitType.City, UnitType.Castle, UnitType.AircraftBase])(
+    "valid spawn tile zero builds %s while upgrading is prevented",
+    (type) => {
+      const { controller, emitted } = makeController(0, 0);
+      const c = controller as any;
+      c.uiState.preventStacking = true;
+      Object.assign(c.ghostUnit.buildableUnit, {
+        type,
+        canBuild: 0,
+        canUpgrade: 7,
+      });
+      c.requestConfirmStructure(new MouseUpEvent(0, 0));
+      expect(emitted[0]).toBeInstanceOf(BuildUnitIntentEvent);
+      expect((emitted[0] as BuildUnitIntentEvent).tile).toBe(0);
+      expect((emitted[0] as BuildUnitIntentEvent).unit).toBe(type);
+    },
+  );
 
   test("held placement uses the single-build cost rather than bulk upgrades", () => {
     const { controller } = makeController(3, 4);
