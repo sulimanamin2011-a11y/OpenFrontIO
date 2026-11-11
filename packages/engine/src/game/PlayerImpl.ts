@@ -1480,11 +1480,11 @@ export class PlayerImpl implements Player {
   private isUnitValidToUpgrade(unit: Unit): boolean {
     // DOMINION tiered structures stop when they reach their final named rank.
     switch (unit.type()) {
-      case UnitType.Port:
-      case UnitType.Factory:
       case UnitType.SAMLauncher:
         if (unit.level() >= 2) return false;
         break;
+      case UnitType.Port:
+      case UnitType.Factory:
       case UnitType.City:
         if (unit.level() >= 3) return false;
         break;
