@@ -37,9 +37,12 @@ describe("PlayerImpl", () => {
     expect(buCity!.canUpgrade).toBe(city.id());
   });
 
-  test("City upgrades grant Bronze-to-Silver and Silver-to-Gold troop bonuses", () => {
+  test("City upgrades grant troop bonuses and cost 250K then 750K gold", () => {
     const city = player.buildUnit(UnitType.City, game.ref(0, 0), {});
     const startingTroops = player.troops();
+    const cityCost = game.config().unitInfo(UnitType.City).cost;
+    expect(cityCost(game, player)).toBe(250_000n);
+    expect(cityCost(game, player, 1)).toBe(750_000n);
     player.addGold(1_000_000n);
 
     player.upgradeUnit(city);
@@ -83,13 +86,15 @@ describe("PlayerImpl", () => {
     expect(buildableCastle!.canUpgrade).toBe(castle.id());
   });
 
-  test("a Factory cannot be upgraded beyond the Gold tier", () => {
+  test("a Factory can reach Gold and cannot be upgraded beyond it", () => {
     player.addGold(BigInt(10_000_000));
     player.conquer(game.ref(20, 20));
     const factory = player.buildUnit(UnitType.Factory, game.ref(20, 20), {});
     player.upgradeUnit(factory);
-
     expect(factory.level()).toBe(2);
+    player.upgradeUnit(factory);
+
+    expect(factory.level()).toBe(3);
     expect(player.canUpgradeUnit(factory)).toBe(false);
     const buildableFactory = player.buildableUnits(
       game.ref(20, 20),
